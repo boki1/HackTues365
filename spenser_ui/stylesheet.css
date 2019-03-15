@@ -1,0 +1,38 @@
+#db-table {
+  width: 800px;
+  margin: 0px auto;
+}
+
+.table > tbody > tr > td {
+   background-color: lightgrey;
+   color: black;
+}
+
+.table > tbody > tr > th {
+   background-color: lightgrey;
+   color: black;
+}
+
+.table > thead > tr > th {
+  background-color: grey;
+  color: black;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: coral;
+}
+
+.btn-arr {
+  align: left;
+  top: 40%;
+  position: absolute;
+  border: none;
+  font-size: 50px;
+  border-radius: 15px;
+  background-color: rgb(51, 51, 51);
+  transition: 0.3s;
+}
+
+.btn-arr:hover {
+  color: white;
+}
