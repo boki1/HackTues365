@@ -7,53 +7,46 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-  <div class="bg-image"></div>
-
-  <div class="main">
-
-    <div id="_navbar">
-      <nav class="navbar navbar-dark bg-dark" >
-        <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
-        <form id="search-form" class="form-inline my-2 my-lg-0">
-          <input onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="search-btn" type="submit"><i class="fa fa-search"></i></button>
-        </form>
-      </nav>
-    </div>
-
-    <div id="db-table">
-      <table cellspacing=2 cellpadding=5 class="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Pills</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td contenteditable="true">gosho</td>
-            <td contenteditable="true">a, b</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td contenteditable="true">pesho</td>
-            <td contenteditable="true">a, b</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td contenteditable="true">mitko</td>
-            <td contenteditable="true">a, b</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div id="_navbar">
+    <nav class="navbar navbar-dark bg-dark" >
+      <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
+      <form id="search-form" class="form-inline my-2 my-lg-0">
+        <input onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="search-btn" type="submit"><i class="fa fa-search"></i></button>
+      </form>
+    </nav>
   </div>
-
+  <div id="db-table-div">
+    <table id="db-table" cellspacing=2 cellpadding=5 class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">Pills</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td contenteditable="true">gosho</td>
+          <td contenteditable="true">a, b</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td contenteditable="true">pesho</td>
+          <td contenteditable="true">a, b</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td contenteditable="true">mitko</td>
+          <td contenteditable="true">a, b</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </body>
 <style>
-  #db-table {
+  #db\-table\-div {
     width: 800px;
     margin: 0px auto;
     font-size: 24px;
@@ -178,7 +171,23 @@
     return document.getElementById("db-table").getElementsByTagName("tr").length;
   }
 
-  
+  function showAdder () {
+    let person = prompt("Name: ", "Name");
+    if (!person) return;
+    let pills = prompt("Format: pill -> delay hour;", "Pills")
+    if (!pills) return;
+    let fPills = pills;
+    let idx = calcNextIdx();
+    let row = document.getElementById("db-table").insertRow(idx);
+    let cell0 = row.insertCell(0);
+    var cell1 = row.insertCell(1);
+    var cell2 = row.insertCell(2);
+    cell0.innerHTML = idx;
+    cell1.innerHTML = person;
+    cell2.innerHTML = fPills;
+    cell1.contentEditable = "true";
+    cell2.contentEditable = "true";
+  }
 
 </script>
 
