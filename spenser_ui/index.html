@@ -26,21 +26,6 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td contenteditable="true">gosho</td>
-          <td contenteditable="true">a, b</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td contenteditable="true">pesho</td>
-          <td contenteditable="true">a, b</td>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td contenteditable="true">mitko</td>
-          <td contenteditable="true">a, b</td>
-        </tr>
       </tbody>
     </table>
   </div>
@@ -171,24 +156,44 @@
     return document.getElementById("db-table").getElementsByTagName("tr").length;
   }
 
-  function showAdder () {
-    let person = prompt("Name: ", "Name");
-    if (!person) return;
-    let pills = prompt("Format: pill -> delay hour;", "Pills")
-    if (!pills) return;
-    let fPills = pills;
-    let idx = calcNextIdx();
-    let row = document.getElementById("db-table").insertRow(idx);
+  function getFormattedOutput(pills) {
+    let splitPills = pills.split('; ');
+    let fPills = {};
+    for (let i = 0; i < splitPills.length; ++i) {
+      let doubleSplit = splitPills[i].split(' -> ');
+      let med = doubleSplit[0];
+      let hourDelay = doubleSplit[1];
+      fPills[med] = parseInt(hourDelay);
+    }
+    let fOutput = "";
+    Object.keys(fPills).forEach(function(key) {
+      fOutput += key;
+      fOutput += ' ';
+    });
+    return fOutput;
+  }
+
+  function fillNewCells(row, idx, person, receipt) {
     let cell0 = row.insertCell(0);
     var cell1 = row.insertCell(1);
     var cell2 = row.insertCell(2);
     cell0.innerHTML = idx;
     cell1.innerHTML = person;
-    cell2.innerHTML = fPills;
+    cell2.innerHTML = receipt;
     cell1.contentEditable = "true";
     cell2.contentEditable = "true";
   }
 
+  function showAdder () {
+    let person = prompt("Name: ", "Name");
+    if (!person) return;
+    let pills = prompt("Format: pill -> delay hour;", "Pills")
+    if (!pills) return;
+    let fOutput = getFormattedOutput(pills);
+    let idx = calcNextIdx();
+    let row = document.getElementById("db-table").insertRow(idx);
+    fillNewCells(row, idx, person, fOutput);
+  }
 </script>
 
 </html>
