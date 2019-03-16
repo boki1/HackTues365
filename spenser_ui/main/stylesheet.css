@@ -43,7 +43,7 @@
   margin: 0;
   padding: 0;
   width: 20%;
-  background-color: #f1f1f1;
+  /* background-color: #f1f1f1; */
   position: fixed;
   height: 100%;
   overflow: auto;
@@ -59,7 +59,7 @@
 }
 
 .menu-opt a:hover {
-  background-color: #555;
+  background-color: rgb(51, 51, 51, 120);
   color: white;
   text-decoration: none;
 }
@@ -85,7 +85,32 @@
 }
 
 #_navbar {
-  background-color: rgb(51, 51, 51);
+  background-color: rgb(51, 51, 51, 120);
   margin: 30px;
   font-size: 24px; 
+  position: relative;
+  /* width: 180%; */
+  /* right: 95%; */
+}
+
+body, html {
+  margin: 0;
+  height: 100%;
+}
+
+.bg-image {
+  background-image: url("../images/background.jpeg");
+  height: 100%; 
+  filter: blur(8px);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  /* position: fixed; */
+}
+
+.main {
+  top: 20px;
+  position: absolute;
+  /* text-align: center; */
+  left: 30%;
 }
