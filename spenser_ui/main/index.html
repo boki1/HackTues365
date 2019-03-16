@@ -8,21 +8,20 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
+<!-- <script src="/cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/static/javascript/swiftype/jquery.ba-hashchange.min.js"></script>
+<script src="/static/javascript/swiftype/jquery.swiftype.search.js"></script> -->
 </head>
 
 <body style="background-color: rgb(51, 51, 51);">
-  <!-- <div style="align-items: right">
-    <button onClick="changeVerticalMenuState()" class="btn-arr"><i class="fa fa-caret-right"></i>></button>
-  </div> -->
-
   <nav class="navbar navbar-dark bg-dark" id="_navbar">
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item">
         <a class="nav-link" href="#">Edit Table</a>
       </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+    <form id="search-form" class="form-inline my-2 my-lg-0">
+      <input onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
       <button class="search-btn" type="submit"><i class="fa fa-search"></i></button>
     </form>
   </nav>
