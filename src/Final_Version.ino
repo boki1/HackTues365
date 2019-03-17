@@ -6,16 +6,26 @@
 #include <vfs.h>
 #include <SPI.h>
 #include <FS.h>
+#include <Servo.h>
+
 extern "C" {
 #include "user_interface.h"
 }
 
-#define SS_PIN 5
+#define SS_PIN 4
 #define RST_PIN 9
 #ifndef STASSID
-#define STASSID "Momchilovi1"
-#define STAPSK  "momchilovi93"
+#define STASSID "HackTUES 365"
+#define STAPSK  "elsysisthebest"
 #endif
+// todo!!
+#define SERVO1
+
+Servo servo1;  
+Servo servo2;
+Servo servo3;
+Servo servo4;
+
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
@@ -52,8 +62,8 @@ void user_info() {
   }
 }
 
-void edit_value() {
-  rc = db_exec(db1, "SELECT * FROM user_info");
+void check_value() {
+//  rc = db_exec(db1, "INSERT IF NOT EXISTS user_info (");
   if (rc != SQLITE_OK) {
     sqlite3_close(db1);
     return;
@@ -130,6 +140,7 @@ int db_exec(sqlite3 *db, const char *sql) {
 }
 
 void setup(void) {
+  
   Serial.begin(115200);
   SPI.begin();
 
@@ -177,9 +188,34 @@ void setup(void) {
     key.keyByte[i] = 0xFF;
   }
   printHex(key.keyByte, MFRC522::MF_KEY_SIZE);
-  user_info();
 }
 
+bool InsertIfNoteExists(String cardID) {
+  String query = "INSERT OR REPLACE into user_info(id, name, medicine, hours) VALUES(" + cardID + ");";
+  Serial.println(query);
+  rc = db_exec(db1, query.c_str());
+  if (rc != SQLITE_OK)
+    return false;
+  return true;
+}
+
+bool GetPillsByCardId(String keyID, String sPills) {
+  Serial.println(sPills.c_str());
+  Serial.println(keyID.c_str());
+  String query = "SELECT medicine FROM user_info WHERE card_id=";
+  query += keyID;
+  query += ";";
+  Serial.println(query);
+  rc = db_exec(db1, query.c_str());
+  if (rc != SQLITE_OK) {
+    Serial.println("FAILED"); //DEBUG LOG
+    bool t = InsertIfNoteExists(keyID);
+    return t;
+  }
+   
+  Serial.println("DONE!"); //DEBUG LOG
+  return true;
+}
 
 
 void loop(void) {
@@ -213,15 +249,27 @@ void loop(void) {
     // Store NUID into nuidPICC array
     for (byte i = 0; i < 4; i++) {
       nuidPICC[i] = rfid.uid.uidByte[i];
+      Serial.println(nuidPICC[i]);
     }
 
     Serial.println(F("The NUID tag is:"));
     Serial.print(F("In hex: "));
     printHex(rfid.uid.uidByte, rfid.uid.size);
     Serial.println();
+
+    String p;
+    String cid;
+    for (int i = 0; i < 4; ++i) {
+       cid += nuidPICC[i];
+    }
+    String print1 = "Card ID recognised by the DB: " + cid;
+    GetPillsByCardId(cid, p);
+    String print2 = "Result of query: " + p;
+    Serial.println(print1);
+    Serial.println(print2);
   }
   else Serial.println(F("Card read previously."));
-  rfid.PCD_StopCrypto1();
+  rfid.PCD_StopCrypto1(); 
 }
 
 
