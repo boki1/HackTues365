@@ -15,17 +15,9 @@ extern "C" {
 #define SS_PIN 4
 #define RST_PIN 9
 #ifndef STASSID
-#define STASSID "HackTUES 365"
-#define STAPSK  "elsysisthebest"
+#define STASSID "AndroidAP"
+#define STAPSK  "wnxg3298"
 #endif
-// todo!!
-#define SERVO1
-
-Servo servo1;  
-Servo servo2;
-Servo servo3;
-Servo servo4;
-
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
@@ -53,47 +45,10 @@ static int callback(void *data, int argc, char **argv, char **azColName) {
   return 0;
 }
 
-
-void user_info() {
-  rc = db_exec(db1, "SELECT * FROM user_info;");
-  if (rc != SQLITE_OK) {
-    sqlite3_close(db1);
-    return;
-  }
-}
-
-void check_value() {
-//  rc = db_exec(db1, "INSERT IF NOT EXISTS user_info (");
-  if (rc != SQLITE_OK) {
-    sqlite3_close(db1);
-    return;
-  }
-}
-
-char temp[] = "<html><head>\
-      <title>ESP8266 Demo</title>\
-      <style>\
-      body { font-family: Arial, Helvetica, Sans-Serif; font-size: large; Color: #000088; }\
-      </style>\
-  </head>\
-  <body>\
-      <h2>Database</h2>\
-      <form action='commands' method='GET'>\
-        <select id='coms'>\
-          <option value='INSERT'>INSERT</option>\
-            <option value='FROM*IMPORT user_info'>VIEW</option>\
-            <option value='DETELE'>DELETE</option>\
-        </select>\
-        <input type='submit' value='Submit'>\
-      </form>\
-  </body>\
-  </html>";
-
-
-void handleRoot() {
-  snprintf(temp, 10000, temp);
-  server.send(10000, "text/html", temp);
-}
+//void handleRoot() {
+ // snprintf(temp, 10000, temp);
+ // server.send(10000, "text/html", temp);
+//}
 
 void handleNotFound() {
   String message = "File Not Found\n\n";
@@ -178,8 +133,9 @@ void setup(void) {
   if (db_open("/FLASH/pills.db", &db1))
     return;
 
-  server.on("/", handleRoot);
-  server.on("/commands", user_info);
+  server.serveStatic("/", SPIFFS, "/index.html");
+//  server.send(10000, "text/html", html);
+//  html.close();
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
@@ -187,7 +143,6 @@ void setup(void) {
   for (byte i = 0; i < 6; i++) {
     key.keyByte[i] = 0xFF;
   }
-  printHex(key.keyByte, MFRC522::MF_KEY_SIZE);
 }
 
 bool InsertIfNoteExists(String cardID) {
@@ -212,7 +167,7 @@ bool GetPillsByCardId(String keyID, String sPills) {
     bool t = InsertIfNoteExists(keyID);
     return t;
   }
-   
+    
   Serial.println("DONE!"); //DEBUG LOG
   return true;
 }
@@ -228,20 +183,20 @@ void loop(void) {
   if ( ! rfid.PICC_ReadCardSerial())
     return;
 
-  Serial.print(F("PICC type: "));
-  MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
-  Serial.println(rfid.PICC_GetTypeName(piccType));
+  //Serial.print(F("PICC type: "));
+  //MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
+  //Serial.println(rfid.PICC_GetTypeName(piccType));
 
   // Check is the PICC of Classic MIFARE type
-  if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI &&
-      piccType != MFRC522::PICC_TYPE_MIFARE_1K &&
-      piccType != MFRC522::PICC_TYPE_MIFARE_4K) {
-    Serial.println(F("Your tag is not of type MIFARE Classic."));
-    return;
-  }
+//  if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI &&
+  //    piccType != MFRC522::PICC_TYPE_MIFARE_1K &&
+   //   piccType != MFRC522::PICC_TYPE_MIFARE_4K) {
+   // Serial.println(F("Your tag is not of type MIFARE Classic."));
+   // return;
+  //}
 
-  if (rfid.uid.uidByte[0] != nuidPICC[0] ||
-      rfid.uid.uidByte[1] != nuidPICC[1] ||
+  /*/if (rfid.uid.uidByte[0] != nuidPICC[0] ||
+     rfid.uid.uidByte[1] != nuidPICC[1] ||
       rfid.uid.uidByte[2] != nuidPICC[2] ||
       rfid.uid.uidByte[3] != nuidPICC[3] ) {
     Serial.println(F("A new card has been detected."));
@@ -270,6 +225,7 @@ void loop(void) {
   }
   else Serial.println(F("Card read previously."));
   rfid.PCD_StopCrypto1(); 
+*/
 }
 
 
