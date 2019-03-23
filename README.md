@@ -2,6 +2,8 @@
 
 Линк към отбор "По жицата", HackTUES^365: https://www.hacktues.com/Teams/Details/1
 
+![](elderly_wallpaper.jpg)
+
 Линк към презентация: https://prezi.com/dashboard/next/#/details/qeja4hnnzc6y/
 
 ## Здравейте, милички!
