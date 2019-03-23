@@ -15,8 +15,8 @@ extern "C" {
 #define SS_PIN 4
 #define RST_PIN 9
 #ifndef STASSID
-#define STASSID "AndroidAP"
-#define STAPSK  "wnxg3298"
+#define STASSID "FONE"
+#define STAPSK  "98766789"
 #endif
 
 const char *ssid = STASSID;
@@ -134,8 +134,6 @@ void setup(void) {
     return;
 
   server.serveStatic("/", SPIFFS, "/index.html");
-//  server.send(10000, "text/html", html);
-//  html.close();
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
@@ -144,34 +142,6 @@ void setup(void) {
     key.keyByte[i] = 0xFF;
   }
 }
-
-bool InsertIfNoteExists(String cardID) {
-  String query = "INSERT OR REPLACE into user_info(id, name, medicine, hours) VALUES(" + cardID + ");";
-  Serial.println(query);
-  rc = db_exec(db1, query.c_str());
-  if (rc != SQLITE_OK)
-    return false;
-  return true;
-}
-
-bool GetPillsByCardId(String keyID, String sPills) {
-  Serial.println(sPills.c_str());
-  Serial.println(keyID.c_str());
-  String query = "SELECT medicine FROM user_info WHERE card_id=";
-  query += keyID;
-  query += ";";
-  Serial.println(query);
-  rc = db_exec(db1, query.c_str());
-  if (rc != SQLITE_OK) {
-    Serial.println("FAILED"); //DEBUG LOG
-    bool t = InsertIfNoteExists(keyID);
-    return t;
-  }
-    
-  Serial.println("DONE!"); //DEBUG LOG
-  return true;
-}
-
 
 void loop(void) {
   server.handleClient();
@@ -235,4 +205,16 @@ void printHex(byte *buffer, byte bufferSize) {
     Serial.print(buffer[i] < 0x10 ? " 0" : " ");
     Serial.print(buffer[i], HEX);
   }
+}
+
+void handleRoot(){ 
+  if ( server.hasArg("frm_test") ) {
+    handleD5(); 
+  }
+}
+
+void handleD5() {
+  String D5Value;
+  Serial.println("handler");
+  digitalWrite(4, HIGH);
 }
