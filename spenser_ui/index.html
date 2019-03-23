@@ -115,7 +115,16 @@
     return document.getElementById("db-table").getElementsByTagName("tr").length;
   }
 
-  function getFormattedOutput(pills) {
+  function getFormattedOutput(fPills) {
+    let fOutput = "";
+    Object.keys(fPills).forEach(function(key) {
+      fOutput += key;
+      fOutput += ' ';
+    });
+    return fOutput;
+  }
+
+  function getFormattedOutputAsObj(pills) {
     let splitPills = pills.split('; ');
     let fPills = {};
     for (let i = 0; i < splitPills.length; ++i) {
@@ -124,12 +133,7 @@
       let hourDelay = doubleSplit[1];
       fPills[med] = parseInt(hourDelay);
     }
-    let fOutput = "";
-    Object.keys(fPills).forEach(function(key) {
-      fOutput += key;
-      fOutput += ' ';
-    });
-    return fOutput;
+    return fPills;
   }
 
   function fillNewCells(row, idx, person, receipt) {
@@ -148,11 +152,11 @@
     if (!person) return;
     let pills = prompt("Format: pill -> delay hour;", "Pills")
     if (!pills) return;
-    let fOutput = getFormattedOutput(pills);
+    let pillObj = getFormattedOutputAsObj(pills);
+    let fOutput = getFormattedOutput(pillObj);
     let idx = calcNextIdx();
     let row = document.getElementById("db-table").insertRow(idx);
     fillNewCells(row, idx, person, fOutput);
   }
 </script>
-
 </html>
