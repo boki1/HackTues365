@@ -11,12 +11,13 @@
     <nav class="navbar navbar-dark bg-dark" >
       <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
       <form id="search-form" class="form-inline my-2 my-lg-0">
-        <input onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <input  onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="search-btn" type="submit"><i class="fa fa-search"></i></button>
       </form>
     </nav>
   </div>
   <div id="db-table-div">
+    <form id="frm_test" class="form-vertical" method="post">
     <table id="db-table" cellspacing=2 cellpadding=5 class="table table-hover">
       <thead>
         <tr>
@@ -28,6 +29,7 @@
       <tbody>
       </tbody>
     </table>
+  </form>
   </div>
 </body>
 <style>
@@ -36,7 +38,7 @@
     margin: 0px auto;
     font-size: 24px;
   }
-  
+
   table tr:hover > td {
     background-color: lightgreen;
   }
@@ -115,7 +117,16 @@
     return document.getElementById("db-table").getElementsByTagName("tr").length;
   }
 
-  function getFormattedOutput(pills) {
+  function getFormattedOutput(fPills) {
+    let fOutput = "";
+    Object.keys(fPills).forEach(function(key) {
+      fOutput += key;
+      fOutput += ' ';
+    });
+    return fOutput;
+  }
+
+  function getFormattedOutputAsObj(pills) {
     let splitPills = pills.split('; ');
     let fPills = {};
     for (let i = 0; i < splitPills.length; ++i) {
@@ -124,12 +135,7 @@
       let hourDelay = doubleSplit[1];
       fPills[med] = parseInt(hourDelay);
     }
-    let fOutput = "";
-    Object.keys(fPills).forEach(function(key) {
-      fOutput += key;
-      fOutput += ' ';
-    });
-    return fOutput;
+    return fPills;
   }
 
   function fillNewCells(row, idx, person, receipt) {
@@ -148,11 +154,11 @@
     if (!person) return;
     let pills = prompt("Format: pill -> delay hour;", "Pills")
     if (!pills) return;
-    let fOutput = getFormattedOutput(pills);
+    let pillObj = getFormattedOutputAsObj(pills);
+    let fOutput = getFormattedOutput(pillObj);
     let idx = calcNextIdx();
     let row = document.getElementById("db-table").insertRow(idx);
     fillNewCells(row, idx, person, fOutput);
   }
 </script>
-
 </html>
