@@ -15,8 +15,8 @@ extern "C" {
 #define SS_PIN 4
 #define RST_PIN 9
 #ifndef STASSID
-#define STASSID "FONE"
-#define STAPSK  "98766789"
+#define STASSID "Momchilovi1"
+#define STAPSK  "momchilovi93"
 #endif
 
 const char *ssid = STASSID;
@@ -34,6 +34,13 @@ MFRC522 rfid(SS_PIN, RST_PIN);
 MFRC522::MIFARE_Key key;
 byte nuidPICC[4];
 
+void printHex(byte *buffer, byte bufferSize) {
+  for (byte i = 0; i < bufferSize; i++) {
+    Serial.print(buffer[i] < 0x10 ? " 0" : " ");
+    Serial.print(buffer[i], HEX);
+  }
+}
+
 const char* data = "Callback function called";
 static int callback(void *data, int argc, char **argv, char **azColName) {
   int i;
@@ -43,28 +50,6 @@ static int callback(void *data, int argc, char **argv, char **azColName) {
   }
   Serial.printf("\n");
   return 0;
-}
-
-//void handleRoot() {
- // snprintf(temp, 10000, temp);
- // server.send(10000, "text/html", temp);
-//}
-
-void handleNotFound() {
-  String message = "File Not Found\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-
-  for (uint8_t i = 0; i < server.args(); i++) {
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-  }
-
-  server.send(404, "text/plain", message);
 }
 
 int db_open(const char *filename, sqlite3 **db) {
@@ -94,8 +79,28 @@ int db_exec(sqlite3 *db, const char *sql) {
   return rc;
 }
 
+void handleSearch(){ 
+  File file = SPIFFS.open("/index.html", "r");
+  server.streamFile(file, "text/html");
+  file.close();
+}
+
+void handleNotFound() {
+  String message = "File Not Found\n\n";
+  message += "URI: ";
+  message += server.uri();
+  message += "\nMethod: ";
+  message += (server.method() == HTTP_GET) ? "GET" : "POST";
+  message += "\nArguments: ";
+  message += server.args();
+  message += "\n";
+  for (uint8_t i = 0; i < server.args(); i++) {
+    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+  }
+  server.send(404, "text/plain", message);
+}
+
 void setup(void) {
-  
   Serial.begin(115200);
   SPI.begin();
 
@@ -107,7 +112,6 @@ void setup(void) {
     delay(100);
     Serial.print(".");
   }
-
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
@@ -117,7 +121,6 @@ void setup(void) {
     Serial.println("Failed to mount file system");
     return;
   }
-
   // list SPIFFS contents
   Dir dir = SPIFFS.openDir("/");
   while (dir.next()) {
@@ -133,7 +136,9 @@ void setup(void) {
   if (db_open("/FLASH/pills.db", &db1))
     return;
 
-  server.serveStatic("/", SPIFFS, "/index.html");
+  //server.serveStatic("/", SPIFFS, "/index.html");
+  server.on("/", handleSearch);
+  
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
@@ -198,23 +203,3 @@ void loop(void) {
 */
 }
 
-
-// Print RFID HEX VALUE
-void printHex(byte *buffer, byte bufferSize) {
-  for (byte i = 0; i < bufferSize; i++) {
-    Serial.print(buffer[i] < 0x10 ? " 0" : " ");
-    Serial.print(buffer[i], HEX);
-  }
-}
-
-void handleRoot(){ 
-  if ( server.hasArg("frm_test") ) {
-    handleD5(); 
-  }
-}
-
-void handleD5() {
-  String D5Value;
-  Serial.println("handler");
-  digitalWrite(4, HIGH);
-}
