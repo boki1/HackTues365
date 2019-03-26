@@ -1,16 +1,15 @@
-#include <ESP8266WiFi.h>
+#include <FS.h>
+#include <FSImpl.h>
+#include <vfs_api.h>
+
+#include <WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
+#include <WebServer.h>
 #include <MFRC522.h>
 #include <sqlite3.h>
-#include <vfs.h>
 #include <SPI.h>
 #include <FS.h>
-#include <Servo.h>
-
-extern "C" {
-#include "user_interface.h"
-}
+#include "SPIFFS.h"
 
 #define SS_PIN 4
 #define RST_PIN 9
@@ -21,14 +20,10 @@ extern "C" {
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
-ESP8266WebServer server(80);
+WebServer server(80);
 
 sqlite3 *db1;
 int rc;
-sqlite3_stmt *res;
-int rec_count = 0;
-const char *tail;
-
 
 MFRC522 rfid(SS_PIN, RST_PIN);
 MFRC522::MIFARE_Key key;
@@ -81,6 +76,9 @@ int db_exec(sqlite3 *db, const char *sql) {
 
 void handleSearch(){ 
   File file = SPIFFS.open("/index.html", "r");
+  if(!file){
+    Serial.println("izqde banana");
+  }
   server.streamFile(file, "text/html");
   file.close();
 }
@@ -102,7 +100,7 @@ void handleNotFound() {
 
 void setup(void) {
   Serial.begin(115200);
-  SPI.begin();
+  SPIFFS.begin();
 
   rfid.PCD_Init();
 
@@ -117,24 +115,34 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  if (!SPIFFS.begin()) {
-    Serial.println("Failed to mount file system");
-    return;
-  }
   // list SPIFFS contents
-  Dir dir = SPIFFS.openDir("/");
-  while (dir.next()) {
-    String fileName = dir.fileName();
-    size_t fileSize = dir.fileSize();
-    Serial.printf("FS File: %s, size: %ld\n", fileName.c_str(), (long) fileSize);
-  }
-  Serial.printf("\n");
+   File root = SPIFFS.open("/spiffs/");
+   if (!root) {
+       Serial.println("- failed to open directory");
+       return;
+   }
+   if (!root.isDirectory()) {
+       Serial.println(" - not a directory");
+       return;
+   }
+   File file = root.openNextFile();
+   while (file) {
+       if (file.isDirectory()) {
+           Serial.print("  DIR : ");
+           Serial.println(file.name());
+       } else {
+           Serial.print("  FILE: ");
+           Serial.print(file.name());
+           Serial.print("\tSIZE: ");
+           Serial.println(file.size());
+       }
+       file = root.openNextFile();
+   }
 
-  sqlite3_initialize();
-  File db_file_obj_1;
-  vfs_set_spiffs_file_obj(&db_file_obj_1);
-  if (db_open("/FLASH/pills.db", &db1))
-    return;
+   sqlite3_initialize();
+
+   if (db_open("/spiffs/pills.db", &db1))
+       return;
 
   //server.serveStatic("/", SPIFFS, "/index.html");
   server.on("/", handleSearch);

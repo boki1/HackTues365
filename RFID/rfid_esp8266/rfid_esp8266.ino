@@ -24,6 +24,7 @@ byte nuidPICC[4];
 
 void setup() { 
   Serial.begin(115200);
+  Serial.println("zdr");
   SPI.begin(); // Init SPI bus
   rfid.PCD_Init(); // Init MFRC522 
 
