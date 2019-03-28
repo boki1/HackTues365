@@ -1,7 +1,6 @@
 #include <FS.h>
 #include <FSImpl.h>
 #include <vfs_api.h>
-
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -10,6 +9,8 @@
 #include <SPI.h>
 #include <FS.h>
 #include "SPIFFS.h"
+#include <WebSocketsServer.h>
+
 
 #define SS_PIN 4
 #define RST_PIN 9
@@ -21,16 +22,16 @@
 const char *ssid = STASSID;
 const char *password = STAPSK;
 WebServer server(80);
+WebSocketsServer webSocket = WebSocketsServer(81);
 
 sqlite3 *db1;
 int rc;
-
-void printHex(byte *buffer, byte bufferSize) {
-  for (byte i = 0; i < bufferSize; i++) {
-    Serial.print(buffer[i] < 0x10 ? " 0" : " ");
-    Serial.print(buffer[i], HEX);
-  }
-}
+sqlite3_stmt *res;
+const char *tail;
+int rec_count = 0;
+//int card_id;
+//const char *names;
+//const char *meds;
 
 const char* data = "Callback function called";
 static int callback(void *data, int argc, char **argv, char **azColName) {
@@ -73,79 +74,6 @@ int db_exec(sqlite3 *db, const char *sql) {
 void handleSearch(){ 
   File file = SPIFFS.open("/index.html", "r");
   server.streamFile(file, "text/html");
-
-  String sql = "Select * from user_info where name between '";
-      sql += server.arg("from");
-      sql += "' and '";
-      sql += server.arg("to");
-      sql += "'";
-      rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
-      if (rc != SQLITE_OK) {
-          String resp = "Failed to fetch data: ";
-          resp += sqlite3_errmsg(db1);
-          resp += ".<br><br><input type=button onclick='location.href=\"/\"' value='back'/>";
-          server.send ( 200, "text/html", resp.c_str());
-          Serial.println(resp.c_str());
-          return;
-      }
-      while (sqlite3_step(res) == SQLITE_ROW) {
-          rec_count = sqlite3_column_int(res, 1);
-          if (rec_count > 5000) {
-              String resp = "Too many records: ";
-              resp += rec_count;
-              resp += ". Please select different range";
-              resp += ".<br><br><input type=button onclick='location.href=\"/\"' value='back'/>";
-              server.send ( 200, "text/html", resp.c_str());
-              Serial.println(resp.c_str());
-              sqlite3_finalize(res);
-              return;
-          }
-      }
-      sqlite3_finalize(res);
-
-      String sql = "Select card_id, name, medicine, hours from user_info where name between '";
-      sql += server.arg("from");
-      sql += "' and '";
-      sql += server.arg("to");
-      sql += "'";
-      rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
-      if (rc != SQLITE_OK) {
-          String resp = "Failed to fetch data: ";
-          resp += sqlite3_errmsg(db1);
-          resp += "<br><br><a href='/'>back</a>";
-          server.send ( 200, "text/html", resp.c_str());
-          Serial.println(resp.c_str());
-          return;
-      }
-
-      rec_count = 0;
-      server.setContentLength(CONTENT_LENGTH_UNKNOWN);
-      String resp = "<html><head><title>ESP32 Sqlite local database query through web server</title>\
-          <style>\
-          body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; font-size: large; Color: #000088; }\
-          </style><head><body><h1>ESP32 Sqlite local database query through web server</h1><h2>";
-      resp += sql;
-      resp += "</h2><br><table cellspacing='1' cellpadding='1' border='1'><tr><td>card_id</td><td>name</td><td>medicine</td><td>hours</td>";
-      server.send ( 200, "text/html", resp.c_str());
-      while (sqlite3_step(res) == SQLITE_ROW) {
-          resp = "<tr><td>";
-          resp += sqlite3_column_int(res, 0);
-          resp += "</td><td>";
-          resp += (const char *) sqlite3_column_text(res, 1);
-          resp += "</td><td>";
-          resp += (const char *) sqlite3_column_text(res, 2);
-          resp += "</td><td>";
-          resp += sqlite3_column_int(res, 3);
-          resp += (const char *) sqlite3_column_text(res, 4);
-          server.sendContent(resp);
-          rec_count++;
-      }
-      resp = "</table><br><br>Number of records: ";
-      resp += rec_count;
-      resp += ".<br><br><input type=button onclick='location.href=\"/\"' value='back'/>";
-      server.sendContent(resp);
-      sqlite3_finalize(res);
-  
   file.close();
 }
 
@@ -208,15 +136,42 @@ void setup(void) {
    if (db_open("/spiffs/pills.db", &db1))
        return;
 
-  //server.serveStatic("/", SPIFFS, "/index.html");
   server.on("/", handleSearch);
-  
   server.onNotFound(handleNotFound);
   server.begin();
+  webSocket.begin();
+  webSocket.onEvent(webSocketEvent);
   Serial.println("HTTP server started");
 }
 
 void loop(void) {
   server.handleClient();
+  webSocket.loop();
 }
 
+void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
+
+    switch(type) {
+        case WStype_DISCONNECTED:
+            Serial.printf("[%u] Disconnected!\n", num);
+            break;
+        case WStype_CONNECTED:
+            {
+        Serial.println('\n');
+        Serial.println('\n');
+        Serial.println('\n');
+            Serial.printf("[%u] get Text: %s\n", num, payload);
+            String sql = "Select * from user_info where card_id between '1' and '3'";
+              rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
+              while (sqlite3_step(res) == SQLITE_ROW) {
+                Serial.println((const char *) sqlite3_column_text(res, 1));
+              webSocket.broadcastTXT(sqlite3_column_text(res, 1));
+              //webSocket.broadcastTXT(sqlite3_column_text(res, 2));
+              }
+              sqlite3_finalize(res);
+              break;
+            }
+      case WStype_TEXT:
+          break;
+    }
+}

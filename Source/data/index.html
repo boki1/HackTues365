@@ -91,6 +91,17 @@
 </style>
 
 <script>
+  var variable;
+  var connection = new WebSocket('ws://' + location.hostname + ':81/');
+
+  connection.onmessage = function (e) {
+    console.log(e);
+    for (var variable = 0; variable < 3; variable++) {
+      var variable = variable + 1;
+      fillNewCells(row, variable, e, fOutput);
+    }
+  };
+
   function filterTable () {
     let value;
     let input = document.getElementById("search-inp");
@@ -156,7 +167,7 @@
     let fOutput = getFormattedOutput(pillObj);
     let idx = calcNextIdx();
     let row = document.getElementById("db-table").insertRow(idx);
-    fillNewCells(row, idx, person, fOutput);
+    fillNewCells(row, variable, e, fOutput);
   }
 </script>
 </html>
