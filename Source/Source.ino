@@ -25,10 +25,6 @@ WebServer server(80);
 sqlite3 *db1;
 int rc;
 
-MFRC522 rfid(SS_PIN, RST_PIN);
-MFRC522::MIFARE_Key key;
-byte nuidPICC[4];
-
 void printHex(byte *buffer, byte bufferSize) {
   for (byte i = 0; i < bufferSize; i++) {
     Serial.print(buffer[i] < 0x10 ? " 0" : " ");
@@ -76,10 +72,80 @@ int db_exec(sqlite3 *db, const char *sql) {
 
 void handleSearch(){ 
   File file = SPIFFS.open("/index.html", "r");
-  if(!file){
-    Serial.println("izqde banana");
-  }
   server.streamFile(file, "text/html");
+
+  String sql = "Select * from user_info where name between '";
+      sql += server.arg("from");
+      sql += "' and '";
+      sql += server.arg("to");
+      sql += "'";
+      rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
+      if (rc != SQLITE_OK) {
+          String resp = "Failed to fetch data: ";
+          resp += sqlite3_errmsg(db1);
+          resp += ".<br><br><input type=button onclick='location.href=\"/\"' value='back'/>";
+          server.send ( 200, "text/html", resp.c_str());
+          Serial.println(resp.c_str());
+          return;
+      }
+      while (sqlite3_step(res) == SQLITE_ROW) {
+          rec_count = sqlite3_column_int(res, 1);
+          if (rec_count > 5000) {
+              String resp = "Too many records: ";
+              resp += rec_count;
+              resp += ". Please select different range";
+              resp += ".<br><br><input type=button onclick='location.href=\"/\"' value='back'/>";
+              server.send ( 200, "text/html", resp.c_str());
+              Serial.println(resp.c_str());
+              sqlite3_finalize(res);
+              return;
+          }
+      }
+      sqlite3_finalize(res);
+
+      String sql = "Select card_id, name, medicine, hours from user_info where name between '";
+      sql += server.arg("from");
+      sql += "' and '";
+      sql += server.arg("to");
+      sql += "'";
+      rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
+      if (rc != SQLITE_OK) {
+          String resp = "Failed to fetch data: ";
+          resp += sqlite3_errmsg(db1);
+          resp += "<br><br><a href='/'>back</a>";
+          server.send ( 200, "text/html", resp.c_str());
+          Serial.println(resp.c_str());
+          return;
+      }
+
+      rec_count = 0;
+      server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+      String resp = "<html><head><title>ESP32 Sqlite local database query through web server</title>\
+          <style>\
+          body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; font-size: large; Color: #000088; }\
+          </style><head><body><h1>ESP32 Sqlite local database query through web server</h1><h2>";
+      resp += sql;
+      resp += "</h2><br><table cellspacing='1' cellpadding='1' border='1'><tr><td>card_id</td><td>name</td><td>medicine</td><td>hours</td>";
+      server.send ( 200, "text/html", resp.c_str());
+      while (sqlite3_step(res) == SQLITE_ROW) {
+          resp = "<tr><td>";
+          resp += sqlite3_column_int(res, 0);
+          resp += "</td><td>";
+          resp += (const char *) sqlite3_column_text(res, 1);
+          resp += "</td><td>";
+          resp += (const char *) sqlite3_column_text(res, 2);
+          resp += "</td><td>";
+          resp += sqlite3_column_int(res, 3);
+          resp += (const char *) sqlite3_column_text(res, 4);
+          server.sendContent(resp);
+          rec_count++;
+      }
+      resp = "</table><br><br>Number of records: ";
+      resp += rec_count;
+      resp += ".<br><br><input type=button onclick='location.href=\"/\"' value='back'/>";
+      server.sendContent(resp);
+      sqlite3_finalize(res);
+  
   file.close();
 }
 
@@ -101,8 +167,6 @@ void handleNotFound() {
 void setup(void) {
   Serial.begin(115200);
   SPIFFS.begin();
-
-  rfid.PCD_Init();
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -150,64 +214,9 @@ void setup(void) {
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server started");
-
-  for (byte i = 0; i < 6; i++) {
-    key.keyByte[i] = 0xFF;
-  }
 }
 
 void loop(void) {
   server.handleClient();
-
-  // Look for new cards
-  if ( ! rfid.PICC_IsNewCardPresent())
-    return;
-  // Verify if the NUID has been readed
-  if ( ! rfid.PICC_ReadCardSerial())
-    return;
-
-  //Serial.print(F("PICC type: "));
-  //MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
-  //Serial.println(rfid.PICC_GetTypeName(piccType));
-
-  // Check is the PICC of Classic MIFARE type
-//  if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI &&
-  //    piccType != MFRC522::PICC_TYPE_MIFARE_1K &&
-   //   piccType != MFRC522::PICC_TYPE_MIFARE_4K) {
-   // Serial.println(F("Your tag is not of type MIFARE Classic."));
-   // return;
-  //}
-
-  /*/if (rfid.uid.uidByte[0] != nuidPICC[0] ||
-     rfid.uid.uidByte[1] != nuidPICC[1] ||
-      rfid.uid.uidByte[2] != nuidPICC[2] ||
-      rfid.uid.uidByte[3] != nuidPICC[3] ) {
-    Serial.println(F("A new card has been detected."));
-
-    // Store NUID into nuidPICC array
-    for (byte i = 0; i < 4; i++) {
-      nuidPICC[i] = rfid.uid.uidByte[i];
-      Serial.println(nuidPICC[i]);
-    }
-
-    Serial.println(F("The NUID tag is:"));
-    Serial.print(F("In hex: "));
-    printHex(rfid.uid.uidByte, rfid.uid.size);
-    Serial.println();
-
-    String p;
-    String cid;
-    for (int i = 0; i < 4; ++i) {
-       cid += nuidPICC[i];
-    }
-    String print1 = "Card ID recognised by the DB: " + cid;
-    GetPillsByCardId(cid, p);
-    String print2 = "Result of query: " + p;
-    Serial.println(print1);
-    Serial.println(print2);
-  }
-  else Serial.println(F("Card read previously."));
-  rfid.PCD_StopCrypto1(); 
-*/
 }
 
