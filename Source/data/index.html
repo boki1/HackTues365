@@ -91,16 +91,7 @@
 </style>
 
 <script>
-  var variable;
-  var connection = new WebSocket('ws://' + location.hostname + ':81/');
-
-  connection.onmessage = function (e) {
-    console.log(e);
-    for (var variable = 0; variable < 3; variable++) {
-      var variable = variable + 1;
-      fillNewCells(row, variable, e, fOutput);
-    }
-  };
+var connection = new WebSocket('ws://' + location.hostname + ':81/');
 
   function filterTable () {
     let value;
@@ -167,7 +158,17 @@
     let fOutput = getFormattedOutput(pillObj);
     let idx = calcNextIdx();
     let row = document.getElementById("db-table").insertRow(idx);
-    fillNewCells(row, variable, e, fOutput);
+    //fillNewCells(row, idx, person, fOutput);
   }
+
+  connection.onmessage = function (e) {
+    console.log('Message: ', e.data);
+    for (var i = 0; i < 1; i++) {
+      console.log("zdr");
+      let row = document.getElementById("db-table").insertRow('1');
+      fillNewCells(row, '1', e.data, 'zdr' );
+    }
+  }
+
 </script>
 </html>
