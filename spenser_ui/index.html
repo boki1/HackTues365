@@ -114,17 +114,24 @@
 
 <script>
   function filterTable () {
-    let value;
+    let valID, valPerson, valPills_;
     let input = document.getElementById("search-inp");
     let filter = input.value.toUpperCase();
     let table = document.getElementById("db-table");
     let tr = table.getElementsByTagName("tr");
 
     for (i = 0; i < tr.length; ++i) {
-      td = tr[i].getElementsByTagName("td")[1];
-      if (td) {
-        value = td.textContent || td.innerText;
-        if (value.toUpperCase().indexOf(filter) > -1) {
+      let id = tr[i].getElementsByTagName("td")[0];
+      let person = tr[i].getElementsByTagName("td")[1];      
+      let pills_ = tr[i].getElementsByTagName("td")[2];      
+      
+      if (id && person && pills_) {
+        valID = id.textContent || id.innerText;
+        valPerson = person.textContent || person.innerText;
+        valPills_ = pills_.textContent || pills_.innerText;        
+        if (valID.toUpperCase().indexOf(filter) > -1 ||
+            valPerson.toUpperCase().indexOf(filter) > -1 ||
+            valPills_.toUpperCase().indexOf(filter) > -1) {
           tr[i].style.display = "";
         } else {
           tr[i].style.display = "none";
@@ -148,7 +155,7 @@
     let fOutput = "";
     Object.keys(fPills).forEach(function(key) {
       fOutput += key;
-      fOutput += ' ';
+      fOutput += ', ';
     });
     return fOutput;
   }
