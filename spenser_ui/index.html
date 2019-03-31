@@ -13,6 +13,9 @@
           <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
           <button onclick="showRemover()" id="rem-btn"><i class="fa fa-minus"></i></button>
       </span>
+      <center>
+        <h1 id="header" ><b>SPENSER UI</b></h1>
+      </center>
       <form id="search-form" class="form-inline my-2 my-lg-0">
         <input onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="search-btn" type="submit"><i class="fa fa-search"></i></button>
@@ -30,12 +33,12 @@
       </thead>
       <tbody>
         <tr>
-          <td>1</td>
+          <td>#TEST</td>
           <td contenteditable="true">Goshko</td>
           <td contenteditable="true">Analgin, Parcetamol</td>
         </tr>
         <tr>
-          <td>2</td>
+          <td>#DEMO</td>
           <td contenteditable="true">Pesho</td>
           <td contenteditable="true">Nurofen, Propolki</td>
         </tr>
@@ -44,6 +47,12 @@
   </div>
 </body>
 <style>
+  #header {
+    font-size: 32px;
+    color: white;
+    text-decoration: bold;
+  }
+
   #db-table-div {
     width: 800px;
     margin: 0px auto;
@@ -174,9 +183,36 @@
     if (!pills) return;
     let pillObj = getFormattedOutputAsObj(pills);
     let fOutput = getFormattedOutput(pillObj);
-    let idx = calcNextIdx();
-    let row = document.getElementById("db-table").insertRow(idx);
+    let rowIdx = calcNextIdx();
+    let idx = generateRandomId();
+    let row = document.getElementById("db-table").insertRow(rowIdx);
     fillNewCells(row, idx, person, fOutput);
+  }
+
+  function generateRandomId() {
+    let appears = false;
+    let ranID;
+    do {
+      ranID = '#' + Math.random().toString(36).substring(2, 6).toUpperCase();
+      let value;
+      let input = document.getElementById("search-inp");
+      let filter = input.value.toUpperCase();
+      let table = document.getElementById("db-table");
+      let tr = table.getElementsByTagName("tr");
+
+      for (i = 0; i < tr.length; ++i) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+          value = td.textContent || td.innerText;
+          if (value == ranID) {
+            break;
+            appears = true;
+          }
+        }
+      }   
+    } while (appears); 
+    
+    return ranID;
   }
 </script>
 </html>
