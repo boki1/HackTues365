@@ -9,7 +9,10 @@
 <body>
   <div id="_navbar">
     <nav class="navbar navbar-dark bg-dark" >
-      <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
+      <span>
+          <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
+          <button onclick="showRemover()" id="rem-btn"><i class="fa fa-minus"></i></button>
+      </span>
       <form id="search-form" class="form-inline my-2 my-lg-0">
         <input onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="search-btn" type="submit"><i class="fa fa-search"></i></button>
@@ -26,6 +29,16 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>1</td>
+          <td contenteditable="true">Goshko</td>
+          <td contenteditable="true">Analgin, Parcetamol</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td contenteditable="true">Pesho</td>
+          <td contenteditable="true">Nurofen, Propolki</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -74,20 +87,20 @@
     height: 100%;
   }
 
-  #add-btn {
+  #add-btn, #rem-btn {
     background-color: rgb(51, 51, 51, 0);
     color: white;
     border: none;
     transition: .5s linear;
+    width: 50px;
+    margin: 10px;
+    padding: 10px;
   }
 
-  #add-btn:hover {
+  #add-btn:hover, #rem-btn:hover {
     color: lightgreen;
   }
 
-  #adder {
-    display: none;
-  }
 </style>
 
 <script>
@@ -110,6 +123,13 @@
       }
     }
   }
+
+  function showRemover() {
+    let rowIdx = prompt('Patient ID:', 0);
+    let table = document.getElementById("db-table");
+    table.deleteRow(rowIdx);
+  }
+
 
   function calcNextIdx () {
     return document.getElementById("db-table").getElementsByTagName("tr").length;
