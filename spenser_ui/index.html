@@ -141,9 +141,31 @@
   }
 
   function showRemover() {
-    let rowIdx = prompt('Patient ID:', 0);
+    let id = prompt('Patient ID:', 0);
+    id = '#' + id;
     let table = document.getElementById("db-table");
-    table.deleteRow(rowIdx);
+    let rowIdx = 1;
+    let appears = false;
+    let input = document.getElementById("search-inp");
+    let filter = input.value.toUpperCase();
+    let tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; ++i) {
+      td = tr[i].getElementsByTagName("td")[0];
+      if (td) {
+        value = td.textContent || td.innerText;
+        if (value != id) {
+          rowIdx++; 
+        } else {
+          appears = true;
+          break;  
+        }
+      }
+    }   
+    if (appears) {
+      table.deleteRow(rowIdx);
+    } else {
+      alert('User with this ID does not exist in records.')
+    }
   }
 
 
