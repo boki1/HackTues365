@@ -243,5 +243,16 @@
     
     return ranID;
   }
+
+  const connection = new WebSocket('ws://' + location.hostname + ':81/');
+
+  connection.onmessage = function (event) {
+    console.log('Message: ', event.data);
+    for (let i = 0; i < 1; i++) {
+      let row = document.getElementById("db-table").insertRow(calcNextIdx());
+      fillNewCells(row, generateRandomId(), event.data, 'TEST FILL' );
+    }
+  }
+
 </script>
 </html>
