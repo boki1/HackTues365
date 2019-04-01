@@ -9,9 +9,15 @@
 <body>
   <div id="_navbar">
     <nav class="navbar navbar-dark bg-dark" >
-      <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
+      <span>
+          <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
+          <button onclick="showRemover()" id="rem-btn"><i class="fa fa-minus"></i></button>
+      </span>
+      <center>
+        <h1 id="header" ><b>SPENSER UI</b></h1>
+      </center>
       <form id="search-form" class="form-inline my-2 my-lg-0">
-        <input  onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <input onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="search-btn" type="submit"><i class="fa fa-search"></i></button>
       </form>
     </nav>
@@ -26,11 +32,27 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>#TEST</td>
+          <td contenteditable="true">Goshko</td>
+          <td contenteditable="true">Analgin, Parcetamol</td>
+        </tr>
+        <tr>
+          <td>#DEMO</td>
+          <td contenteditable="true">Pesho</td>
+          <td contenteditable="true">Nurofen, Propolki</td>
+        </tr>
       </tbody>
     </table>
   </div>
 </body>
 <style>
+  #header {
+    font-size: 32px;
+    color: white;
+    text-decoration: bold;
+  }
+
   #db-table-div {
     width: 800px;
     margin: 0px auto;
@@ -74,37 +96,42 @@
     height: 100%;
   }
 
-  #add-btn {
+  #add-btn, #rem-btn {
     background-color: rgb(51, 51, 51, 0);
     color: white;
     border: none;
     transition: .5s linear;
+    width: 50px;
+    margin: 10px;
+    padding: 10px;
   }
 
-  #add-btn:hover {
+  #add-btn:hover, #rem-btn:hover {
     color: lightgreen;
   }
 
-  #adder {
-    display: none;
-  }
 </style>
 
 <script>
-var connection = new WebSocket('ws://' + location.hostname + ':81/');
-
   function filterTable () {
-    let value;
+    let valID, valPerson, valPills_;
     let input = document.getElementById("search-inp");
     let filter = input.value.toUpperCase();
     let table = document.getElementById("db-table");
     let tr = table.getElementsByTagName("tr");
 
     for (i = 0; i < tr.length; ++i) {
-      td = tr[i].getElementsByTagName("td")[1];
-      if (td) {
-        value = td.textContent || td.innerText;
-        if (value.toUpperCase().indexOf(filter) > -1) {
+      let id = tr[i].getElementsByTagName("td")[0];
+      let person = tr[i].getElementsByTagName("td")[1];
+      let pills_ = tr[i].getElementsByTagName("td")[2];
+
+      if (id && person && pills_) {
+        valID = id.textContent || id.innerText;
+        valPerson = person.textContent || person.innerText;
+        valPills_ = pills_.textContent || pills_.innerText;
+        if (valID.toUpperCase().indexOf(filter) > -1 ||
+            valPerson.toUpperCase().indexOf(filter) > -1 ||
+            valPills_.toUpperCase().indexOf(filter) > -1) {
           tr[i].style.display = "";
         } else {
           tr[i].style.display = "none";
@@ -112,6 +139,35 @@ var connection = new WebSocket('ws://' + location.hostname + ':81/');
       }
     }
   }
+
+  function showRemover() {
+    let id = prompt('Patient ID:', 0);
+    id = '#' + id;
+    let table = document.getElementById("db-table");
+    let rowIdx = 1;
+    let appears = false;
+    let input = document.getElementById("search-inp");
+    let filter = input.value.toUpperCase();
+    let tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; ++i) {
+      td = tr[i].getElementsByTagName("td")[0];
+      if (td) {
+        value = td.textContent || td.innerText;
+        if (value != id) {
+          rowIdx++;
+        } else {
+          appears = true;
+          break;
+        }
+      }
+    }
+    if (appears) {
+      table.deleteRow(rowIdx);
+    } else {
+      alert('User with this ID does not exist in records.')
+    }
+  }
+
 
   function calcNextIdx () {
     return document.getElementById("db-table").getElementsByTagName("tr").length;
@@ -121,7 +177,7 @@ var connection = new WebSocket('ws://' + location.hostname + ':81/');
     let fOutput = "";
     Object.keys(fPills).forEach(function(key) {
       fOutput += key;
-      fOutput += ' ';
+      fOutput += ', ';
     });
     return fOutput;
   }
@@ -156,19 +212,46 @@ var connection = new WebSocket('ws://' + location.hostname + ':81/');
     if (!pills) return;
     let pillObj = getFormattedOutputAsObj(pills);
     let fOutput = getFormattedOutput(pillObj);
-    let idx = calcNextIdx();
-    let row = document.getElementById("db-table").insertRow(idx);
-    //fillNewCells(row, idx, person, fOutput);
+    let rowIdx = calcNextIdx();
+    let idx = generateRandomId();
+    let row = document.getElementById("db-table").insertRow(rowIdx);
+    fillNewCells(row, idx, person, fOutput);
   }
 
-  connection.onmessage = function (e) {
-    console.log('Message: ', e.data);
-    for (var i = 0; i < 1; i++) {
-      console.log("zdr");
-      let row = document.getElementById("db-table").insertRow('1');
-      fillNewCells(row, '1', e.data, 'zdr_we' );
-    }
+  function generateRandomId() {
+    let appears = false;
+    let ranID;
+    do {
+      ranID = '#' + Math.random().toString(36).substring(2, 6).toUpperCase();
+      let value;
+      let input = document.getElementById("search-inp");
+      let filter = input.value.toUpperCase();
+      let table = document.getElementById("db-table");
+      let tr = table.getElementsByTagName("tr");
+
+      for (i = 0; i < tr.length; ++i) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+          value = td.textContent || td.innerText;
+          if (value == ranID) {
+            break;
+            appears = true;
+          }
+        }
+      }
+    } while (appears);
+
+    return ranID;
   }
+
+  const connection = new WebSocket('ws://' + location.hostname + ':81/');
+  connection.addEventListener('message', () => {
+    console.log('Message: ', event.data);
+    for (let i = 0; i < 1; i++) {
+      let row = document.getElementById("db-table").insertRow(calcNextIdx());
+      fillNewCells(row, generateRandomId(), event.data, 'TEST FILL' );
+    }
+  });
 
 </script>
 </html>
