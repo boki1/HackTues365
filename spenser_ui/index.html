@@ -2,7 +2,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Spenser Web UI</title>
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="icon" href="https://visibleranking.com/images/favicon_library/favicon_454.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
@@ -14,11 +14,11 @@
           <button onclick="showRemover()" id="rem-btn"><i class="fa fa-minus"></i></button>
       </span>
       <center>
-        <h1 id="header" ><b>SPENSER UI</b></h1>
+        <h1 id="header"><b>SPENSER UI</b></h1>
       </center>
       <form id="search-form" class="form-inline my-2 my-lg-0">
         <input onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="search-btn" type="submit"><i class="fa fa-search"></i></button>
+        <button id="search-btn" type="submit"><i class="fa fa-search"></i></button>
       </form>
     </nav>
   </div>
@@ -33,24 +33,115 @@
       </thead>
       <tbody>
         <tr>
-          <td>#TEST</td>
+          <td><button class="id-button" onclick="showCard(this.textContent)">#TEST</button></td>
           <td contenteditable="true">Goshko</td>
           <td contenteditable="true">Analgin, Parcetamol</td>
         </tr>
         <tr>
-          <td>#DEMO</td>
+          <td><button class="id-button" onclick="showCard(this.textContent)">#DEMO</button></td>
           <td contenteditable="true">Pesho</td>
           <td contenteditable="true">Nurofen, Propolki</td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <div id="card">
+      <button id="close-card-btn" onclick="closeCard()"><i class="fa fa-close"></i></button>
+      <center>
+          <img id="male" src="./images/male.png" alt="Avatar">
+          <img id="female" src="./images/female.png" alt="Avatar">            
+          <img id="default" src="./images/default.png" alt="Avatar">            
+          <b><h1 id="person"></h1></b>
+      </center>
+
+      <ul id="info">
+          <h6 class="subheader">Sex: </h6><p id="sex-label"></p><br>            
+          <h6 class="subheader">ID: </h6><p id="id-label"></p><br>
+          <h6 class="subheader">Pills: </h6><p id="pills-label"></p><br>
+          <h6 class="subheader">Contact name: </h6><p id="contact-name-label"></p><br>
+          <h6 class="subheader">Contact phone: </h6><p id="contact-phone-label"></p><br>
+          <h6 class="subheader">Birthday: </h6><p id="birthday-label"></p><br>
+          <h6 class="subheader">Room: </h6><p id="room-label"></p><br>
+          <h6 class="subheader">Entering date: </h6><p id="entering-date-label"></p>
+      </ul>
+
+  </div>  
 </body>
+
 <style>
+  
+  #card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    width: 20%;
+    display: none;
+    margin: auto auto;
+  }
+
+  #card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  #female, #male, #default {
+    margin-top: 15px;
+    border: none;
+    width: 50%;
+    height: 50%;
+    display: none;
+  }
+
+  #info {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+  }
+
+  .subheader {
+    margin: 0px;
+    font-size: 22px;
+    text-decoration: none;
+    padding: 0px;
+    display: inline;
+  }
+
+  #close-card-btn {
+    color: rgb(51, 51, 51);
+    background: rgb(51, 51, 51, 0);
+    border: none;
+    font-size: 22px;
+    transition: .24s linear;
+  }
+
+  #close-card-btn:hover {
+    font-size: 32px;
+  }  
+
+  #id-label, #sex-label, #contact-name-label, #contact-phone-label, 
+  #birthday-label, #room-label, #entering-date-label, #pills-label {
+    display: inline;
+    text-align: right;
+    font-size: 18px;
+  }  
+
+  #person {
+    text-decoration: underline;
+  }
+
+  .id-button {
+    border: none;
+    background-color: rgb(51, 51, 51, 0);
+  }
+  
+  .id-button:hover {
+    cursor: pointer;
+  }
+
   #header {
     font-size: 32px;
     color: white;
     text-decoration: bold;
+    margin-left: 200px;
   }
 
   #db-table-div {
@@ -73,14 +164,14 @@
     color: black;
   }
 
-  .search-btn {
+  #search-btn {
     background-color: rgb(51, 51, 51, 0);
     color: white;
     border: none;
     transition: .5s linear;
   }
 
-  .search-btn:hover {
+  #search-btn:hover {
     color: lightgreen;
   }
 
@@ -113,6 +204,98 @@
 </style>
 
 <script>
+  function prepareForCard() {
+    let table = document.getElementById("db-table");
+    let addBtn = document.getElementById("add-btn");
+    let removeBtn = document.getElementById("rem-btn");
+    let searchInput = document.getElementById('search-inp');
+    let searchBtn = document.getElementById('search-btn');
+    let _header = document.getElementById('header');
+
+    _header.style.marginLeft = '0';
+    _header.style.marginRight = '100px';
+    searchInput.style.display = 'none';
+    searchBtn.style.color = 'rgb(51, 51, 51, 0)';
+    removeBtn.style.color = 'rgb(51, 51, 51, 0)';    
+    addBtn.style.color = 'rgb(51, 51, 51, 0)';
+    table.style.display = 'none';
+  }
+
+  function prepareForTable() {
+    let addBtn = document.getElementById("add-btn");
+    let removeBtn = document.getElementById("rem-btn");
+    let table = document.getElementById("db-table");   
+    let searchInput = document.getElementById('search-inp');
+    let searchBtn = document.getElementById('search-btn')
+    let _header = document.getElementById('header');
+
+    _header.style.marginLeft = '200px';
+    _header.style.marginRight = '0';
+    searchInput.style.display = 'inline';
+    searchBtn.style.color = 'rgb(51, 51, 51, 0)';
+    removeBtn.style.color = 'white';    
+    addBtn.style.color = 'white';
+    table.style.display = 'table';
+  }
+
+  function closeCard() {
+    document.getElementById('card').style.display = 'none';
+    prepareForTable();
+  }
+
+  function showCard(id) {
+    console.log(id);
+    prepareForCard();
+    let rows = document.getElementById("db-table").getElementsByTagName("tr");
+    let person, pills; 
+
+    for (let i = 0; i < rows.length; ++i) {
+      let candidate = rows[i].getElementsByTagName("td");
+      if (candidate.length <= 0)
+        continue;
+      if (candidate[0].innerText == id) {
+        person = candidate[1].innerText;
+        pills = candidate[2].innerText;
+        break;
+      }
+    }
+    
+    let _card = document.getElementById('card');
+    _card.style.display = 'block';
+
+    let _id = document.getElementById('id-label');
+    let _contactName = document.getElementById('contact-name-label');
+    let _contactPhone = document.getElementById('contact-phone-label');
+    let _birthday = document.getElementById('birthday-label');
+    let _room = document.getElementById('room-label');
+    let _enteringDate = document.getElementById('entering-date-label');
+    let _sex = document.getElementById('sex-label');
+    let _person = document.getElementById('person');
+    let _pills = document.getElementById('pills-label');
+
+    _pills.innerHTML = pills;
+    _person.innerHTML = person;
+    _sex.innerHTML = '...';
+    _id.innerHTML = id;
+    _contactName.innerHTML = '...';
+    _contactPhone.innerHTML = '...';
+    _birthday.innerHTML = '...';
+    _room.innerHTML = '...';
+    _enteringDate.innerHTML = '...';
+
+    let male = document.getElementById('male');
+    let female = document.getElementById('female');
+    let _default = document.getElementById('default');
+
+    if (_sex.innerHTML == 'Male') {
+        male.style.display = 'block';
+    } else if (_sex.innerHTML == 'Female') {
+        female.style.display = 'block';
+    } else {
+      _default.style.display = 'block';
+    }
+  }
+
   function filterTable () {
     let valID, valPerson, valPills_;
     let input = document.getElementById("search-inp");
@@ -179,6 +362,7 @@
       fOutput += key;
       fOutput += ', ';
     });
+    fOutput = fOutput.replace(/([, ]*)$/g, '')
     return fOutput;
   }
 
@@ -243,15 +427,17 @@
     
     return ranID;
   }
-
-  const connection = new WebSocket('ws://' + location.hostname + ':81/');
-  connection.addEventListener('message', () => {
-    console.log('Message: ', event.data);
-    for (let i = 0; i < 1; i++) {
-      let row = document.getElementById("db-table").insertRow(calcNextIdx());
-      fillNewCells(row, generateRandomId(), event.data, 'TEST FILL' );
-    }
-  });
+  
+  // const connection = new WebSocket('ws://' + location.hostname + ':81/');
+  
+  // connection.addEventListener('message', () => {
+  //   console.log('Message: ', event.data);
+  //   for (let i = 0; i < 1; ++i) {
+  //     let row = document.getElementById("db-table").insertRow(calcNextIdx());
+  //     fillNewCells(row, generateRandomId(), event.data, 'TEST FILL' );
+  //   }
+  // });
 
 </script>
 </html>
+
