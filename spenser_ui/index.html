@@ -1,29 +1,29 @@
 <!DOCTYPE html>
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Spenser Web UI</title>
-<link rel="icon" href="https://visibleranking.com/images/favicon_library/favicon_454.png">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Spenser Web UI</title>
+  <link rel="icon" href="https://visibleranking.com/images/favicon_library/favicon_454.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
+
 <body>
-  <div id="nav-div">
-    <nav class="navbar navbar-dark bg-dark">
-      <span>
-          <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
-          <button onclick="showRemover()" id="rem-btn"><i class="fa fa-minus"></i></button>
-      </span>
-      <center>
-        <h1 id="header"><b>SPENSER UI</b></h1>
-      </center>
-      <form id="search-form" class="form-inline my-2 my-lg-0">
-        <input onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button id="search-btn" type="submit"><i class="fa fa-search"></i></button>
-      </form>
-    </nav>
-  </div>
   <div id="db-table-div">
-    <table id="db-table" cellspacing=2 cellpadding=5 class="table table-hover">
+    <table id="db-table" cellspacing=20 cellpadding=16 class="table table-hover">
+      <div id="nav-div">
+        <center>
+          <img src="images/logo.png" alt="Spenser">
+          <form id="search-form">
+            <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
+            <button onclick="showRemover()" id="rem-btn"><i class="fa fa-minus"></i></button>
+            <input onkeyup="filterTable()" id="search-inp" class="form-control " type="search" placeholder="Search"
+              aria-label="Search">
+            <button id="search-btn" type="submit"><i class="fa fa-search"></i></button>
+          </form>
+        </center>
+      </div>
       <thead>
         <tr>
           <th scope="col">ID</th>
@@ -34,43 +34,52 @@
       <tbody>
         <tr>
           <td><button class="id-button" onclick="showCard(this.textContent)">#TEST</button></td>
-          <td contenteditable="true">Goshko</td>
-          <td contenteditable="true">Analgin, Parcetamol</td>
+          <td>Goshko</td>
+          <td>Analgin, Parcetamol</td>
         </tr>
         <tr>
           <td><button class="id-button" onclick="showCard(this.textContent)">#DEMO</button></td>
-          <td contenteditable="true">Pesho</td>
-          <td contenteditable="true">Nurofen, Propolki</td>
+          <td>Pesho</td>
+          <td>Nurofen, Propolki</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div id="card">
-      <button id="close-card-btn" onclick="closeCard()"><i class="fa fa-close"></i></button>
-      <center>
-          <img id="male" src="./images/male.png" alt="Avatar">
-          <img id="female" src="./images/female.png" alt="Avatar">            
-          <img id="default" src="./images/default.png" alt="Avatar">            
-          <b><h1 id="person"></h1></b>
-      </center>
+    <button id="close-card-btn" onclick="closeCard()"><i class="fa fa-close"></i></button>
+    <center>
+      <img id="male" src="./images/male.png" alt="Avatar">
+      <img id="female" src="./images/female.png" alt="Avatar">
+      <img id="default" src="./images/default.png" alt="Avatar">
+      <b>
+        <h1 id="person"></h1>
+      </b>
+    </center>
 
-      <ul id="info">
-          <h6 class="subheader">Sex: </h6><p id="sex-label"></p><br>            
-          <h6 class="subheader">ID: </h6><p id="id-label"></p><br>
-          <h6 class="subheader">Pills: </h6><p id="pills-label"></p><br>
-          <h6 class="subheader">Contact name: </h6><p id="contact-name-label"></p><br>
-          <h6 class="subheader">Contact phone: </h6><p id="contact-phone-label"></p><br>
-          <h6 class="subheader">Birthday: </h6><p id="birthday-label"></p><br>
-          <h6 class="subheader">Room: </h6><p id="room-label"></p><br>
-          <h6 class="subheader">Entering date: </h6><p id="entering-date-label"></p>
-      </ul>
+    <ul id="info">
+      <h6 class="subheader">Sex: </h6>
+      <p id="sex-label"></p><br>
+      <h6 class="subheader">ID: </h6>
+      <p id="id-label"></p><br>
+      <h6 class="subheader">Pills: </h6>
+      <p id="pills-label"></p><br>
+      <h6 class="subheader">Contact name: </h6>
+      <p id="contact-name-label"></p><br>
+      <h6 class="subheader">Contact phone: </h6>
+      <p id="contact-phone-label"></p><br>
+      <h6 class="subheader">Birthday: </h6>
+      <p id="birthday-label"></p><br>
+      <h6 class="subheader">Room: </h6>
+      <p id="room-label"></p><br>
+      <h6 class="subheader">Entering date: </h6>
+      <p id="entering-date-label"></p>
+    </ul>
 
-  </div>  
+  </div>
 </body>
 
 <style>
-  
   #card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
@@ -83,7 +92,9 @@
     box-shadow: 0 16px 50px 0 rgba(0, 0, 0, 0.2);
   }
 
-  #female, #male, #default {
+  #female,
+  #male,
+  #default {
     margin-top: 15px;
     border: none;
     width: 50%;
@@ -99,30 +110,37 @@
 
   .subheader {
     margin: 0px;
-    font-size: 22px;
+    font-size: 24px;
     text-decoration: none;
     padding: 0px;
     display: inline;
   }
 
   #close-card-btn {
-    color: rgb(51, 51, 51);
+    color: white;
     background: rgb(51, 51, 51, 0);
     border: none;
-    font-size: 22px;
+    font-size: 26px;
     transition: .24s linear;
   }
 
   #close-card-btn:hover {
     font-size: 32px;
-  }  
+    color: lightpink;
+  }
 
-  #id-label, #sex-label, #contact-name-label, #contact-phone-label, 
-  #birthday-label, #room-label, #entering-date-label, #pills-label {
+  #id-label,
+  #sex-label,
+  #contact-name-label,
+  #contact-phone-label,
+  #birthday-label,
+  #room-label,
+  #entering-date-label,
+  #pills-label {
     display: inline;
     text-align: right;
-    font-size: 18px;
-  }  
+    font-size: 20px;
+  }
 
   #person {
     text-decoration: underline;
@@ -132,26 +150,15 @@
     border: none;
     background-color: rgb(51, 51, 51, 0);
   }
-  
+
   .id-button:hover {
     cursor: pointer;
-  }
-
-  #header {
-    font-size: 32px;
-    color: white;
-    text-decoration: bold;
-    margin-left: 200px;
   }
 
   #db-table-div {
     width: 800px;
     margin: 0px auto;
     font-size: 24px;
-  }
-  
-  table tr:hover > td {
-    background-color: lightgreen;
   }
 
   #search {
@@ -160,8 +167,13 @@
     margin: 0 auto;
     width: 475px;
     margin: 44px 44px 44px 300px;
-    background-color: rgb(51, 51, 51);
+    background-color: #FFF8E7;
     color: black;
+  }
+
+  #search-inp:focus {
+    border-color: lightpink;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px lightpink;
   }
 
   #search-btn {
@@ -171,8 +183,8 @@
     transition: .5s linear;
   }
 
-  #search-btn:hover {
-    color: lightgreen;
+  table tr:hover>td {
+    background-color: rgba(255, 182, 193, 255);
   }
 
   #nav-div {
@@ -181,13 +193,16 @@
     position: relative;
   }
 
-  body, html {
+  body,
+  html {
     margin: 0;
     height: 100%;
     background-image: url("images/elderly_wallpaper.jpg");
   }
 
-  #add-btn, #rem-btn {
+  #search-btn,
+  #add-btn,
+  #rem-btn {
     background-color: rgb(51, 51, 51, 0);
     color: white;
     border: none;
@@ -195,50 +210,58 @@
     width: 50px;
     margin: 10px;
     padding: 10px;
+    display: inline-block;
   }
-
-  #add-btn:hover, #rem-btn:hover {
-    color: lightgreen;
+  
+  #search-btn:hover,
+  #add-btn:hover,
+  #rem-btn:hover {
+    color: lightpink;
   }
 
   tr {
     background-color: rgba(0, 0, 0, 0.2);
   }
 
+  #search-inp {
+    font-size: 20px;
+    width: 35%;
+    display: inline;
+  }
 </style>
 
 <script>
   function prepareForCard() {
     let table = document.getElementById("db-table");
-    let addBtn = document.getElementById("add-btn");
-    let removeBtn = document.getElementById("rem-btn");
-    let searchInput = document.getElementById('search-inp');
-    let searchBtn = document.getElementById('search-btn');
-    let _header = document.getElementById('header');
+    // let addBtn = document.getElementById("add-btn");
+    // let removeBtn = document.getElementById("rem-btn");
+    // let searchInput = document.getElementById('search-inp');
+    // let searchBtn = document.getElementById('search-btn');
+    // let _header = document.getElementById('header');
 
-    _header.style.marginLeft = '0';
-    _header.style.marginRight = '100px';
-    searchInput.style.display = 'none';
-    searchBtn.style.color = 'rgb(51, 51, 51, 0)';
-    removeBtn.style.color = 'rgb(51, 51, 51, 0)';    
-    addBtn.style.color = 'rgb(51, 51, 51, 0)';
+    // _header.style.marginLeft = '0';
+    // _header.style.marginRight = '100px';
+    // searchInput.style.display = 'none';
+    // searchBtn.style.color = 'rgb(51, 51, 51, 0)';
+    // removeBtn.style.color = 'rgb(51, 51, 51, 0)';
+    // addBtn.style.color = 'rgb(51, 51, 51, 0)';
     table.style.display = 'none';
   }
 
   function prepareForTable() {
-    let addBtn = document.getElementById("add-btn");
-    let removeBtn = document.getElementById("rem-btn");
-    let table = document.getElementById("db-table");   
-    let searchInput = document.getElementById('search-inp');
-    let searchBtn = document.getElementById('search-btn')
-    let _header = document.getElementById('header');
+    // let addBtn = document.getElementById("add-btn");
+    // let removeBtn = document.getElementById("rem-btn");
+    let table = document.getElementById("db-table");
+    // let searchInput = document.getElementById('search-inp');
+    // let searchBtn = document.getElementById('search-btn')
+    // let _header = document.getElementById('header');
 
-    _header.style.marginLeft = '200px';
-    _header.style.marginRight = '0';
-    searchInput.style.display = 'inline';
-    searchBtn.style.color = 'white';
-    removeBtn.style.color = 'white';    
-    addBtn.style.color = 'white';
+    // _header.style.marginLeft = '200px';
+    // _header.style.marginRight = '0';
+    // searchInput.style.display = 'inline';
+    // searchBtn.style.color = 'white';
+    // removeBtn.style.color = 'white';
+    // addBtn.style.color = 'white';
     table.style.display = 'table';
   }
 
@@ -248,10 +271,9 @@
   }
 
   function showCard(id) {
-    console.log(id);
     prepareForCard();
     let rows = document.getElementById("db-table").getElementsByTagName("tr");
-    let person, pills; 
+    let person, pills;
 
     for (let i = 0; i < rows.length; ++i) {
       let candidate = rows[i].getElementsByTagName("td");
@@ -263,7 +285,7 @@
         break;
       }
     }
-    
+
     let _card = document.getElementById('card');
     _card.style.display = 'block';
 
@@ -292,15 +314,15 @@
     let _default = document.getElementById('default');
 
     if (_sex.innerHTML == 'Male') {
-        male.style.display = 'block';
+      male.style.display = 'block';
     } else if (_sex.innerHTML == 'Female') {
-        female.style.display = 'block';
+      female.style.display = 'block';
     } else {
       _default.style.display = 'block';
     }
   }
 
-  function filterTable () {
+  function filterTable() {
     let valID, valPerson, valPills_;
     let input = document.getElementById("search-inp");
     let filter = input.value.toUpperCase();
@@ -309,16 +331,16 @@
 
     for (i = 0; i < tr.length; ++i) {
       let id = tr[i].getElementsByTagName("td")[0];
-      let person = tr[i].getElementsByTagName("td")[1];      
-      let pills_ = tr[i].getElementsByTagName("td")[2];      
-      
+      let person = tr[i].getElementsByTagName("td")[1];
+      let pills_ = tr[i].getElementsByTagName("td")[2];
+
       if (id && person && pills_) {
         valID = id.textContent || id.innerText;
         valPerson = person.textContent || person.innerText;
-        valPills_ = pills_.textContent || pills_.innerText;        
+        valPills_ = pills_.textContent || pills_.innerText;
         if (valID.toUpperCase().indexOf(filter) > -1 ||
-            valPerson.toUpperCase().indexOf(filter) > -1 ||
-            valPills_.toUpperCase().indexOf(filter) > -1) {
+          valPerson.toUpperCase().indexOf(filter) > -1 ||
+          valPills_.toUpperCase().indexOf(filter) > -1) {
           tr[i].style.display = "";
         } else {
           tr[i].style.display = "none";
@@ -341,13 +363,13 @@
       if (td) {
         value = td.textContent || td.innerText;
         if (value != id) {
-          rowIdx++; 
+          rowIdx++;
         } else {
           appears = true;
-          break;  
+          break;
         }
       }
-    }   
+    }
     if (appears) {
       table.deleteRow(rowIdx);
     } else {
@@ -356,13 +378,13 @@
   }
 
 
-  function calcNextIdx () {
+  function calcNextIdx() {
     return document.getElementById("db-table").getElementsByTagName("tr").length;
   }
 
   function getFormattedOutput(fPills) {
     let fOutput = "";
-    Object.keys(fPills).forEach(function(key) {
+    Object.keys(fPills).forEach(function (key) {
       fOutput += key;
       fOutput += ', ';
     });
@@ -389,11 +411,9 @@
     cell0.innerHTML = idx;
     cell1.innerHTML = person;
     cell2.innerHTML = receipt;
-    cell1.contentEditable = "true";
-    cell2.contentEditable = "true";
   }
 
-  function showAdder () {
+  function showAdder() {
     let person = prompt("Name: ", "Name");
     if (!person) return;
     let pills = prompt("Format: pill -> delay hour;", "Pills")
@@ -426,14 +446,14 @@
             appears = true;
           }
         }
-      }   
-    } while (appears); 
-    
+      }
+    } while (appears);
+
     return ranID;
   }
-  
+
   // const connection = new WebSocket('ws://' + location.hostname + ':81/');
-  
+
   // connection.addEventListener('message', () => {
   //   console.log('Message: ', event.data);
   //   for (let i = 0; i < 1; ++i) {
@@ -443,5 +463,5 @@
   // });
 
 </script>
-</html>
 
+</html>
