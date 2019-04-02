@@ -11,12 +11,11 @@
 #include "SPIFFS.h"
 #include <WebSocketsServer.h>
 
-
 #define SS_PIN 4
 #define RST_PIN 9
 #ifndef STASSID
-#define STASSID "Momchilovi1"
-#define STAPSK  "momchilovi93"
+#define STASSID "AndroidAP"
+#define STAPSK  "hari1234"
 #endif
 
 const char *ssid = STASSID;
@@ -29,9 +28,8 @@ int rc;
 sqlite3_stmt *res;
 const char *tail;
 int rec_count = 0;
-//int card_id;
-//const char *names;
-//const char *meds;
+
+volatile int userNum = 0;
 
 const char* data = "Callback function called";
 static int callback(void *data, int argc, char **argv, char **azColName) {
@@ -153,25 +151,23 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
 
     switch(type) {
         case WStype_DISCONNECTED:
-            Serial.printf("[%u] Disconnected!\n", num);
+            userNum = 0;
             break;
         case WStype_CONNECTED:
             {
-        Serial.println('\n');
-        Serial.println('\n');
-        Serial.println('\n');
-            Serial.printf("[%u] get Text: %s\n", num, payload);
             String sql = "Select * from user_info where card_id between '1' and '3'";
               rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
               while (sqlite3_step(res) == SQLITE_ROW) {
                 Serial.println((const char *) sqlite3_column_text(res, 1));
-              webSocket.broadcastTXT(sqlite3_column_text(res, 1));
+              webSocket.sendTXT(0, sqlite3_column_text(res, 1));
               //webSocket.broadcastTXT(sqlite3_column_text(res, 2));
               }
+            }
+            
               sqlite3_finalize(res);
               break;
-            }
+              
       case WStype_TEXT:
           break;
     }
-}
+    }
