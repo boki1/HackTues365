@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-  <div id="_navbar">
-    <nav class="navbar navbar-dark bg-dark" >
+  <div id="nav-div">
+    <nav class="navbar navbar-dark bg-dark">
       <span>
           <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
           <button onclick="showRemover()" id="rem-btn"><i class="fa fa-minus"></i></button>
@@ -80,7 +80,7 @@
   }
 
   #card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 16px 50px 0 rgba(0, 0, 0, 0.2);
   }
 
   #female, #male, #default {
@@ -175,9 +175,8 @@
     color: lightgreen;
   }
 
-  #_navbar {
-    background-color: rgb(51, 51, 51, 120);
-    margin: 30px;
+  #nav-div {
+    padding: 15px;
     font-size: 24px;
     position: relative;
   }
@@ -185,6 +184,7 @@
   body, html {
     margin: 0;
     height: 100%;
+    background-image: url("images/elderly_wallpaper.jpg");
   }
 
   #add-btn, #rem-btn {
@@ -199,6 +199,10 @@
 
   #add-btn:hover, #rem-btn:hover {
     color: lightgreen;
+  }
+
+  tr {
+    background-color: rgba(0, 0, 0, 0.2);
   }
 
 </style>
@@ -232,7 +236,7 @@
     _header.style.marginLeft = '200px';
     _header.style.marginRight = '0';
     searchInput.style.display = 'inline';
-    searchBtn.style.color = 'rgb(51, 51, 51, 0)';
+    searchBtn.style.color = 'white';
     removeBtn.style.color = 'white';    
     addBtn.style.color = 'white';
     table.style.display = 'table';
