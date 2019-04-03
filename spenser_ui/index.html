@@ -366,8 +366,10 @@
 
     const LEN = old.length;
 
+    console.log('Saving...');
     for (let i = 0; i < LEN; ++i) {
       old[i].innerHTML = inputs[i].value;
+      console.log(old[i].innerHTML);
       old[i].style.display = 'inline';
       inputs[i].style.display = 'none'
     }
@@ -406,6 +408,7 @@
     editBtn.style.display = 'inline';
     const LEN = old.length;
 
+    console.log("Changes discarded..");
     for (let i = 0; i < LEN; ++i) {
       inputs[i].style.display = 'none'
       inputs[i].value = '';
@@ -446,9 +449,11 @@
     editBtn.style.display = 'none';
     const LEN = old.length;
 
+    console.log('Old version:');
     for (let i = 0; i < LEN; ++i) {
       inputs[i].style.display = 'inline'
       inputs[i].value = old[i].innerHTML;
+      console.log(inputs[i].value);
       old[i].style.display = 'none';
     }
   }
