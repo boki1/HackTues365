@@ -1,3 +1,5 @@
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 #include <FS.h>
 #include <FSImpl.h>
 #include <vfs_api.h>
@@ -23,13 +25,8 @@ const char *password = STAPSK;
 WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
 
-String getContentType(String filename) { // convert the file extension to the MIME type
-  if (filename.endsWith(".html")) return "text/html";
-  else if (filename.endsWith(".css")) return "text/css";
-  else if (filename.endsWith(".js")) return "application/javascript";
-  else if (filename.endsWith(".ico")) return "image/x-icon";
-  return "text/plain";
-}
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
 
 sqlite3 *db1;
 int rc;
@@ -76,7 +73,7 @@ int db_exec(sqlite3 *db, const char *sql) {
   return rc;
 }
 
-void handleSearch(){ 
+void handleSearch() {
   File file = SPIFFS.open("/index.html", "r");
   server.streamFile(file, "text/html");
   file.close();
@@ -113,74 +110,80 @@ void setup(void) {
   Serial.println(WiFi.localIP());
 
   // list SPIFFS contents
-   File root = SPIFFS.open("/spiffs/");
-   if (!root) {
-       Serial.println("- failed to open directory");
-       return;
-   }
-   if (!root.isDirectory()) {
-       Serial.println(" - not a directory");
-       return;
-   }
-   File file = root.openNextFile();
-   while (file) {
-       if (file.isDirectory()) {
-           Serial.print("  DIR : ");
-           Serial.println(file.name());
-       } else {
-           Serial.print("  FILE: ");
-           Serial.print(file.name());
-           Serial.print("\tSIZE: ");
-           Serial.println(file.size());
-       }
-       file = root.openNextFile();
-   }
+  File root = SPIFFS.open("/spiffs/");
+  if (!root) {
+    Serial.println("- failed to open directory");
+    return;
+  }
+  if (!root.isDirectory()) {
+    Serial.println(" - not a directory");
+    return;
+  }
+  File file = root.openNextFile();
+  while (file) {
+    if (file.isDirectory()) {
+      Serial.print("  DIR : ");
+      Serial.println(file.name());
+    } else {
+      Serial.print("  FILE: ");
+      Serial.print(file.name());
+      Serial.print("\tSIZE: ");
+      Serial.println(file.size());
+    }
+    file = root.openNextFile();
+  }
 
-   sqlite3_initialize();
+  sqlite3_initialize();
 
-   if (db_open("/spiffs/pills.db", &db1))
-       return;
+  if (db_open("/spiffs/pills.db", &db1))
+    return;
 
   server.on("/", handleSearch);
   server.onNotFound(handleNotFound);
   server.begin();
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);
-  Serial.println("HTTP server started");
+  timeClient.begin();
+  timeClient.setTimeOffset(10800);
+  Serial.println("Server started");
+  Serial.println("Local time : " + timeClient.getFormattedTime());
 }
 
 void loop(void) {
   server.handleClient();
   webSocket.loop();
+  timeClient.update();
 }
 
-void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
+void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length) {
 
-    switch(type) {
-        case WStype_DISCONNECTED:
-            userNum = 0;
-            break;
-        case WStype_CONNECTED:
-            {
-            String sql = "Select * from user_info where card_id between '1' and '3'";
-              rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
-              while (sqlite3_step(res) == SQLITE_ROW) {
-                Serial.println((const char *) sqlite3_column_text(res, 1));
-              webSocket.sendTXT(0, sqlite3_column_text(res, 1));
-              //webSocket.broadcastTXT(sqlite3_column_text(res, 2));
-              }
-            }
-            
-              sqlite3_finalize(res);
-              break;
-              
-      case WStype_TEXT:
-            String sql = String((char *) &payload[0]);
-            rc = db_exec(db1, sql);
-            if (rc != SQLITE_OK) {
-              Serial.println("ne e dobre polojenieto");
-            return;
-            }
-          break;
-    }
+  switch (type) {
+    case WStype_DISCONNECTED:
+      userNum = 0;
+      break;
+    case WStype_CONNECTED:
+      {
+        String sql = "Select * from user_info_harry where card_id between '1' and '3'";
+        rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
+        while (sqlite3_step(res) == SQLITE_ROW) {
+          Serial.println((const char *) sqlite3_column_text(res, 1));
+          webSocket.sendTXT(0, sqlite3_column_text(res, 1));
+          //webSocket.broadcastTXT(sqlite3_column_text(res, 2));
+        }
+      }
+
+      sqlite3_finalize(res);
+      break;
+
+    case WStype_TEXT:
+    {
+      String sql = ((const char*) payload);
+      Serial.println(sql);
+      rc = db_exec(db1, sql.c_str());
+      if (rc != SQLITE_OK) {
+        Serial.println("ne e dobre polojenieto");
+        }
+     }
+      break;
+  }
 }
