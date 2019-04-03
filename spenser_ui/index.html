@@ -330,129 +330,75 @@
 </style>
 
 <script>
+  const OLD = [
+    document.getElementById('id-label'),
+    document.getElementById('contact-name-label'),
+    document.getElementById('contact-phone-label'),
+    document.getElementById('birthday-label'),
+    document.getElementById('room-label'),
+    document.getElementById('entering-date-label'),
+    document.getElementById('sex-label'),
+    document.getElementById('pills-label')
+  ];
+
+  const NEW = [
+    document.getElementById('id-inp'),
+    document.getElementById('contact-name-inp'),
+    document.getElementById('contact-phone-inp'),
+    document.getElementById('birthday-inp'),
+    document.getElementById('room-inp'),
+    document.getElementById('entering-date-inp'),
+    document.getElementById('sex-inp'),
+    document.getElementById('pills-inp')
+  ];
+
+  const CLOSE_BUTTON = document.getElementById('close-card-btn');
+  const SAVE_BUTTON = document.getElementById('save-card-btn');
+  const DISCARD_BUTTON = document.getElementById('discard-card-btn');
+  const EDIT_BUTTON = document.getElementById('edit-card-btn');
+  const LEN = OLD.length;
+
   function saveChanges() {
-    const old = [
-      document.getElementById('id-label'),
-      document.getElementById('contact-name-label'),
-      document.getElementById('contact-phone-label'),
-      document.getElementById('birthday-label'),
-      document.getElementById('room-label'),
-      document.getElementById('entering-date-label'),
-      document.getElementById('sex-label'),
-      document.getElementById('pills-label')
-    ];
-
-    const inputs = [
-      document.getElementById('id-inp'),
-      document.getElementById('contact-name-inp'),
-      document.getElementById('contact-phone-inp'),
-      document.getElementById('birthday-inp'),
-      document.getElementById('room-inp'),
-      document.getElementById('entering-date-inp'),
-      document.getElementById('sex-inp'),
-      document.getElementById('pills-inp')
-    ];
-
-    const closeBtn = document.getElementById('close-card-btn');
-    closeBtn.style.display = 'inline';
-    const discardBtn = document.getElementById('discard-card-btn');
-    discardBtn.style.display = 'none';
-    const saveBtn = document.getElementById('save-card-btn');
-    saveBtn.style.display = 'none';
-    const editBtn = document.getElementById('edit-card-btn');
-    editBtn.style.display = 'inline';
-
-    const LEN = old.length;
+    CLOSE_BUTTON.style.display = 'inline';
+    DISCARD_BUTTON.style.display = 'none';
+    SAVE_BUTTON.style.display = 'none';
+    EDIT_BUTTON.style.display = 'inline';
 
     console.log('Saving...');
     for (let i = 0; i < LEN; ++i) {
-      old[i].innerHTML = inputs[i].value;
-      console.log(old[i].innerHTML);
-      old[i].style.display = 'inline';
-      inputs[i].style.display = 'none'
+      OLD[i].innerHTML = inputs[i].value;
+      console.log(OLD[i].innerHTML);
+      OLD[i].style.display = 'inline';
+      NEW[i].style.display = 'none'
     }
   }
 
   function discardChanges() {
-    const old = [
-      document.getElementById('id-label'),
-      document.getElementById('contact-name-label'),
-      document.getElementById('contact-phone-label'),
-      document.getElementById('birthday-label'),
-      document.getElementById('room-label'),
-      document.getElementById('entering-date-label'),
-      document.getElementById('sex-label'),
-      document.getElementById('pills-label')
-    ];
-
-    const inputs = [
-      document.getElementById('id-inp'),
-      document.getElementById('contact-name-inp'),
-      document.getElementById('contact-phone-inp'),
-      document.getElementById('birthday-inp'),
-      document.getElementById('room-inp'),
-      document.getElementById('entering-date-inp'),
-      document.getElementById('sex-inp'),
-      document.getElementById('pills-inp')
-    ];
-
-    const closeBtn = document.getElementById('close-card-btn');
-    closeBtn.style.display = 'inline';
-    const discardBtn = document.getElementById('discard-card-btn');
-    discardBtn.style.display = 'none';
-    const saveBtn = document.getElementById('save-card-btn');
-    saveBtn.style.display = 'none';
-    const editBtn = document.getElementById('edit-card-btn');
-    editBtn.style.display = 'inline';
-    const LEN = old.length;
-
+    CLOSE_BUTTON.style.display = 'inline';
+    DISCARD_BUTTON.style.display = 'none';
+    SAVE_BUTTON.style.display = 'none';
+    EDIT_BUTTON.style.display = 'inline';
+    
     console.log("Changes discarded..");
     for (let i = 0; i < LEN; ++i) {
-      inputs[i].style.display = 'none'
-      inputs[i].value = '';
-      old[i].style.display = 'inline';
+      NEW[i].style.display = 'none'
+      NEW[i].value = '';
+      OLD[i].style.display = 'inline';
     }
   }
 
   function startEditing() {
-    const old = [
-      document.getElementById('id-label'),
-      document.getElementById('contact-name-label'),
-      document.getElementById('contact-phone-label'),
-      document.getElementById('birthday-label'),
-      document.getElementById('room-label'),
-      document.getElementById('entering-date-label'),
-      document.getElementById('sex-label'),
-      document.getElementById('pills-label')
-    ];
-
-    const inputs = [
-      document.getElementById('id-inp'),
-      document.getElementById('contact-name-inp'),
-      document.getElementById('contact-phone-inp'),
-      document.getElementById('birthday-inp'),
-      document.getElementById('room-inp'),
-      document.getElementById('entering-date-inp'),
-      document.getElementById('sex-inp'),
-      document.getElementById('pills-inp')
-    ];
-
-    const closeBtn = document.getElementById('close-card-btn');
-    closeBtn.style.display = 'none';
-    const discardBtn = document.getElementById('discard-card-btn');
-    discardBtn.style.display = 'inline';
-    const saveBtn = document.getElementById('save-card-btn');
-    saveBtn.style.display = 'inline';
-    const editBtn = document.getElementById('edit-card-btn');
-    editBtn.style.display = 'none';
-    const LEN = old.length;
-
+    CLOSE_BUTTON.style.display = 'none';
+    DISCARD_BUTTON.style.display = 'inline';
+    SAVE_BUTTON.style.display = 'inline';
+    EDIT_BUTTON.style.display = 'none';
+    
     console.log('Old version:');
     for (let i = 0; i < LEN; ++i) {
-      inputs[i].style.display = 'inline'
-      inputs[i].value = old[i].innerHTML;
-      console.log(inputs[i].value);
-      old[i].style.display = 'none';
+      NEW[i].style.display = 'inline'
+      NEW[i].value = OLD[i].innerHTML;
+      console.log(NEW[i].value);
+      OLD[i].style.display = 'none';
     }
   }
 
@@ -657,16 +603,16 @@
     return ranID;
   }
 
-  // const connection = new WebSocket('ws://' + location.hostname + ':81/');
+  const connection = new WebSocket('ws://' + location.hostname + ':81/');
 
-  // connection.addEventListener('message', () => {
-  //   console.log('Message: ', event.data);
-  //   for (let i = 0; i < 1; ++i) {
-  //     let row = document.getElementById("db-table").insertRow(calcNextIdx());
-  //     fillNewCells(row, generateRandomId(), event.data, 'TEST FILL' );
-  //   }
-  // });
-
+  connection.addEventListener('message', () => {
+    console.log('Message: ', event.data);
+    for (let i = 0; i < 1; ++i) {
+      let row = document.getElementById("db-table").insertRow(calcNextIdx());
+      fillNewCells(row, generateRandomId(), event.data, 'TEST FILL' );
+    }
+  });
+X
 </script>
 
 </html>
