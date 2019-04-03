@@ -1,6 +1,6 @@
 # Spenser - OUR DRUG DISPENSER
 
-![](/spenser_ui/images/elderly_wallpaper.jpg)
+![](elderly_wallpaper.jpg)
 
 Линк към отбор "По жицата", HackTUES^365: https://www.hacktues.com/Teams/Details/1
 
