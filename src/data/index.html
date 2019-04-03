@@ -1,242 +1,23 @@
 <!DOCTYPE html>
-
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Spenser Web UI</title>
-  <link rel="icon" href="https://visibleranking.com/images/favicon_library/favicon_454.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Spenser Web UI</title>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
-
-
-<style>
-  #info>li {
-    list-style-type: none;
-    margin-top: 40px;
-  }
-
-  #card {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    transition: 0.3s;
-    width: 20%;
-    display: none;
-    margin: auto auto;
-    margin-top: 30px;
-  }
-
-  #card:hover {
-    box-shadow: 0 16px 50px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  #female,
-  #male,
-  #default {
-    margin-top: 15px;
-    border: none;
-    width: 50%;
-    height: 50%;
-    display: none;
-  }
-
-  #info {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 20px;
-  }
-
-  .subheader {
-    margin: 0px;
-    font-size: 24px;
-    text-decoration: none;
-    padding: 12px;
-    display: inline;
-  }
-
-  #close-card-btn,
-  #edit-card-btn,
-  #save-card-btn,
-  #discard-card-btn {
-    color: white;
-    background: rgb(51, 51, 51, 0);
-    border: none;
-    font-size: 26px;
-    transition: .24s linear;
-  }
-
-  #close-card-btn:hover,
-  #edit-card-btn:hover,
-  #save-card-btn:hover,
-  #discard-card-btn:hover {
-    font-size: 32px;
-    color: lightpink;
-  }
-
-  #save-card-btn,
-  #discard-card-btn {
-    display: none;
-  }
-
-  #id-label,
-  #sex-label,
-  #contact-name-label,
-  #contact-phone-label,
-  #birthday-label,
-  #room-label,
-  #entering-date-label,
-  #pills-label {
-    display: inline;
-    text-align: right;
-    font-size: 20px;
-  }
-
-  #id-inp,
-  #contact-name-inp,
-  #contact-phone-inp,
-  #birthday-inp,
-  #room-inp,
-  #entering-date-inp,
-  #sex-inp,
-  #pills-inp {
-    display: none;
-    width: 42%;
-    height: 40px;
-    transition: .3s linear;
-    float: right;
-    border: none;
-    border-radius: 0;
-    border-bottom: 1px solid white;
-    background-color: rgba(0, 0, 0, 0);
-    font-size: 22px;
-  }
-
-  #person {
-    font-size: 26px;
-    margin: 0;
-    text-decoration: underline;
-  }
-
-  .id-button {
-    border: none;
-    border-radius: 19px;
-    transition: linear .4s;
-    background-color: rgba(255, 248, 231, .2);
-  }
-
-  .id-button:hover {
-    cursor: pointer;
-    background-color: rgba(255, 248, 231, .3);
-  }
-
-  #db-table-div {
-    width: 800px;
-    margin: 0px auto;
-    font-size: 24px;
-  }
-
-  #search {
-    display: inline-block;
-    text-align: center;
-    margin: 0 auto;
-    width: 475px;
-    margin: 44px 44px 44px 300px;
-    background-color: #FFF8E7;
-    color: black;
-  }
-
-  #search-inp:focus,
-  #id-inp:focus,
-  #contact-name-inp:focus,
-  #contact-phone-inp:focus,
-  #birthday-inp:focus,
-  #room-inp:focus,
-  #entering-date-inp:focus,
-  #sex-inp:focus,
-  #pills-inp:focus {
-    border-color: lightpink;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px lightpink;
-  }
-
-  #search-btn {
-    background-color: rgb(51, 51, 51, 0);
-    color: white;
-    border: none;
-    transition: .5s linear;
-  }
-
-  table tr:hover>td {
-    background-color: rgba(255, 182, 193, .4);
-    color: #fff8e7;
-  }
-
-  table tr>th {
-    color: black;
-  }
-
-  #nav-div {
-    padding: 15px;
-    font-size: 24px;
-    position: relative;
-  }
-
-  body,
-  html {
-    margin: 0;
-    height: 100%;
-    background-image: url("https://i.imgur.com/eLdt7r6.jpg");
-    background-attachment: fixed;
-  }
-
-  #search-btn,
-  #add-btn,
-  #rem-btn {
-    background-color: rgb(51, 51, 51, 0);
-    color: white;
-    border: none;
-    transition: .5s linear;
-    width: 50px;
-    margin: 10px;
-    padding: 10px;
-    display: inline-block;
-  }
-
-  #search-btn:hover,
-  #add-btn:hover,
-  #rem-btn:hover {
-    color: lightpink;
-  }
-
-
-  tr {
-    background-color: rgba(255, 255, 255, .3);
-  }
-
-  #search-inp {
-    padding: 25px;
-    font-size: 22px;
-    width: 35%;
-    display: inline;
-  }
-</style>
-
-
 <body>
+  <div id="_navbar">
+    <nav class="navbar navbar-dark bg-dark" >
+      <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
+      <form id="search-form" class="form-inline my-2 my-lg-0">
+        <input onkeyup="filterTable()" id="search-inp" style="font-size: 20px;" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="search-btn" type="submit"><i class="fa fa-search"></i></button>
+      </form>
+    </nav>
+  </div>
   <div id="db-table-div">
-    <table id="db-table" cellspacing=20 cellpadding=16 class="table table-hover">
-      <center>
-        <img src="https://imgur.com/aMjyWsy.png" alt="Spenser">
-      </center>
-      <div id="nav-div">
-        <center>
-          <form id="search-form">
-            <button id="add-btn"><i class="fa fa-plus"></i></button>             <!-- onclick="addPatient()"  -->
-            <button id="rem-btn"><i class="fa fa-minus"></i></button>             <!-- onclick="removePatient()"  -->
-            <input onkeyup="filterTable()" id="search-inp" class="form-control " type="search" placeholder="Search"
-              aria-label="Search">
-            <button id="search-btn" type="submit"><i class="fa fa-search"></i></button>
-          </form>
-        </center>
-      </div>
+    <table id="db-table" cellspacing=2 cellpadding=5 class="table table-hover">
       <thead>
         <tr>
           <th scope="col">ID</th>
@@ -245,255 +26,83 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td><button class="id-button" onclick="showCard(this.textContent)">#TEST</button></td>
-          <td>Goshko</td>
-          <td>Analgin, Parcetamol</td>
-        </tr>
-        <tr>
-          <td><button class="id-button" onclick="showCard(this.textContent)">#DEMO</button></td>
-          <td>Pesho</td>
-          <td>Nurofen, Propolki</td>
-        </tr>
       </tbody>
     </table>
   </div>
-
-  <div id="card">
-    <button id="close-card-btn" onclick="closeCard()"><i class="fa fa-close"></i></button>
-    <button id="edit-card-btn" onclick="startEditing()"><i class="fa fa-cog"></i></button>
-    <button id="save-card-btn" onclick="saveChanges()"><i class="fa fa-check"></i></button>
-    <button id="discard-card-btn" onclick="discardChanges()"><i class="fa fa-ban"></i></button>
-    <center>
-      <img id="male" src="https://i.imgur.com/mietY9y.png" alt="Avatar">
-      <img id="female" src="https://i.imgur.com/3U9W11P.png" alt="Avatar">
-      <img id="default" src="https://i.imgur.com/O1RzfLC.png" alt="Avatar">
-    </center>
-    <ul id="info">
-      <h1 id="person"></h1><br>
-
-      <li>
-        <h6 class="subheader">Sex: </h6>
-        <p id="sex-label"></p>
-        <input id="sex-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">ID: </h6>
-        <p id="id-label"></p>
-        <input id="id-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Pills: </h6>
-        <p id="pills-label"></p>
-        <input id="pills-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Contact name: </h6>
-        <p id="contact-name-label"></p>
-        <input id="contact-name-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Contact phone: </h6>
-        <p id="contact-phone-label"></p>
-        <input id="contact-phone-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Birthday: </h6>
-        <p id="birthday-label"></p>
-        <input id="birthday-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Room: </h6>
-        <p id="room-label"></p>
-        <input id="room-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Entering date: </h6>
-        <p id="entering-date-label"></p>
-        <input id="entering-date-inp" class="form-control ">
-      </li>
-
-    </ul>
-  </div>
 </body>
+<style>
+  #db-table-div {
+    width: 800px;
+    margin: 0px auto;
+    font-size: 24px;
+  }
+  
+  table tr:hover > td {
+    background-color: lightgreen;
+  }
+
+  #search {
+    display: inline-block;
+    text-align: center;
+    margin: 0 auto;
+    width: 475px;
+    margin: 44px 44px 44px 300px;
+    background-color: rgb(51, 51, 51);
+    color: black;
+  }
+
+  .search-btn {
+    background-color: rgb(51, 51, 51, 0);
+    color: white;
+    border: none;
+    transition: .5s linear;
+  }
+
+  .search-btn:hover {
+    color: lightgreen;
+  }
+
+  #_navbar {
+    background-color: rgb(51, 51, 51, 120);
+    margin: 30px;
+    font-size: 24px;
+    position: relative;
+  }
+
+  body, html {
+    margin: 0;
+    height: 100%;
+  }
+
+  #add-btn {
+    background-color: rgb(51, 51, 51, 0);
+    color: white;
+    border: none;
+    transition: .5s linear;
+  }
+
+  #add-btn:hover {
+    color: lightgreen;
+  }
+
+  #adder {
+    display: none;
+  }
+</style>
 
 <script>
-  const OLD = [
-    document.getElementById('id-label'),
-    document.getElementById('contact-name-label'),
-    document.getElementById('contact-phone-label'),
-    document.getElementById('birthday-label'),
-    document.getElementById('room-label'),
-    document.getElementById('entering-date-label'),
-    document.getElementById('sex-label'),
-    document.getElementById('pills-label')
-  ];
-
-  const NEW = [
-    document.getElementById('id-inp'),
-    document.getElementById('contact-name-inp'),
-    document.getElementById('contact-phone-inp'),
-    document.getElementById('birthday-inp'),
-    document.getElementById('room-inp'),
-    document.getElementById('entering-date-inp'),
-    document.getElementById('sex-inp'),
-    document.getElementById('pills-inp')
-  ];
-
-  const CLOSE_BUTTON = document.getElementById('close-card-btn');
-  const SAVE_BUTTON = document.getElementById('save-card-btn');
-  const DISCARD_BUTTON = document.getElementById('discard-card-btn');
-  const EDIT_BUTTON = document.getElementById('edit-card-btn');
-  const LEN = OLD.length;
-
-  function saveChanges() {
-    CLOSE_BUTTON.style.display = 'inline';
-    DISCARD_BUTTON.style.display = 'none';
-    SAVE_BUTTON.style.display = 'none';
-    EDIT_BUTTON.style.display = 'inline';
-
-    console.log('Saving...');
-    for (let i = 0; i < LEN; ++i) {
-      OLD[i].innerHTML = inputs[i].value;
-      console.log(OLD[i].innerHTML);
-      OLD[i].style.display = 'inline';
-      NEW[i].style.display = 'none'
-    }
-  }
-
-  function discardChanges() {
-    CLOSE_BUTTON.style.display = 'inline';
-    DISCARD_BUTTON.style.display = 'none';
-    SAVE_BUTTON.style.display = 'none';
-    EDIT_BUTTON.style.display = 'inline';
-
-    console.log("Changes discarded..");
-    for (let i = 0; i < LEN; ++i) {
-      NEW[i].style.display = 'none'
-      NEW[i].value = '';
-      OLD[i].style.display = 'inline';
-    }
-  }
-
-  function startEditing() {
-    CLOSE_BUTTON.style.display = 'none';
-    DISCARD_BUTTON.style.display = 'inline';
-    SAVE_BUTTON.style.display = 'inline';
-    EDIT_BUTTON.style.display = 'none';
-
-    console.log('Old version:');
-    for (let i = 0; i < LEN; ++i) {
-      NEW[i].style.display = 'inline'
-      NEW[i].value = OLD[i].innerHTML;
-      console.log(NEW[i].value);
-      OLD[i].style.display = 'none';
-    }
-  }
-
-  function prepareForCard() {
-    let table = document.getElementById("db-table");
-    let nav = document.getElementById("nav-div");
-    table.style.display = 'none';
-    nav.style.display = 'none';
-  }
-
-  function prepareForTable() {
-    let table = document.getElementById("db-table");
-    let nav = document.getElementById("nav-div");
-    table.style.display = 'table';
-    nav.style.display = 'inline';
-  }
-
-  function closeCard() {
-    document.getElementById('card').style.display = 'none';
-    prepareForTable();
-  }
-
-  function showCard(id) {
-    prepareForCard();
-    let rows = document.getElementById("db-table").getElementsByTagName("tr");
-    let person, pills;
-
-    for (let i = 0; i < rows.length; ++i) {
-      let candidate = rows[i].getElementsByTagName("td");
-      if (candidate.length <= 0)
-        continue;
-      if (candidate[0].innerText == id) {
-        person = candidate[1].innerText;
-        pills = candidate[2].innerText;
-        break;
-      }
-    }
-
-    let _card = document.getElementById('card');
-    _card.style.display = 'block';
-
-    let _id = document.getElementById('id-label');
-    let _contactName = document.getElementById('contact-name-label');
-    let _contactPhone = document.getElementById('contact-phone-label');
-    let _birthday = document.getElementById('birthday-label');
-    let _room = document.getElementById('room-label');
-    let _enteringDate = document.getElementById('entering-date-label');
-    let _sex = document.getElementById('sex-label');
-    let _person = document.getElementById('person');
-    let _pills = document.getElementById('pills-label');
-
-    _pills.innerHTML = pills;
-    _person.innerHTML = 'About ' + person + ':';
-    _sex.innerHTML = '...';
-    _id.innerHTML = id;
-    _contactName.innerHTML = '...';
-    _contactPhone.innerHTML = '...';
-    _birthday.innerHTML = '...';
-    _room.innerHTML = '...';
-    _enteringDate.innerHTML = '...';
-
-    let male = document.getElementById('male');
-    let female = document.getElementById('female');
-    let _default = document.getElementById('default');
-
-    if (_sex.innerHTML == 'Male') {
-      male.style.display = 'block';
-    } else if (_sex.innerHTML == 'Female') {
-      female.style.display = 'block';
-    } else {
-      _default.style.display = 'block';
-    }
-  }
-
-  function filterTable() {
-    let valID, valPerson, valPills_;
+  function filterTable () {
+    let value;
     let input = document.getElementById("search-inp");
     let filter = input.value.toUpperCase();
     let table = document.getElementById("db-table");
     let tr = table.getElementsByTagName("tr");
 
     for (i = 0; i < tr.length; ++i) {
-      let id = tr[i].getElementsByTagName("td")[0];
-      let person = tr[i].getElementsByTagName("td")[1];
-      let pills_ = tr[i].getElementsByTagName("td")[2];
-
-      if (id && person && pills_) {
-        valID = id.textContent || id.innerText;
-        valPerson = person.textContent || person.innerText;
-        valPills_ = pills_.textContent || pills_.innerText;
-        if (valID.toUpperCase().indexOf(filter) > -1 ||
-          valPerson.toUpperCase().indexOf(filter) > -1 ||
-          valPills_.toUpperCase().indexOf(filter) > -1) {
+      td = tr[i].getElementsByTagName("td")[1];
+      if (td) {
+        value = td.textContent || td.innerText;
+        if (value.toUpperCase().indexOf(filter) > -1) {
           tr[i].style.display = "";
         } else {
           tr[i].style.display = "none";
@@ -502,47 +111,11 @@
     }
   }
 
-  function removePatient() {
-    let id = prompt('Patient ID (#ABCD):', '#');
-
-    let table = document.getElementById("db-table");
-    let rowIdx = 1;
-    let appears = false;
-    let rows = table.getElementsByTagName("tr");
-
-    for (i = 1; i < rows.length; ++i) {
-      const columns = rows[i].getElementsByTagName("td");
-      const idColumn = columns[0];
-      const idButton = idColumn.getElementsByClassName('id-button')[0];
-      const columnContent = idButton.innerText;
-      if (columnContent != id) {
-        rowIdx++;
-      } else {
-        appears = true;
-        break;
-      }
-    }
-
-    if (appears) table.deleteRow(rowIdx);
-    else alert('User with such ID does not appear in our records!');
-
-  }
-
-  function calcNextIdx() {
+  function calcNextIdx () {
     return document.getElementById("db-table").getElementsByTagName("tr").length;
   }
 
-  function getFormattedOutput(fPills) {
-    let fOutput = "";
-    Object.keys(fPills).forEach(function (key) {
-      fOutput += key;
-      fOutput += ', ';
-    });
-    fOutput = fOutput.replace(/([, ]*)$/g, '')
-    return fOutput;
-  }
-
-  function getFormattedOutputAsObj(pills) {
+  function getFormattedOutput(pills) {
     let splitPills = pills.split('; ');
     let fPills = {};
     for (let i = 0; i < splitPills.length; ++i) {
@@ -551,105 +124,35 @@
       let hourDelay = doubleSplit[1];
       fPills[med] = parseInt(hourDelay);
     }
-    return fPills;
+    let fOutput = "";
+    Object.keys(fPills).forEach(function(key) {
+      fOutput += key;
+      fOutput += ' ';
+    });
+    return fOutput;
   }
 
-  function fillNewCells(row, id, person, receipt) {
+  function fillNewCells(row, idx, person, receipt) {
     let cell0 = row.insertCell(0);
-    let cell1 = row.insertCell(1);
-    let cell2 = row.insertCell(2);
-
-    let newIdBtn = document.createElement('button');
-    newIdBtn.setAttribute('class', 'id-button');
-    newIdBtn.innerHTML = id;
-    newIdBtn.addEventListener('click', showCard, false);
-    cell0.appendChild(newIdBtn);
-
+    var cell1 = row.insertCell(1);
+    var cell2 = row.insertCell(2);
+    cell0.innerHTML = idx;
     cell1.innerHTML = person;
     cell2.innerHTML = receipt;
+    cell1.contentEditable = "true";
+    cell2.contentEditable = "true";
   }
 
-  function SaveDetailInfo(_id, _person, _sex, _contactName, _contactPhone, _birthday, _room) {
-    console.log(`ID: ${_id}, Person: ${_person}, Sex: ${_sex}, ContactName: ${_contactName}, ContactPhone: ${_contactPhone}, Birthday: ${_birthday}, Room: ${_room}`);
-  }
-
-  function SavePills(_id, _pills) {
-    console.log(`ID: ${_id}, Pills: ${_pills}`);
-  }
-
-  function addPatient() {
-    const person = prompt("Name: ", "Goshko Petrov");
+  function showAdder () {
+    let person = prompt("Name: ", "Name");
     if (!person) return;
-    const pills = prompt("Pills (pill -> hour;):", "Aspirin -> 12:00;");
+    let pills = prompt("Format: pill -> delay hour;", "Pills")
     if (!pills) return;
-    const sex = prompt("Sex (Male / Female):", "Male");
-    if (!sex) return;
-    const contactName = prompt("Name for contact (son / daughter...):", "Ivan Petrov");
-    if (!contactName) return;
-    const contactPhone = prompt("Phone for contact (son's / daughter's...):", "08** *** ***");
-    if (!contactPhone) return;
-    const birthday = prompt("Birthday (DD/MM/YYYY):", "11-11-1111");
-    if (!birthday) return;
-    const room = prompt("Room: ", "0");
-    if (!room) return;
-    const today = new Date();
-    const enteringDate = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
-    console.log('done getting info');
-
-    let id = generateRandomId();
-    let pillObj = getFormattedOutputAsObj(pills);
-
-    //SaveToDB
-    SaveDetailInfo(id, person, sex, contactName, contactPhone, birthday, room);
-    SavePills(id, pillObj);
-
-    let fOutput = getFormattedOutput(pillObj);
-    let rowIdx = calcNextIdx();
-    let row = document.getElementById("db-table").insertRow(rowIdx);
-    fillNewCells(row, id, person, fOutput);
+    let fOutput = getFormattedOutput(pills);
+    let idx = calcNextIdx();
+    let row = document.getElementById("db-table").insertRow(idx);
+    fillNewCells(row, idx, person, fOutput);
   }
-
-  function generateRandomId() {
-    let appears = false;
-    let ranID;
-    do {
-      ranID = '#' + Math.random().toString(36).substring(2, 6).toUpperCase();
-      let value;
-      let input = document.getElementById("search-inp");
-      let filter = input.value.toUpperCase();
-      let table = document.getElementById("db-table");
-      let tr = table.getElementsByTagName("tr");
-
-      for (i = 0; i < tr.length; ++i) {
-        td = tr[i].getElementsByTagName("td")[0];
-        if (td) {
-          value = td.textContent || td.innerText;
-          if (value == ranID) {
-            break;
-            appears = true;
-          }
-        }
-      }
-    } while (appears);
-    return ranID;
-  }
-
-  const ADD_PATIENT_BUTTON = document.getElementById('add-btn');
-  ADD_PATIENT_BUTTON.addEventListener('click', addPatient);
-  const DEL_PATIENT_BUTTON = document.getElementById('rem-btn');
-  DEL_PATIENT_BUTTON.addEventListener('click', removePatient);
-
-  // const connection = new WebSocket('ws://' + location.hostname + ':81/');
-
-  // connection.addEventListener('message', () => {
-  //   console.log('Message: ', event.data);
-  //   for (let i = 0; i < 1; ++i) {
-  //     let row = document.getElementById("db-table").insertRow(calcNextIdx());
-  //     fillNewCells(row, generateRandomId(), event.data, 'TEST FILL');
-  //   }
-  // });
-
-  //connection.onopen = () => connection.send("INSERT INTO user_info_harry VALUES ('hi', 'zdr', 'zdr', 'zdr');");
 </script>
 
 </html>

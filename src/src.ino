@@ -1,20 +1,25 @@
+//===================RTC Libs==================//
 #include <NTPClient.h>
 #include <WiFiUdp.h>
+
+//==================SQLite3 Libs==============//
 #include <FS.h>
 #include <FSImpl.h>
 #include <vfs_api.h>
+#include <sqlite3.h>
+#include "SPIFFS.h"
+//==================Web server Libs==========//
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
-#include <MFRC522.h>
-#include <sqlite3.h>
-#include <SPI.h>
-#include <FS.h>
-#include "SPIFFS.h"
 #include <WebSocketsServer.h>
+//=================RFID Libs================//
+#include <MFRC522.h>
+#include <SPI.h>
 
 #define SS_PIN 4
 #define RST_PIN 9
+
 #ifndef STASSID
 #define STASSID "AndroidAP"
 #define STAPSK  "hari1234"
@@ -22,6 +27,7 @@
 
 const char *ssid = STASSID;
 const char *password = STAPSK;
+
 WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
 
@@ -33,8 +39,9 @@ int rc;
 sqlite3_stmt *res;
 const char *tail;
 
-volatile int userNum = 0;
+volatile int userNum = 0; //user login id
 
+//=========== Callback SQL Functions=========//
 const char* data = "Callback function called";
 static int callback(void *data, int argc, char **argv, char **azColName) {
   int i;
@@ -46,6 +53,7 @@ static int callback(void *data, int argc, char **argv, char **azColName) {
   return 0;
 }
 
+//================ Open SQL function============//
 int db_open(const char *filename, sqlite3 **db) {
   int rc = sqlite3_open(filename, db);
   if (rc) {
@@ -57,6 +65,8 @@ int db_open(const char *filename, sqlite3 **db) {
   return rc;
 }
 
+
+//=============== Execute SQL lines========//
 char *zErrMsg = 0;
 int db_exec(sqlite3 *db, const char *sql) {
   Serial.println(sql);
@@ -73,7 +83,8 @@ int db_exec(sqlite3 *db, const char *sql) {
   return rc;
 }
 
-void handleSearch() {
+//==============Server handlers===========//
+void handleRoot() {
   File file = SPIFFS.open("/index.html", "r");
   server.streamFile(file, "text/html");
   file.close();
@@ -95,9 +106,11 @@ void handleNotFound() {
 }
 
 void setup(void) {
-  Serial.begin(115200);
-  SPIFFS.begin();
+  
+  Serial.begin(115200); //Start Serial conn
+  SPIFFS.begin(); //Start the SPI Flash File System
 
+//============Connect to a WiFi AP============//
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -109,7 +122,7 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  // list SPIFFS contents
+//===========List SPIFFS contents=================//
   File root = SPIFFS.open("/spiffs/");
   if (!root) {
     Serial.println("- failed to open directory");
@@ -133,12 +146,12 @@ void setup(void) {
     file = root.openNextFile();
   }
 
-  sqlite3_initialize();
+  sqlite3_initialize(); //Init SQLite3
 
   if (db_open("/spiffs/pills.db", &db1))
     return;
 
-  server.on("/", handleSearch);
+  server.on("/", handleRoot);
   server.onNotFound(handleNotFound);
   server.begin();
   webSocket.begin();
@@ -155,12 +168,12 @@ void loop(void) {
   timeClient.update();
 }
 
-void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length) {
-
+void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length) 
+  {
   switch (type) {
     case WStype_DISCONNECTED:
       userNum = 0;
-      break;
+        break;
     case WStype_CONNECTED:
       {
         String sql = "Select * from user_info_harry where card_id between '1' and '3'";
@@ -168,13 +181,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
         while (sqlite3_step(res) == SQLITE_ROW) {
           Serial.println((const char *) sqlite3_column_text(res, 1));
           webSocket.sendTXT(0, sqlite3_column_text(res, 1));
-          //webSocket.broadcastTXT(sqlite3_column_text(res, 2));
         }
       }
 
       sqlite3_finalize(res);
       break;
-
     case WStype_TEXT:
     {
       String sql = ((const char*) payload);
