@@ -229,8 +229,8 @@
       <div id="nav-div">
         <center>
           <form id="search-form">
-            <button id="add-btn"><i class="fa fa-plus"></i></button>             <!-- onclick="addPatient()"  -->
-            <button id="rem-btn"><i class="fa fa-minus"></i></button>             <!-- onclick="removePatient()"  -->
+            <button id="add-btn"><i class="fa fa-plus"></i></button> <!-- onclick="addPatient()"  -->
+            <button id="rem-btn"><i class="fa fa-minus"></i></button> <!-- onclick="removePatient()"  -->
             <input onkeyup="filterTable()" id="search-inp" class="form-control " type="search" placeholder="Search"
               aria-label="Search">
             <button id="search-btn" type="submit"><i class="fa fa-search"></i></button>
@@ -246,12 +246,12 @@
       </thead>
       <tbody>
         <tr>
-          <td><button class="id-button" onclick="showCard(this.textContent)">#TEST</button></td>
+          <td><button class="id-button">#TEST</button></td>
           <td>Goshko</td>
           <td>Analgin, Parcetamol</td>
         </tr>
         <tr>
-          <td><button class="id-button" onclick="showCard(this.textContent)">#DEMO</button></td>
+          <td><button class="id-button">#DEMO</button></td>
           <td>Pesho</td>
           <td>Nurofen, Propolki</td>
         </tr>
@@ -332,6 +332,13 @@
 </body>
 
 <script>
+  document.getElementsByTagName('body')[0].onload = () => {
+    let idBtns = document.getElementsByClassName('id-button');
+    for (btn of idBtns) {
+      btn.onclick = showCard;
+    }
+  };
+
   const OLD = [
     document.getElementById('id-label'),
     document.getElementById('contact-name-label'),
@@ -423,7 +430,9 @@
     prepareForTable();
   }
 
-  function showCard(id) {
+  function showCard() {
+    let id = this.textContent;
+    console.log(id);
     prepareForCard();
     let rows = document.getElementById("db-table").getElementsByTagName("tr");
     let person, pills;
@@ -554,16 +563,30 @@
     return fPills;
   }
 
+  // const 
+  // trigger.addEventListener('mouseover', function(ev) {
+
+  // let currId;
+
   function fillNewCells(row, id, person, receipt) {
     let cell0 = row.insertCell(0);
     let cell1 = row.insertCell(1);
     let cell2 = row.insertCell(2);
 
+    // <button class="id-button" onclick="showCard(this.textContent)">#TEST</button></button>
+
     let newIdBtn = document.createElement('button');
-    newIdBtn.setAttribute('class', 'id-button');
-    newIdBtn.innerHTML = id;
-    newIdBtn.addEventListener('click', showCard, false);
+    newIdBtn.textContent = id;
+    newIdBtn.className = 'id-button';
+    newIdBtn.onclick = showCard;
     cell0.appendChild(newIdBtn);
+
+    // let btnNode = document.createElement('input');
+    // btnNode.setAttribute('type', 'button');
+    // btnNode.setAttribute('value', id);
+    // btnNode.setAttribute('class', 'id-button');
+    // cell0.appendChild(btnNode);
+    // btnNode.attachEvent('OnClick', showCard(this.value));
 
     cell1.innerHTML = person;
     cell2.innerHTML = receipt;
