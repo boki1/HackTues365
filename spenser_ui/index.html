@@ -189,7 +189,7 @@
 
   #search-btn,
   #add-btn,
-  #rem-btn {
+  #del-btn {
     background-color: rgb(51, 51, 51, 0);
     color: white;
     border: none;
@@ -202,7 +202,7 @@
 
   #search-btn:hover,
   #add-btn:hover,
-  #rem-btn:hover {
+  #del-btn:hover {
     color: lightpink;
   }
 
@@ -228,15 +228,13 @@
       </center>
       <div id="nav-div">
         <center>
-          <form id="search-form">
-            <button id="add-btn"><i class="fa fa-plus"></i></button> <!-- onclick="addPatient()"  -->
-            <button id="rem-btn"><i class="fa fa-minus"></i></button> <!-- onclick="removePatient()"  -->
-            <input onkeyup="filterTable()" id="search-inp" class="form-control " type="search" placeholder="Search"
-              aria-label="Search">
-            <button id="search-btn" type="submit"><i class="fa fa-search"></i></button>
-          </form>
+          <button id="add-btn"><i class="fa fa-plus"></i></button>
+          <button id="del-btn"><i class="fa fa-minus"></i></button>
+          <input id="search-inp" class="form-control " placeholder="Search">
+          <i id="search-btn" class="fa fa-search"></i>
         </center>
       </div>
+
       <thead>
         <tr>
           <th scope="col">ID</th>
@@ -258,6 +256,7 @@
       </tbody>
     </table>
   </div>
+
 
   <div id="card">
     <button id="close-card-btn" onclick="closeCard()"><i class="fa fa-close"></i></button>
@@ -333,10 +332,27 @@
 
 <script>
   document.getElementsByTagName('body')[0].onload = () => {
-    let idBtns = document.getElementsByClassName('id-button');
+    const idBtns = document.getElementsByClassName('id-button');
     for (btn of idBtns) {
       btn.onclick = showCard;
     }
+
+    const addPatientButton = document.getElementById('add-btn');
+    const delPatientButton = document.getElementById('del-btn');
+    const searchInputBox = document.getElementById('search-inp');
+    addPatientButton.addEventListener('click', () => {
+      console.info('Clicked on Add Patient Btn');
+      addPatient();
+    });
+    delPatientButton.addEventListener('click', () => {
+      console.info('Clicked on Delete Patient Btn');
+      delPatient();
+    });
+
+    searchInputBox.addEventListener('keyup', () => {
+      console.log(document.getElementById("search-inp").value.toUpperCase());
+      filterTable();
+    });
   };
 
   const OLD = [
@@ -511,8 +527,10 @@
     }
   }
 
-  function removePatient() {
-    let id = prompt('Patient ID (#ABCD):', '#');
+  function delPatient() {
+    let id = prompt('Patient ID (#ABCD):', '#').toUpperCase();
+    let _confirm = confirm('Are you sure you want to remove this person from the records?');
+    if (!_confirm) return;
 
     let table = document.getElementById("db-table");
     let rowIdx = 1;
@@ -534,7 +552,6 @@
 
     if (appears) table.deleteRow(rowIdx);
     else alert('User with such ID does not appear in our records!');
-
   }
 
   function calcNextIdx() {
@@ -573,20 +590,11 @@
     let cell1 = row.insertCell(1);
     let cell2 = row.insertCell(2);
 
-    // <button class="id-button" onclick="showCard(this.textContent)">#TEST</button></button>
-
     let newIdBtn = document.createElement('button');
     newIdBtn.textContent = id;
     newIdBtn.className = 'id-button';
     newIdBtn.onclick = showCard;
     cell0.appendChild(newIdBtn);
-
-    // let btnNode = document.createElement('input');
-    // btnNode.setAttribute('type', 'button');
-    // btnNode.setAttribute('value', id);
-    // btnNode.setAttribute('class', 'id-button');
-    // cell0.appendChild(btnNode);
-    // btnNode.attachEvent('OnClick', showCard(this.value));
 
     cell1.innerHTML = person;
     cell2.innerHTML = receipt;
@@ -597,7 +605,7 @@
   }
 
   function SavePills(_id, _pills) {
-    console.log(`ID: ${_id}, Pills: ${_pills}`);
+    console.log(_pills);
   }
 
   function addPatient() {
@@ -656,12 +664,6 @@
     } while (appears);
     return ranID;
   }
-
-  const ADD_PATIENT_BUTTON = document.getElementById('add-btn');
-  ADD_PATIENT_BUTTON.addEventListener('click', addPatient);
-  const DEL_PATIENT_BUTTON = document.getElementById('rem-btn');
-  DEL_PATIENT_BUTTON.addEventListener('click', removePatient);
-
   // const connection = new WebSocket('ws://' + location.hostname + ':81/');
 
   // connection.addEventListener('message', () => {
