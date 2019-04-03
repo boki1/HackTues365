@@ -23,11 +23,18 @@ const char *password = STAPSK;
 WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
 
+String getContentType(String filename) { // convert the file extension to the MIME type
+  if (filename.endsWith(".html")) return "text/html";
+  else if (filename.endsWith(".css")) return "text/css";
+  else if (filename.endsWith(".js")) return "application/javascript";
+  else if (filename.endsWith(".ico")) return "image/x-icon";
+  return "text/plain";
+}
+
 sqlite3 *db1;
 int rc;
 sqlite3_stmt *res;
 const char *tail;
-int rec_count = 0;
 
 volatile int userNum = 0;
 
@@ -168,6 +175,12 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
               break;
               
       case WStype_TEXT:
+            String sql = String((char *) &payload[0]);
+            rc = db_exec(db1, sql);
+            if (rc != SQLITE_OK) {
+              Serial.println("ne e dobre polojenieto");
+            return;
+            }
           break;
     }
-    }
+}
