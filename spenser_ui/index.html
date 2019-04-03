@@ -51,6 +51,9 @@
 
   <div id="card">
     <button id="close-card-btn" onclick="closeCard()"><i class="fa fa-close"></i></button>
+    <button id="edit-card-btn" onclick="startEditing()"><i class="fa fa-cog"></i></button>
+    <button id="save-card-btn" onclick="saveChanges()"><i class="fa fa-check"></i></button>
+    <button id="discard-card-btn" onclick="discardChanges()"><i class="fa fa-ban"></i></button>
     <center>
       <img id="male" src="./images/male.png" alt="Avatar">
       <img id="female" src="./images/female.png" alt="Avatar">
@@ -58,28 +61,73 @@
     </center>
     <ul id="info">
       <h1 id="person"></h1><br>
-      <h6 class="subheader">Sex: </h6>
-      <p id="sex-label"></p><br>
-      <h6 class="subheader">ID: </h6>
-      <p id="id-label"></p><br>
-      <h6 class="subheader">Pills: </h6>
-      <p id="pills-label"></p><br>
-      <h6 class="subheader">Contact name: </h6>
-      <p id="contact-name-label"></p><br>
-      <h6 class="subheader">Contact phone: </h6>
-      <p id="contact-phone-label"></p><br>
-      <h6 class="subheader">Birthday: </h6>
-      <p id="birthday-label"></p><br>
-      <h6 class="subheader">Room: </h6>
-      <p id="room-label"></p><br>
-      <h6 class="subheader">Entering date: </h6>
-      <p id="entering-date-label"></p>
-    </ul>
 
+      <li>
+        <h6 class="subheader">Sex: </h6>
+        <p id="sex-label"></p>
+        <input id="sex-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">ID: </h6>
+        <p id="id-label"></p>
+        <input id="id-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Pills: </h6>
+        <p id="pills-label"></p>
+        <input id="pills-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Contact name: </h6>
+        <p id="contact-name-label"></p>
+        <input id="contact-name-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Contact phone: </h6>
+        <p id="contact-phone-label"></p>
+        <input id="contact-phone-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Birthday: </h6>
+        <p id="birthday-label"></p>
+        <input id="birthday-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Room: </h6>
+        <p id="room-label"></p>
+        <input id="room-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Entering date: </h6>
+        <p id="entering-date-label"></p>
+        <input id="entering-date-inp" class="form-control ">
+      </li>
+
+    </ul>
   </div>
 </body>
 
 <style>
+
+  #info > li {
+    list-style-type: none;
+    margin-top: 40px;
+  }
+
   #card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
@@ -113,11 +161,14 @@
     margin: 0px;
     font-size: 24px;
     text-decoration: none;
-    padding: 0px;
+    padding: 12px;
     display: inline;
   }
 
-  #close-card-btn {
+  #close-card-btn,
+  #edit-card-btn,
+  #save-card-btn,
+  #discard-card-btn {
     color: white;
     background: rgb(51, 51, 51, 0);
     border: none;
@@ -125,9 +176,17 @@
     transition: .24s linear;
   }
 
-  #close-card-btn:hover {
+  #close-card-btn:hover,
+  #edit-card-btn:hover,
+  #save-card-btn:hover,
+  #discard-card-btn:hover {
     font-size: 32px;
     color: lightpink;
+  }
+
+  #save-card-btn,
+  #discard-card-btn {
+    display: none;
   }
 
   #id-label,
@@ -143,9 +202,30 @@
     font-size: 20px;
   }
 
+  #id-inp,
+  #contact-name-inp,
+  #contact-phone-inp,
+  #birthday-inp,
+  #room-inp,
+  #entering-date-inp,
+  #sex-inp,
+  #pills-inp {
+    display: none;
+    width: 42%;
+    height: 40px;
+    transition: .3s linear;
+    float: right;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid white;
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 22px;
+  }
+
   #person {
     font-size: 26px;
     margin: 0;
+    text-decoration: underline;
   }
 
   .id-button {
@@ -176,7 +256,15 @@
     color: black;
   }
 
-  #search-inp:focus {
+  #search-inp:focus,
+  #id-inp:focus,
+  #contact-name-inp:focus,
+  #contact-phone-inp:focus,
+  #birthday-inp:focus,
+  #room-inp:focus,
+  #entering-date-inp:focus,
+  #sex-inp:focus,
+  #pills-inp:focus {
     border-color: lightpink;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px lightpink;
   }
@@ -208,6 +296,7 @@
     margin: 0;
     height: 100%;
     background-image: url("images/elderly_wallpaper.jpg");
+    background-attachment: fixed;
   }
 
   #search-btn,
@@ -243,6 +332,127 @@
 </style>
 
 <script>
+  function saveChanges() {
+    const old = [
+      document.getElementById('id-label'),
+      document.getElementById('contact-name-label'),
+      document.getElementById('contact-phone-label'),
+      document.getElementById('birthday-label'),
+      document.getElementById('room-label'),
+      document.getElementById('entering-date-label'),
+      document.getElementById('sex-label'),
+      document.getElementById('pills-label')
+    ];
+
+    const inputs = [
+      document.getElementById('id-inp'),
+      document.getElementById('contact-name-inp'),
+      document.getElementById('contact-phone-inp'),
+      document.getElementById('birthday-inp'),
+      document.getElementById('room-inp'),
+      document.getElementById('entering-date-inp'),
+      document.getElementById('sex-inp'),
+      document.getElementById('pills-inp')
+    ];
+
+    const closeBtn = document.getElementById('close-card-btn');
+    closeBtn.style.display = 'inline';
+    const discardBtn = document.getElementById('discard-card-btn');
+    discardBtn.style.display = 'none';
+    const saveBtn = document.getElementById('save-card-btn');
+    saveBtn.style.display = 'none';
+    const editBtn = document.getElementById('edit-card-btn');
+    editBtn.style.display = 'inline';
+
+    const LEN = old.length;
+
+    for (let i = 0; i < LEN; ++i) {
+      old[i].innerHTML = inputs[i].value;
+      old[i].style.display = 'inline';
+      inputs[i].style.display = 'none'
+    }
+  }
+
+  function discardChanges() {
+    const old = [
+      document.getElementById('id-label'),
+      document.getElementById('contact-name-label'),
+      document.getElementById('contact-phone-label'),
+      document.getElementById('birthday-label'),
+      document.getElementById('room-label'),
+      document.getElementById('entering-date-label'),
+      document.getElementById('sex-label'),
+      document.getElementById('pills-label')
+    ];
+
+    const inputs = [
+      document.getElementById('id-inp'),
+      document.getElementById('contact-name-inp'),
+      document.getElementById('contact-phone-inp'),
+      document.getElementById('birthday-inp'),
+      document.getElementById('room-inp'),
+      document.getElementById('entering-date-inp'),
+      document.getElementById('sex-inp'),
+      document.getElementById('pills-inp')
+    ];
+
+    const closeBtn = document.getElementById('close-card-btn');
+    closeBtn.style.display = 'inline';
+    const discardBtn = document.getElementById('discard-card-btn');
+    discardBtn.style.display = 'none';
+    const saveBtn = document.getElementById('save-card-btn');
+    saveBtn.style.display = 'none';
+    const editBtn = document.getElementById('edit-card-btn');
+    editBtn.style.display = 'inline';
+    const LEN = old.length;
+
+    for (let i = 0; i < LEN; ++i) {
+      inputs[i].style.display = 'none'
+      inputs[i].value = '';
+      old[i].style.display = 'inline';
+    }
+  }
+
+  function startEditing() {
+    const old = [
+      document.getElementById('id-label'),
+      document.getElementById('contact-name-label'),
+      document.getElementById('contact-phone-label'),
+      document.getElementById('birthday-label'),
+      document.getElementById('room-label'),
+      document.getElementById('entering-date-label'),
+      document.getElementById('sex-label'),
+      document.getElementById('pills-label')
+    ];
+
+    const inputs = [
+      document.getElementById('id-inp'),
+      document.getElementById('contact-name-inp'),
+      document.getElementById('contact-phone-inp'),
+      document.getElementById('birthday-inp'),
+      document.getElementById('room-inp'),
+      document.getElementById('entering-date-inp'),
+      document.getElementById('sex-inp'),
+      document.getElementById('pills-inp')
+    ];
+
+    const closeBtn = document.getElementById('close-card-btn');
+    closeBtn.style.display = 'none';
+    const discardBtn = document.getElementById('discard-card-btn');
+    discardBtn.style.display = 'inline';
+    const saveBtn = document.getElementById('save-card-btn');
+    saveBtn.style.display = 'inline';
+    const editBtn = document.getElementById('edit-card-btn');
+    editBtn.style.display = 'none';
+    const LEN = old.length;
+
+    for (let i = 0; i < LEN; ++i) {
+      inputs[i].style.display = 'inline'
+      inputs[i].value = old[i].innerHTML;
+      old[i].style.display = 'none';
+    }
+  }
+
   function prepareForCard() {
     let table = document.getElementById("db-table");
     let nav = document.getElementById("nav-div");
@@ -254,7 +464,7 @@
     let table = document.getElementById("db-table");
     let nav = document.getElementById("nav-div");
     table.style.display = 'table';
-    nav.style.display = 'inline';  
+    nav.style.display = 'inline';
   }
 
   function closeCard() {
