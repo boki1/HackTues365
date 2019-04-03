@@ -9,116 +9,6 @@
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 
-<body>
-  <div id="db-table-div">
-    <table id="db-table" cellspacing=20 cellpadding=16 class="table table-hover">
-      <center>
-        <img src="https://imgur.com/aMjyWsy.png" alt="Spenser">
-      </center>
-      <div id="nav-div">
-        <center>
-          <form id="search-form">
-            <button onclick="showAdder()" id="add-btn"><i class="fa fa-plus"></i></button>
-            <button onclick="showRemover()" id="rem-btn"><i class="fa fa-minus"></i></button>
-            <input onkeyup="filterTable()" id="search-inp" class="form-control " type="search" placeholder="Search"
-              aria-label="Search">
-            <button id="search-btn" type="submit"><i class="fa fa-search"></i></button>
-          </form>
-        </center>
-      </div>
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Name</th>
-          <th scope="col">Pills</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><button class="id-button" onclick="showCard(this.textContent)">#TEST</button></td>
-          <td>Goshko</td>
-          <td>Analgin, Parcetamol</td>
-        </tr>
-        <tr>
-          <td><button class="id-button" onclick="showCard(this.textContent)">#DEMO</button></td>
-          <td>Pesho</td>
-          <td>Nurofen, Propolki</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div id="card">
-    <button id="close-card-btn" onclick="closeCard()"><i class="fa fa-close"></i></button>
-    <button id="edit-card-btn" onclick="startEditing()"><i class="fa fa-cog"></i></button>
-    <button id="save-card-btn" onclick="saveChanges()"><i class="fa fa-check"></i></button>
-    <button id="discard-card-btn" onclick="discardChanges()"><i class="fa fa-ban"></i></button>
-    <center>
-      <img id="male" src="https://i.imgur.com/mietY9y.png" alt="Avatar">
-      <img id="female" src="https://i.imgur.com/3U9W11P.png" alt="Avatar">
-      <img id="default" src="https://i.imgur.com/O1RzfLC.png" alt="Avatar">
-    </center>
-    <ul id="info">
-      <h1 id="person"></h1><br>
-
-      <li>
-        <h6 class="subheader">Sex: </h6>
-        <p id="sex-label"></p>
-        <input id="sex-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">ID: </h6>
-        <p id="id-label"></p>
-        <input id="id-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Pills: </h6>
-        <p id="pills-label"></p>
-        <input id="pills-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Contact name: </h6>
-        <p id="contact-name-label"></p>
-        <input id="contact-name-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Contact phone: </h6>
-        <p id="contact-phone-label"></p>
-        <input id="contact-phone-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Birthday: </h6>
-        <p id="birthday-label"></p>
-        <input id="birthday-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Room: </h6>
-        <p id="room-label"></p>
-        <input id="room-inp" class="form-control ">
-        <br>
-      </li>
-
-      <li>
-        <h6 class="subheader">Entering date: </h6>
-        <p id="entering-date-label"></p>
-        <input id="entering-date-inp" class="form-control ">
-      </li>
-
-    </ul>
-  </div>
-</body>
 
 <style>
   #info>li {
@@ -235,7 +125,7 @@
 
   .id-button:hover {
     cursor: pointer;
-    background-color: rgba(255, 248, 231, .5);
+    background-color: rgba(255, 248, 231, .3);
   }
 
   #db-table-div {
@@ -276,7 +166,7 @@
 
   table tr:hover>td {
     background-color: rgba(255, 182, 193, .4);
-    color: #FFF8E7;
+    color: #fff8e7;
   }
 
   table tr>th {
@@ -329,6 +219,118 @@
   }
 </style>
 
+
+<body>
+  <div id="db-table-div">
+    <table id="db-table" cellspacing=20 cellpadding=16 class="table table-hover">
+      <center>
+        <img src="https://imgur.com/aMjyWsy.png" alt="Spenser">
+      </center>
+      <div id="nav-div">
+        <center>
+          <form id="search-form">
+            <button id="add-btn"><i class="fa fa-plus"></i></button>             <!-- onclick="addPatient()"  -->
+            <button id="rem-btn"><i class="fa fa-minus"></i></button>             <!-- onclick="removePatient()"  -->
+            <input onkeyup="filterTable()" id="search-inp" class="form-control " type="search" placeholder="Search"
+              aria-label="Search">
+            <button id="search-btn" type="submit"><i class="fa fa-search"></i></button>
+          </form>
+        </center>
+      </div>
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">Pills</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><button class="id-button" onclick="showCard(this.textContent)">#TEST</button></td>
+          <td>Goshko</td>
+          <td>Analgin, Parcetamol</td>
+        </tr>
+        <tr>
+          <td><button class="id-button" onclick="showCard(this.textContent)">#DEMO</button></td>
+          <td>Pesho</td>
+          <td>Nurofen, Propolki</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="card">
+    <button id="close-card-btn" onclick="closeCard()"><i class="fa fa-close"></i></button>
+    <button id="edit-card-btn" onclick="startEditing()"><i class="fa fa-cog"></i></button>
+    <button id="save-card-btn" onclick="saveChanges()"><i class="fa fa-check"></i></button>
+    <button id="discard-card-btn" onclick="discardChanges()"><i class="fa fa-ban"></i></button>
+    <center>
+      <img id="male" src="https://i.imgur.com/mietY9y.png" alt="Avatar">
+      <img id="female" src="https://i.imgur.com/3U9W11P.png" alt="Avatar">
+      <img id="default" src="https://i.imgur.com/O1RzfLC.png" alt="Avatar">
+    </center>
+    <ul id="info">
+      <h1 id="person"></h1><br>
+
+      <li>
+        <h6 class="subheader">Sex: </h6>
+        <p id="sex-label"></p>
+        <input id="sex-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">ID: </h6>
+        <p id="id-label"></p>
+        <input id="id-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Pills: </h6>
+        <p id="pills-label"></p>
+        <input id="pills-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Contact name: </h6>
+        <p id="contact-name-label"></p>
+        <input id="contact-name-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Contact phone: </h6>
+        <p id="contact-phone-label"></p>
+        <input id="contact-phone-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Birthday: </h6>
+        <p id="birthday-label"></p>
+        <input id="birthday-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Room: </h6>
+        <p id="room-label"></p>
+        <input id="room-inp" class="form-control ">
+        <br>
+      </li>
+
+      <li>
+        <h6 class="subheader">Entering date: </h6>
+        <p id="entering-date-label"></p>
+        <input id="entering-date-inp" class="form-control ">
+      </li>
+
+    </ul>
+  </div>
+</body>
+
 <script>
   const OLD = [
     document.getElementById('id-label'),
@@ -378,7 +380,7 @@
     DISCARD_BUTTON.style.display = 'none';
     SAVE_BUTTON.style.display = 'none';
     EDIT_BUTTON.style.display = 'inline';
-    
+
     console.log("Changes discarded..");
     for (let i = 0; i < LEN; ++i) {
       NEW[i].style.display = 'none'
@@ -392,7 +394,7 @@
     DISCARD_BUTTON.style.display = 'inline';
     SAVE_BUTTON.style.display = 'inline';
     EDIT_BUTTON.style.display = 'none';
-    
+
     console.log('Old version:');
     for (let i = 0; i < LEN; ++i) {
       NEW[i].style.display = 'inline'
@@ -500,34 +502,31 @@
     }
   }
 
-  function showRemover() {
-    let id = prompt('Patient ID:', 0);
-    id = '#' + id;
+  function removePatient() {
+    let id = prompt('Patient ID (#ABCD):', '#');
+
     let table = document.getElementById("db-table");
     let rowIdx = 1;
     let appears = false;
-    let input = document.getElementById("search-inp");
-    let filter = input.value.toUpperCase();
-    let tr = table.getElementsByTagName("tr");
-    for (i = 0; i < tr.length; ++i) {
-      td = tr[i].getElementsByTagName("td")[0];
-      if (td) {
-        value = td.textContent || td.innerText;
-        if (value != id) {
-          rowIdx++;
-        } else {
-          appears = true;
-          break;
-        }
+    let rows = table.getElementsByTagName("tr");
+
+    for (i = 1; i < rows.length; ++i) {
+      const columns = rows[i].getElementsByTagName("td");
+      const idColumn = columns[0];
+      const idButton = idColumn.getElementsByClassName('id-button')[0];
+      const columnContent = idButton.innerText;
+      if (columnContent != id) {
+        rowIdx++;
+      } else {
+        appears = true;
+        break;
       }
     }
-    if (appears) {
-      table.deleteRow(rowIdx);
-    } else {
-      alert('User with this ID does not exist in records.')
-    }
-  }
 
+    if (appears) table.deleteRow(rowIdx);
+    else alert('User with such ID does not appear in our records!');
+
+  }
 
   function calcNextIdx() {
     return document.getElementById("db-table").getElementsByTagName("tr").length;
@@ -555,26 +554,59 @@
     return fPills;
   }
 
-  function fillNewCells(row, idx, person, receipt) {
+  function fillNewCells(row, id, person, receipt) {
     let cell0 = row.insertCell(0);
-    var cell1 = row.insertCell(1);
-    var cell2 = row.insertCell(2);
-    cell0.innerHTML = idx;
+    let cell1 = row.insertCell(1);
+    let cell2 = row.insertCell(2);
+
+    let newIdBtn = document.createElement('button');
+    newIdBtn.setAttribute('class', 'id-button');
+    newIdBtn.innerHTML = id;
+    newIdBtn.addEventListener('click', showCard, false);
+    cell0.appendChild(newIdBtn);
+
     cell1.innerHTML = person;
     cell2.innerHTML = receipt;
   }
 
-  function showAdder() {
-    let person = prompt("Name: ", "Name");
+  function SaveDetailInfo(_id, _person, _sex, _contactName, _contactPhone, _birthday, _room) {
+    console.log(`ID: ${_id}, Person: ${_person}, Sex: ${_sex}, ContactName: ${_contactName}, ContactPhone: ${_contactPhone}, Birthday: ${_birthday}, Room: ${_room}`);
+  }
+
+  function SavePills(_id, _pills) {
+    console.log(`ID: ${_id}, Pills: ${_pills}`);
+  }
+
+  function addPatient() {
+    const person = prompt("Name: ", "Goshko Petrov");
     if (!person) return;
-    let pills = prompt("Format: pill -> delay hour;", "Pills")
+    const pills = prompt("Pills (pill -> hour;):", "Aspirin -> 12:00;");
     if (!pills) return;
+    const sex = prompt("Sex (Male / Female):", "Male");
+    if (!sex) return;
+    const contactName = prompt("Name for contact (son / daughter...):", "Ivan Petrov");
+    if (!contactName) return;
+    const contactPhone = prompt("Phone for contact (son's / daughter's...):", "08** *** ***");
+    if (!contactPhone) return;
+    const birthday = prompt("Birthday (DD/MM/YYYY):", "11-11-1111");
+    if (!birthday) return;
+    const room = prompt("Room: ", "0");
+    if (!room) return;
+    const today = new Date();
+    const enteringDate = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+    console.log('done getting info');
+
+    let id = generateRandomId();
     let pillObj = getFormattedOutputAsObj(pills);
+
+    //SaveToDB
+    SaveDetailInfo(id, person, sex, contactName, contactPhone, birthday, room);
+    SavePills(id, pillObj);
+
     let fOutput = getFormattedOutput(pillObj);
     let rowIdx = calcNextIdx();
-    let idx = generateRandomId();
     let row = document.getElementById("db-table").insertRow(rowIdx);
-    fillNewCells(row, idx, person, fOutput);
+    fillNewCells(row, id, person, fOutput);
   }
 
   function generateRandomId() {
@@ -599,19 +631,23 @@
         }
       }
     } while (appears);
-
     return ranID;
   }
 
-  const connection = new WebSocket('ws://' + location.hostname + ':81/');
+  const ADD_PATIENT_BUTTON = document.getElementById('add-btn');
+  ADD_PATIENT_BUTTON.addEventListener('click', addPatient);
+  const DEL_PATIENT_BUTTON = document.getElementById('rem-btn');
+  DEL_PATIENT_BUTTON.addEventListener('click', removePatient);
 
-  connection.addEventListener('message', () => {
-    console.log('Message: ', event.data);
-    for (let i = 0; i < 1; ++i) {
-      let row = document.getElementById("db-table").insertRow(calcNextIdx());
-      fillNewCells(row, generateRandomId(), event.data, 'TEST FILL' );
-    }
-  });
+  // const connection = new WebSocket('ws://' + location.hostname + ':81/');
+
+  // connection.addEventListener('message', () => {
+  //   console.log('Message: ', event.data);
+  //   for (let i = 0; i < 1; ++i) {
+  //     let row = document.getElementById("db-table").insertRow(calcNextIdx());
+  //     fillNewCells(row, generateRandomId(), event.data, 'TEST FILL');
+  //   }
+  // });
 
 </script>
 
