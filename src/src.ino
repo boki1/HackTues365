@@ -1,6 +1,5 @@
 //===================RTC Libs==================//
-#include <NTPClient.h>
-#include <WiFiUdp.h>
+#include "time.h"
 
 //==================SQLite3 Libs==============//
 #include <FS.h>
@@ -21,8 +20,8 @@
 #define RST_PIN 9
 
 #ifndef STASSID
-#define STASSID "AndroidAP"
-#define STAPSK  "hari1234"
+#define STASSID "Momchilovi1"
+#define STAPSK  "momchilovi93"
 #endif
 
 const char *ssid = STASSID;
@@ -31,8 +30,9 @@ const char *password = STAPSK;
 WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
 
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP);
+const char* ntpServer = "europe.pool.ntp.org";
+const long  gmtOffset_sec = 7200;
+const int   daylightOffset_sec = 3600;
 
 sqlite3 *db1;
 int rc;
@@ -40,6 +40,18 @@ sqlite3_stmt *res;
 const char *tail;
 
 volatile int userNum = 0; //user login id
+
+//=========== NTP Function===================//
+
+void printLocalTime()
+{
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+    return;
+  }
+  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+}
 
 //=========== Callback SQL Functions=========//
 const char* data = "Callback function called";
@@ -154,46 +166,61 @@ void setup(void) {
   server.on("/", handleRoot);
   server.onNotFound(handleNotFound);
   server.begin();
+  
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);
-  timeClient.begin();
-  timeClient.setTimeOffset(10800);
+  
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  printLocalTime();
+  
   Serial.println("Server started");
-  Serial.println("Local time : " + timeClient.getFormattedTime());
 }
 
 void loop(void) {
   server.handleClient();
   webSocket.loop();
-  timeClient.update();
 }
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length) 
   {
   switch (type) {
     case WStype_DISCONNECTED:
-      userNum = 0;
+      userNum = userNum - 1;
         break;
     case WStype_CONNECTED:
       {
-        String sql = "Select * from user_info_harry where card_id between '1' and '3'";
+        userNum = userNum + 1;
+        if (userNum == 1){
+        String sql = "Select * from user_info2 where card_id is not null;";
         rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
+        if (rc != SQLITE_OK) {
+          String resp = "Failed to fetch data: ";
+          resp += sqlite3_errmsg(db1);
+          Serial.println(resp.c_str());
+          return;
+        }
         while (sqlite3_step(res) == SQLITE_ROW) {
           Serial.println((const char *) sqlite3_column_text(res, 1));
           webSocket.sendTXT(0, sqlite3_column_text(res, 1));
-        }
-      }
-
+         }
+       }
       sqlite3_finalize(res);
       break;
     case WStype_TEXT:
     {
+      if (userNum == 1){
       String sql = ((const char*) payload);
-      Serial.println(sql);
-      rc = db_exec(db1, sql.c_str());
+      db_exec(db1, sql.c_str());
       if (rc != SQLITE_OK) {
         Serial.println("ne e dobre polojenieto");
         }
+      String sql2 = "Select * from user_info2";
+      db_exec(db1, sql2.c_str()); 
+      if (rc != SQLITE_OK) {
+        Serial.println("ne e dobre polojenieto");
+        }
+       }
+      }
      }
       break;
   }
