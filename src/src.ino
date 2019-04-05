@@ -18,11 +18,11 @@
 #define SS_PIN 4
 #define RST_PIN 9
 
-#define COLUMN_COUNT 4
+#define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "HTC Portable Hotspot EC18"
-#define STAPSK  "Password321what"
+#define STASSID "Momchilovi1"
+#define STAPSK  "momchilovi93"
 #endif
 
 const char *ssid = STASSID;
@@ -172,7 +172,7 @@ void setup(void) {
 
   sqlite3_initialize(); //Init SQLite3
 
-  if (db_open("/spiffs/pills.db", &db1))
+  if (db_open("/spiffs/data.db", &db1))
     return;
 
   server.on("/", handleRoot);
@@ -198,7 +198,7 @@ void stack_results() {
   String curr = "";
   int i = 0;
   for (String r : results) {
-    if (i >= 4) {
+    if (i >= COLUMN_COUNT) {
       _new.push_back(curr);
       curr = "";
       i = 0;
@@ -210,6 +210,17 @@ void stack_results() {
   results = _new;
 }
 
+String stack_pills(String id){
+  String pillsResult = "";
+  String getPills = "SELECT medicines from medicines;";
+  db_exec(db1, getPills.c_str());
+
+  for (String r: results){
+    pillsResult += (r + " ");
+    }
+  return pillsResult;
+  }
+  
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 {
   switch (type) {
@@ -219,16 +230,36 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
     case WStype_CONNECTED:
       userNum++;
       if (userNum == 1) {
-        String rowCountQuery = "SELECT * FROM user_info2";
-        db_exec(db1, rowCountQuery.c_str());
-        stack_results();
-        Serial.printf("Results length: %d\n", results.size());
-        for (String r : results) {
-          Serial.println("Result: " + r);
-        }
+        //String rowCountQuery = "SELECT count(id) FROM details;";
+        //db_exec(db1, rowCountQuery.c_str());
 
-        for (String row: results) {
-          webSocket.sendTXT(0, row);
+        String getIdQuery = "SELECT id from details;";
+        db_exec(db1, getIdQuery.c_str());
+
+        std::vector<String> IDs = results;
+        results.clear();
+
+        String getNameQuery = "SELECT name from details;";
+        db_exec(db1, getNameQuery.c_str());
+
+        std::vector<String> Names = results;
+        results.clear();
+
+
+        std::vector<String> Pills;
+        for (String id: IDs){
+          Pills.push_back(stack_pills(id));
+         }
+//        Serial.printf("%d %d %d", IDs.size(), Names.size(), Pills.size());
+//        stack_results();
+//        Serial.printf("Results length: %d\n", results.size());
+//        for (String r : results) {
+//          Serial.println("Result: " + r);
+//        }
+
+        const int LEN = IDs.size();
+        for (int i = 0; i < LEN; ++i) {
+          webSocket.sendTXT(0, IDs[i] + ";" + Names[i] + ";" + Pills[i]);
           delay(10);
         }
 
