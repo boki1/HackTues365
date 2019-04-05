@@ -185,6 +185,7 @@
     height: 100%;
     background-image: url("https://i.imgur.com/eLdt7r6.jpg");
     background-attachment: fixed;
+    background-size: cover;
   }
 
   #search-btn,
@@ -243,6 +244,16 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td><button class="id-button">#TEST</button></td>
+          <td>Goshko</td>
+          <td>Analgin, Parcetamol</td>
+        </tr>
+        <tr>
+          <td><button class="id-button">#DEMO</button></td>
+          <td>Pesho</td>
+          <td>Nurofen, Propolki</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -321,6 +332,8 @@
 </body>
 
 <script>
+  let connection;
+
   document.getElementsByTagName('body')[0].onload = () => {
     const idBtns = document.getElementsByClassName('id-button');
     for (btn of idBtns) {
@@ -342,6 +355,15 @@
     searchInputBox.addEventListener('keyup', () => {
       console.log(document.getElementById("search-inp").value.toUpperCase());
       filterTable();
+    });
+
+    connection = new WebSocket('ws://' + location.hostname + ':81/');
+    connection.addEventListener('message', () => {
+      console.log('Message: ', event.data);
+      for (let i = 0; i < 1; ++i) {
+        let row = document.getElementById("db-table").insertRow(calcNextIdx());
+        fillNewCells(row, generateRandomId(), event.data, 'TEST FILL');
+      }
     });
   };
 
@@ -540,10 +562,13 @@
       }
     }
 
-    connection.send("DELETE FROM user_info2 where card_id ='" + id + "'");
-
-    if (appears) table.deleteRow(rowIdx);
-    else alert('User with such ID does not appear in our records!');
+    if (appears) {
+      table.deleteRow(rowIdx);
+      connection.send(`DELETE FROM Medicine WHERE ID=${id}`);
+      connection.send(`DELETE FROM Details WHERE ID=${id}`);
+    } else {
+      alert('User with such ID does not appear in our records!');
+    }
   }
 
   function calcNextIdx() {
@@ -572,11 +597,6 @@
     return fPills;
   }
 
-  // const
-  // trigger.addEventListener('mouseover', function(ev) {
-
-  // let currId;
-
   function fillNewCells(row, id, person, receipt) {
     let cell0 = row.insertCell(0);
     let cell1 = row.insertCell(1);
@@ -592,12 +612,18 @@
     cell2.innerHTML = receipt;
   }
 
+  // TODO: ADD TABLE Details
   function SaveDetailInfo(_id, _person, _sex, _contactName, _contactPhone, _birthday, _room) {
-    console.log(`ID: ${_id}, Person: ${_person}, Sex: ${_sex}, ContactName: ${_contactName}, ContactPhone: ${_contactPhone}, Birthday: ${_birthday}, Room: ${_room}`);
+    connection.send(`INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`);
+    console.log(`INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`);
   }
 
+  // TODO: ADD TABLE Medicines
   function SavePills(_id, _pills) {
-    console.log(_pills);
+    Object.keys(_pills).forEach((pill, hour) => {
+      connection.send(`INSERT INTO Medicines VALUES('${_id}', '${pill}', '${hour}')`);
+      console.log(`INSERT INTO Medicines VALUES('${_id}', '${pill}', '${hour}')`);
+    });
   }
 
   function addPatient() {
@@ -623,15 +649,49 @@
     let pillObj = getFormattedOutputAsObj(pills);
 
     //SaveToDB
-    SaveDetailInfo(id, person, sex, contactName, contactPhone, birthday, room);
+    const hasValidDetails = validateDetails(person, sex, contactName, contactPhone, birthday, room);
+    const hasValidPills = validateMedicines(pillObj);
+
+    if (!(hasValidDetails && hasValidPills)) {
+      alert('WHY YOU TRY HACK US?');
+      return;
+    };
+
+    SaveDetailInfo(id, personObj);
     SavePills(id, pillObj);
 
     let fOutput = getFormattedOutput(pillObj);
     let rowIdx = calcNextIdx();
     let row = document.getElementById("db-table").insertRow(rowIdx);
-    fillNewCells(row, id, person, fOutput);
-    connection.send("INSERT INTO user_info2 VALUES ('" + id +"','" + person + "','" + fOutput + "', '10:00')");
+    NewCells(row, id, person, fOutput);
   }
+
+  function validateMedicines(pillObj) {
+    let isValid = true;
+    Object.keys(pillObj).forEach((pill, hour) => {
+      if (!(/[^a-zA-Z \d]/.test(pill)) || !(/[^\d:]/).test(hour)) {
+        isValid = false;
+      }
+    });
+    return isValid;
+  }
+
+  function validateDetails(person, sex, contactName, contactPhone, birthday, room) {
+    if (!(/[^a-zA-Z ]/.test(person) && /[^a-zA-Z]/.test(sex) && /[^a-zA-Z ]/.test(contactName))) {
+      return false;
+    }
+    if (!(/[^\d'" /-\\]/.test(birthday))) {
+      return false;
+    }
+    if (!(/[^\d]/.test(room))) {
+      return false;
+    }
+    if (!(/[^\d +]/.test(contactPhone))) {
+      return false;
+    }
+    return true;
+  }
+
 
   function generateRandomId() {
     let appears = false;
@@ -657,15 +717,7 @@
     } while (appears);
     return ranID;
   }
-  const connection = new WebSocket('ws://' + location.hostname + ':81/');
 
-  connection.addEventListener('message', () => {
-    console.log('Message: ', event.data);
-    for (let i = 0; i < 1; ++i) {
-      let row = document.getElementById("db-table").insertRow(calcNextIdx());
-      fillNewCells(row, generateRandomId(), event.data, 'TEST FILL');
-    }
-  });
 </script>
 
 </html>
