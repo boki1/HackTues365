@@ -21,8 +21,8 @@
 #define COLUMN_COUNT 4
 
 #ifndef STASSID
-#define STASSID "AndroidAP"
-#define STAPSK  "hari1234"
+#define STASSID "HTC Portable Hotspot EC18"
+#define STAPSK  "Password321what"
 #endif
 
 const char *ssid = STASSID;
@@ -47,7 +47,7 @@ volatile int userNum = 0; //user login id
 void printLocalTime()
 {
   struct tm timeinfo;
-  if(!getLocalTime(&timeinfo)){
+  if (!getLocalTime(&timeinfo)) {
     Serial.println("Failed to obtain time");
     return;
   }
@@ -130,7 +130,7 @@ void setup(void) {
   Serial.begin(115200); //Start Serial conn
   SPIFFS.begin(); //Start the SPI Flash File System
 
-//============Connect to a WiFi AP============//
+  //============Connect to a WiFi AP============//
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -197,7 +197,7 @@ void stack_results() {
   std::vector<String> _new;
   String curr = "";
   int i = 0;
-  for (String r: results) {
+  for (String r : results) {
     if (i >= 4) {
       _new.push_back(curr);
       curr = "";
@@ -213,34 +213,40 @@ void stack_results() {
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 {
   switch (type) {
-  case WStype_DISCONNECTED:
-    userNum = userNum - 1;
-    break;
-  case WStype_CONNECTED:
-    userNum++;
-    if (userNum == 1) {
-      String rowCountQuery = "SELECT * FROM user_info2";
-      db_exec(db1, rowCountQuery.c_str());
-      stack_results();
-      Serial.printf("Results length: %d\n", results.size());
-      for (String r: results) {
-        Serial.println("Result: " + r);
-      }
-    }
-    sqlite3_finalize(res);
-    break;
+    case WStype_DISCONNECTED:
+      userNum = userNum - 1;
+      break;
+    case WStype_CONNECTED:
+      userNum++;
+      if (userNum == 1) {
+        String rowCountQuery = "SELECT * FROM user_info2";
+        db_exec(db1, rowCountQuery.c_str());
+        stack_results();
+        Serial.printf("Results length: %d\n", results.size());
+        for (String r : results) {
+          Serial.println("Result: " + r);
+        }
 
-  case WStype_TEXT:
-    if (userNum == 1) {
-      String sql = ((const char*) payload);
-      db_exec(db1, sql.c_str());
-      if (rc != SQLITE_OK)
-        Serial.println("ne e dobre polojenieto");
-      String sql2 = "Select * from user_info2";
-      db_exec(db1, sql2.c_str());
-      if (rc != SQLITE_OK)
-        Serial.println("ne e dobre polojenieto");
-    }
-    break;
+        for (String row: results) {
+          webSocket.sendTXT(0, row);
+          delay(10);
+        }
+
+      }
+      sqlite3_finalize(res);
+      break;
+
+    case WStype_TEXT:
+      if (userNum == 1) {
+        String sql = ((const char*) payload);
+        db_exec(db1, sql.c_str());
+        if (rc != SQLITE_OK)
+          Serial.println("ne e dobre polojenieto");
+        String sql2 = "Select * from user_info2";
+        db_exec(db1, sql2.c_str());
+        if (rc != SQLITE_OK)
+          Serial.println("ne e dobre polojenieto");
+      }
+      break;
   }
 }
