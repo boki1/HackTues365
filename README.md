@@ -32,6 +32,14 @@ Link to the presenttion: https://prezi.com/dashboard/next/#/details/qeja4hnnzc6y
 
 A system, designed to help the people in the rest homes. Its componends are following: there's a main station from which the elderly can simply get their pills, and substations - notification bases. The notifications contain a light and a sound signal that is indicating when the time for getting the pills is approaching.
 
+## FAQ:
+
+    А: How will it be ensured that older people do not lose their ID cards?
+    В: This can be done by using bracelets instead of cards or chips.
+
+    A: Is there a way to know when a container of medicine is empty?
+    B: A system of sensors will be introduced to detect the presence of drugs in the given container.
+
 ###### --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ![](PreziPresentation/_1.png)
