@@ -1,6 +1,5 @@
 //===================RTC Libs==================//
 #include "time.h"
-
 //==================SQLite3 Libs==============//
 #include <FS.h>
 #include <FSImpl.h>
@@ -20,8 +19,8 @@
 #define RST_PIN 9
 
 #ifndef STASSID
-#define STASSID "Momchilovi1"
-#define STAPSK  "momchilovi93"
+#define STASSID "AndroidAP"
+#define STAPSK  "hari1234"
 #endif
 
 const char *ssid = STASSID;
@@ -54,27 +53,30 @@ void printLocalTime()
 }
 
 //--------------------------------------------------------------------------------------------
-//   _____     _ _ _           _      _____ _____ __       _____             _   _             
-//  |     |___| | | |_ ___ ___| |_   |   __|     |  |     |   __|_ _ ___ ___| |_|_|___ ___ ___ 
+//   _____     _ _ _           _      _____ _____ __       _____             _   _
+//  |     |___| | | |_ ___ ___| |_   |   __|     |  |     |   __|_ _ ___ ___| |_|_|___ ___ ___
 //  |   --| .'| | | . | .'|  _| '_|  |__   |  |  |  |__   |   __| | |   |  _|  _| | . |   |_ -|
 //  |_____|__,|_|_|___|__,|___|_,_|  |_____|__  _|_____|  |__|  |___|_|_|___|_| |_|___|_|_|___|
-//                                            |__|                                             
+//
+std::vector<String> results;
 const char* data = "Callback function called";
 static int callback(void *data, int argc, char **argv, char **azColName) {
-  Serial.printf("%s: ", (const char*)data);
+  //Serial.printf("%s: ", (const char*) data);
   for (int i = 0; i < argc; ++i) {
-    Serial.printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+    String current = String(argv[i]);
+    if (current != "NULL")
+      results.push_back(current);
   }
-  Serial.printf("\n");
+  // Serial.printf("Results len: %d\n", results.size());
   return 0;
 }
 
-//---------------------------------------------------------                                                         
-//   _____                _____ _____ __       ____  _____ 
+//---------------------------------------------------------
+//   _____                _____ _____ __       ____  _____
 //  |     |___ ___ ___   |   __|     |  |     |    \| __  |
 //  |  |  | . | -_|   |  |__   |  |  |  |__   |  |  | __ -|
 //  |_____|  _|___|_|_|  |_____|__  _|_____|  |____/|_____|
-//        |_|                     |__|                     
+//        |_|                     |__|
 
 int db_open(const char *filename, sqlite3 **db) {
   int rc = sqlite3_open(filename, db);
@@ -90,10 +92,6 @@ int db_open(const char *filename, sqlite3 **db) {
 //=============== Execute SQL lines========//
 char *zErrMsg = 0;
 void db_exec(sqlite3 *db, const char *sql) {
-  Serial.println(sql);
-  long start = micros();
-  Serial.println("%s\n", data);\
-  //xd
   int rc = sqlite3_exec(db, sql, callback, (void*) data, &zErrMsg);
   if (rc != SQLITE_OK) {
     Serial.printf("SQL error: %s\n", zErrMsg);
@@ -101,8 +99,6 @@ void db_exec(sqlite3 *db, const char *sql) {
   } else {
     Serial.printf("Operation done successfully\n");
   }
-  Serial.print(F("Time taken:"));
-  Serial.println(micros() - start);
 }
 
 //==============Server handlers===========//
@@ -128,7 +124,7 @@ void handleNotFound() {
 }
 
 void setup(void) {
-  
+
   Serial.begin(115200); //Start Serial conn
   SPIFFS.begin(); //Start the SPI Flash File System
 
@@ -176,13 +172,13 @@ void setup(void) {
   server.on("/", handleRoot);
   server.onNotFound(handleNotFound);
   server.begin();
-  
+
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);
-  
+
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   printLocalTime();
-  
+
   Serial.println("Server started");
 }
 
@@ -191,7 +187,7 @@ void loop(void) {
   webSocket.loop();
 }
 
-void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length) 
+void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
   {
   switch (type) {
     case WStype_DISCONNECTED:
@@ -201,14 +197,14 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
       {
         userNum = userNum + 1;
         if (userNum == 1){
-        String sql = "Select * from user_info2 where card_id is not null;";
-        rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
-        if (rc != SQLITE_OK) {
-          String resp = "Failed to fetch data: ";
-          resp += sqlite3_errmsg(db1);
-          Serial.println(resp.c_str());
-          return;
+        String rowCountQuery = "Select * from user_info2;";
+        db_exec(db1, rowCountQuery.c_str());
+
+        Serial.printf("Results length: %d\n", results.size());
+        for (String r: results) {
+          Serial.println("Result: " + r);
         }
+
         while (sqlite3_step(res) == SQLITE_ROW) {
           Serial.println((const char *) sqlite3_column_text(res, 1));
           webSocket.sendTXT(0, sqlite3_column_text(res, 1));
@@ -221,14 +217,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
       if (userNum == 1){
       String sql = ((const char*) payload);
       db_exec(db1, sql.c_str());
-      if (rc != SQLITE_OK) {
-        Serial.println("ne e dobre polojenieto");
-        }
-      String sql2 = "Select * from user_info2";
-      db_exec(db1, sql2.c_str()); 
-      if (rc != SQLITE_OK) {
-        Serial.println("ne e dobre polojenieto");
-        }
+
+      //String sql2 = "Select * from user_info2";
+      //db_exec(db1, sql2.c_str());
+
        }
       }
      }
