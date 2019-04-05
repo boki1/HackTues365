@@ -212,12 +212,13 @@ void stack_results() {
 
 String stack_pills(String id){
   String pillsResult = "";
-  String getPills = "SELECT medicines from medicines where id="+ id +";";
+  String getPills = "SELECT medicines from medicines where id='"+ id +"';";
   db_exec(db1, getPills.c_str());
 
   for (String r: results){
     pillsResult += (r + " ");
     }
+  results.clear();
   return pillsResult;
   }
   
@@ -271,10 +272,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
       if (userNum == 1) {
         String sql = ((const char*) payload);
         db_exec(db1, sql.c_str());
-        if (rc != SQLITE_OK)
-          Serial.println("ne e dobre polojenieto");
-        String sql2 = "Select * from user_info2";
-        db_exec(db1, sql2.c_str());
         if (rc != SQLITE_OK)
           Serial.println("ne e dobre polojenieto");
       }
