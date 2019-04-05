@@ -244,7 +244,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <!-- <tr>
           <td><button class="id-button">#TEST</button></td>
           <td>Goshko</td>
           <td>Analgin, Parcetamol</td>
@@ -253,7 +253,7 @@
           <td><button class="id-button">#DEMO</button></td>
           <td>Pesho</td>
           <td>Nurofen, Propolki</td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
   </div>
@@ -347,6 +347,7 @@
       console.info('Clicked on Add Patient Btn');
       addPatient();
     });
+
     delPatientButton.addEventListener('click', () => {
       console.info('Clicked on Delete Patient Btn');
       delPatient();
@@ -360,11 +361,14 @@
     connection = new WebSocket('ws://' + location.hostname + ':81/');
     connection.addEventListener('message', () => {
       console.log('Message: ', event.data);
-      for (let i = 0; i < 1; ++i) {
-        let row = document.getElementById("db-table").insertRow(calcNextIdx());
-        fillNewCells(row, generateRandomId(), event.data, 'TEST FILL');
-      }
+      const row = event.data.split(';');
+      const id = row[0];
+      const personName = row[1];
+      const pills = getFormattedOutput(row[2]);
+      fillNewCells(id, personName, pills);
+      console.log(info);
     });
+
   };
 
   const OLD = [
@@ -597,7 +601,10 @@
     return fPills;
   }
 
-  function fillNewCells(row, id, person, receipt) {
+  function fillNewCells(id, person, receipt) {
+    let rowIdx = calcNextIdx();
+    let row = document.getElementById("db-table").insertRow(rowIdx);
+
     let cell0 = row.insertCell(0);
     let cell1 = row.insertCell(1);
     let cell2 = row.insertCell(2);
@@ -614,8 +621,12 @@
 
   // TODO: ADD TABLE Details
   function SaveDetailInfo(_id, _person, _sex, _contactName, _contactPhone, _birthday, _room) {
-    connection.send(`INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`);
-    console.log(`INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`);
+    connection.send(
+      `INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
+      );
+    console.log(
+      `INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
+      );
   }
 
   // TODO: ADD TABLE Medicines
@@ -649,21 +660,19 @@
     let pillObj = getFormattedOutputAsObj(pills);
 
     //SaveToDB
-    const hasValidDetails = validateDetails(person, sex, contactName, contactPhone, birthday, room); 
-    const hasValidPills = validateMedicines(pillObj);
+    const hasValidDetails = true;//validateDetails(person, sex, contactName, contactPhone, birthday, room);
+    const hasValidPills = true;//validateMedicines(pillObj);
 
     if (!(hasValidDetails && hasValidPills)) {
       alert('WHY YOU TRY HACK US?');
       return;
     };
-    
-    SaveDetailInfo(id, personObj);
+
+    SaveDetailInfo(id, person, sex, contactName, contactPhone, birthday, room, enteringDate);
     SavePills(id, pillObj);
 
     let fOutput = getFormattedOutput(pillObj);
-    let rowIdx = calcNextIdx();
-    let row = document.getElementById("db-table").insertRow(rowIdx);
-    NewCells(row, id, person, fOutput);
+    fillNewCells(id, person, fOutput);
   }
 
   function validateMedicines(pillObj) {
@@ -692,7 +701,6 @@
     return true;
   }
 
-
   function generateRandomId() {
     let appears = false;
     let ranID;
@@ -717,7 +725,6 @@
     } while (appears);
     return ranID;
   }
-
 </script>
 
 </html>
