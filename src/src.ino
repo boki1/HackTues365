@@ -212,7 +212,7 @@ void stack_results() {
 
 String stack_pills(String id){
   String pillsResult = "";
-  String getPills = "SELECT medicines from medicines;";
+  String getPills = "SELECT medicines from medicines where id="+ id +";";
   db_exec(db1, getPills.c_str());
 
   for (String r: results){
@@ -239,7 +239,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
         std::vector<String> IDs = results;
         results.clear();
 
-        String getNameQuery = "SELECT name from details;";
+        String getNameQuery = "SELECT person from details;";
         db_exec(db1, getNameQuery.c_str());
 
         std::vector<String> Names = results;
@@ -250,12 +250,12 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
         for (String id: IDs){
           Pills.push_back(stack_pills(id));
          }
-//        Serial.printf("%d %d %d", IDs.size(), Names.size(), Pills.size());
+        Serial.printf("%d %d %d", IDs.size(), Names.size(), Pills.size());
 //        stack_results();
 //        Serial.printf("Results length: %d\n", results.size());
-//        for (String r : results) {
-//          Serial.println("Result: " + r);
-//        }
+        for (String r : Pills) {
+          Serial.println("Result: " + r);
+        }
 
         const int LEN = IDs.size();
         for (int i = 0; i < LEN; ++i) {
