@@ -142,8 +142,13 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
+<<<<<<< HEAD:src/src/src.ino
   //   __    _     _      _____ _____ _____ _____ _____ _____                _           _
   //  |  |  |_|___| |_   |   __|  _  |     |   __|   __|   __|   ___ ___ ___| |_ ___ ___| |_ ___
+=======
+  //   __    _     _      _____ _____ _____ _____ _____ _____                _           _       
+  //  |  |  |_|___| |_   |   __|  _  |     |   __|   __|   __|   ___ ___ ___| |_ ___ ___| |_ ___ 
+>>>>>>> master:src/src.ino
   //  |  |__| |_ -|  _|  |__   |   __|-   -|   __|   __|__   |  |  _| . |   |  _| -_|   |  _|_ -|
   //  |_____|_|___|_|    |_____|__|  |_____|__|  |__|  |_____|  |___|___|_|_|_| |___|_|_|_| |___|
 
@@ -208,6 +213,18 @@ void stack_results() {
   }
   results.clear();
   results = _new;
+=======
+    if (i++ <= 4) {
+      curr += r;
+      curr += " ";
+    } else {
+      _new.push_back(curr);
+      curr = "";
+    }
+    results.clear();
+    results = _new;
+  }
+>>>>>>> master:src/src.ino
 }
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
@@ -220,16 +237,28 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
     userNum++;
     if (userNum == 1) {
       String rowCountQuery = "SELECT * FROM user_info2";
+<<<<<<< HEAD:src/src/src.ino
       db_exec(db1, rowCountQuery.c_str());
+=======
+      db_exec(db1, rowCountQuery,.c_str());
+>>>>>>> master:src/src.ino
       stack_results();
       Serial.printf("Results length: %d\n", results.size());
       for (String r: results) {
         Serial.println("Result: " + r);
+<<<<<<< HEAD:src/src/src.ino
       }
     }
     sqlite3_finalize(res);
     break;
 
+=======
+      }      
+    }
+    sqlite3_finalize(res);
+    break;
+  
+>>>>>>> master:src/src.ino
   case WStype_TEXT:
     if (userNum == 1) {
       String sql = ((const char*) payload);
@@ -238,7 +267,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
         Serial.println("ne e dobre polojenieto");
       String sql2 = "Select * from user_info2";
       db_exec(db1, sql2.c_str());
+<<<<<<< HEAD:src/src/src.ino
       if (rc != SQLITE_OK)
+=======
+      if (rc != SQLITE_OK) 
+>>>>>>> master:src/src.ino
         Serial.println("ne e dobre polojenieto");
     }
     break;
