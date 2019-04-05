@@ -366,7 +366,6 @@
       const personName = row[1];
       const pills = row[2];
       fillNewCells(id, personName, pills);
-      console.log(info);
     });
 
   };
@@ -568,7 +567,7 @@
 
     if (appears) {
       table.deleteRow(rowIdx);
-      connection.send(`DELETE FROM Medicine WHERE ID=${id}`);
+      connection.send(`DELETE FROM Medicines WHERE ID=${id}`);
       connection.send(`DELETE FROM Details WHERE ID=${id}`);
     } else {
       alert('User with such ID does not appear in our records!');
