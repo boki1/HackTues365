@@ -364,7 +364,7 @@
       const row = event.data.split(';');
       const id = row[0];
       const personName = row[1];
-      const pills = getFormattedOutput(getFormattedOutputAsObj(row.slice(2)));
+      const pills = row[2];
       fillNewCells(id, personName, pills);
       console.log(info);
     });
