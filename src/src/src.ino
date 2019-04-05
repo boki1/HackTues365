@@ -18,6 +18,8 @@
 #define SS_PIN 4
 #define RST_PIN 9
 
+#define COLUMN_COUNT 4
+
 #ifndef STASSID
 #define STASSID "AndroidAP"
 #define STAPSK  "hari1234"
@@ -140,7 +142,11 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-//===========List SPIFFS contents=================//
+  //   __    _     _      _____ _____ _____ _____ _____ _____                _           _
+  //  |  |  |_|___| |_   |   __|  _  |     |   __|   __|   __|   ___ ___ ___| |_ ___ ___| |_ ___
+  //  |  |__| |_ -|  _|  |__   |   __|-   -|   __|   __|__   |  |  _| . |   |  _| -_|   |  _|_ -|
+  //  |_____|_|___|_|    |_____|__|  |_____|__|  |__|  |_____|  |___|___|_|_|_| |___|_|_|_| |___|
+
   File root = SPIFFS.open("/spiffs/");
   if (!root) {
     Serial.println("- failed to open directory");
@@ -187,43 +193,54 @@ void loop(void) {
   webSocket.loop();
 }
 
+void stack_results() {
+  std::vector<String> _new;
+  String curr = "";
+  int i = 0;
+  for (String r: results) {
+    if (i >= 4) {
+      _new.push_back(curr);
+      curr = "";
+      i = 0;
+    }
+    curr += (r + " ");
+    i++;
+  }
+  results.clear();
+  results = _new;
+}
+
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
-  {
+{
   switch (type) {
-    case WStype_DISCONNECTED:
-      userNum = userNum - 1;
-        break;
-    case WStype_CONNECTED:
-      {
-        userNum = userNum + 1;
-        if (userNum == 1){
-        String rowCountQuery = "Select * from user_info2;";
-        db_exec(db1, rowCountQuery.c_str());
+  case WStype_DISCONNECTED:
+    userNum = userNum - 1;
+    break;
+  case WStype_CONNECTED:
+    userNum++;
+    if (userNum == 1) {
+      String rowCountQuery = "SELECT * FROM user_info2";
+      db_exec(db1, rowCountQuery.c_str());
+      stack_results();
+      Serial.printf("Results length: %d\n", results.size());
+      for (String r: results) {
+        Serial.println("Result: " + r);
+      }
+    }
+    sqlite3_finalize(res);
+    break;
 
-        Serial.printf("Results length: %d\n", results.size());
-        for (String r: results) {
-          Serial.println("Result: " + r);
-        }
-
-        while (sqlite3_step(res) == SQLITE_ROW) {
-          Serial.println((const char *) sqlite3_column_text(res, 1));
-          webSocket.sendTXT(0, sqlite3_column_text(res, 1));
-         }
-       }
-      sqlite3_finalize(res);
-      break;
-    case WStype_TEXT:
-    {
-      if (userNum == 1){
+  case WStype_TEXT:
+    if (userNum == 1) {
       String sql = ((const char*) payload);
       db_exec(db1, sql.c_str());
-
-      //String sql2 = "Select * from user_info2";
-      //db_exec(db1, sql2.c_str());
-
-       }
-      }
-     }
-      break;
+      if (rc != SQLITE_OK)
+        Serial.println("ne e dobre polojenieto");
+      String sql2 = "Select * from user_info2";
+      db_exec(db1, sql2.c_str());
+      if (rc != SQLITE_OK)
+        Serial.println("ne e dobre polojenieto");
+    }
+    break;
   }
 }
