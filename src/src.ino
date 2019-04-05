@@ -20,8 +20,8 @@
 #define RST_PIN 9
 
 #ifndef STASSID
-#define STASSID "AndroidAP"
-#define STAPSK  "hari1234"
+#define STASSID "Momchilovi1"
+#define STAPSK  "momchilovi93"
 #endif
 
 const char *ssid = STASSID;
@@ -41,7 +41,6 @@ const char *tail;
 
 volatile int userNum = 0; //user login id
 
-
 //=========== NTP Function===================//
 
 void printLocalTime()
@@ -54,19 +53,29 @@ void printLocalTime()
   Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
 }
 
-//=========== Callback SQL Functions=========//
-static const char* data = "Callback function called";
+//--------------------------------------------------------------------------------------------
+//   _____     _ _ _           _      _____ _____ __       _____             _   _             
+//  |     |___| | | |_ ___ ___| |_   |   __|     |  |     |   __|_ _ ___ ___| |_|_|___ ___ ___ 
+//  |   --| .'| | | . | .'|  _| '_|  |__   |  |  |  |__   |   __| | |   |  _|  _| | . |   |_ -|
+//  |_____|__,|_|_|___|__,|___|_,_|  |_____|__  _|_____|  |__|  |___|_|_|___|_| |_|___|_|_|___|
+//                                            |__|                                             
+const char* data = "Callback function called";
 static int callback(void *data, int argc, char **argv, char **azColName) {
-  int i;
   Serial.printf("%s: ", (const char*)data);
-  for (i = 0; i < argc; i++) {
+  for (int i = 0; i < argc; ++i) {
     Serial.printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
   }
   Serial.printf("\n");
   return 0;
 }
 
-//================ Open SQL function============//
+//---------------------------------------------------------                                                         
+//   _____                _____ _____ __       ____  _____ 
+//  |     |___ ___ ___   |   __|     |  |     |    \| __  |
+//  |  |  | . | -_|   |  |__   |  |  |  |__   |  |  | __ -|
+//  |_____|  _|___|_|_|  |_____|__  _|_____|  |____/|_____|
+//        |_|                     |__|                     
+
 int db_open(const char *filename, sqlite3 **db) {
   int rc = sqlite3_open(filename, db);
   if (rc) {
@@ -78,13 +87,14 @@ int db_open(const char *filename, sqlite3 **db) {
   return rc;
 }
 
-
 //=============== Execute SQL lines========//
 char *zErrMsg = 0;
-int db_exec(sqlite3 *db, const char *sql ) {
+void db_exec(sqlite3 *db, const char *sql) {
   Serial.println(sql);
   long start = micros();
-  int rc = sqlite3_exec(db, sql, callback, (void*)data, &zErrMsg);
+  Serial.println("%s\n", data);\
+  //xd
+  int rc = sqlite3_exec(db, sql, callback, (void*) data, &zErrMsg);
   if (rc != SQLITE_OK) {
     Serial.printf("SQL error: %s\n", zErrMsg);
     sqlite3_free(zErrMsg);
@@ -93,7 +103,6 @@ int db_exec(sqlite3 *db, const char *sql ) {
   }
   Serial.print(F("Time taken:"));
   Serial.println(micros() - start);
-  return rc;
 }
 
 //==============Server handlers===========//
@@ -118,32 +127,18 @@ void handleNotFound() {
   server.send(404, "text/plain", message);
 }
 
-#include <esp_wifi.h> //NEED THIS TO COMPILE
-#define WIFI_CHANNEL 1
-uint8_t masterCustomMac[] = {0x88, 0xBD, 0x45, 0xAE, 0x83, 0x8C};
- 
-void initVariant() {
-  WiFi.mode(WIFI_STA);
-  esp_wifi_set_mac(ESP_IF_WIFI_STA, &masterCustomMac[0]); // esp32 code
-}
-
-
-
 void setup(void) {
   
   Serial.begin(115200); //Start Serial conn
   SPIFFS.begin(); //Start the SPI Flash File System
 
 //============Connect to a WiFi AP============//
-  initVariant();
-  //WiFi.mode(WIFI_STA);
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("Connection Failed! Rebooting...");
-    delay(5000);
-    ESP.restart();
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(100);
+    Serial.print(".");
   }
-  Serial.println( WiFi.macAddress() );
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
@@ -206,24 +201,20 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
       {
         userNum = userNum + 1;
         if (userNum == 1){
-//        String sql = "Select * from user_info2 where card_id is not null;";
-//        rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
-//        if (rc != SQLITE_OK) {
-//          String resp = "Failed to fetch data: ";
-//          resp += sqlite3_errmsg(db1);
-//          Serial.println(resp.c_str());
-//          return;
-//        }
-//        while (sqlite3_step(res) == SQLITE_ROW) {
-//          Serial.println((const char *) sqlite3_column_text(res, 1));
-//          webSocket.sendTXT(0, sqlite3_column_text(res, 1));
-//         }
-//       }
-//      sqlite3_finalize(res);
-        String row_count_query = "select count(card_id) from user_info2";
-        db_exec(db1, row_count_query.c_str());
-        Serial.println("DATA: "  data);
+        String sql = "Select * from user_info2 where card_id is not null;";
+        rc = sqlite3_prepare_v2(db1, sql.c_str(), 1000, &res, &tail);
+        if (rc != SQLITE_OK) {
+          String resp = "Failed to fetch data: ";
+          resp += sqlite3_errmsg(db1);
+          Serial.println(resp.c_str());
+          return;
         }
+        while (sqlite3_step(res) == SQLITE_ROW) {
+          Serial.println((const char *) sqlite3_column_text(res, 1));
+          webSocket.sendTXT(0, sqlite3_column_text(res, 1));
+         }
+       }
+      sqlite3_finalize(res);
       break;
     case WStype_TEXT:
     {
