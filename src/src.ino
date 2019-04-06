@@ -37,7 +37,7 @@ const long GMT_OFFSET_SEC = 7200;
 const int DAYLIGHT_OFFSET_SEC = 3600;
 
 sqlite3 *DataBase;
-int rc;
+//int rc;
 sqlite3_stmt *res;
 const char *TAIL;
 
@@ -84,8 +84,9 @@ int db_open(const char *filename, sqlite3 **db)
 
 // Execute SQL Queries
 char *zErrMsg = 0;
-void db_exec(sqlite3 *db, const char *sql)
+int db_exec(sqlite3 *db, const char *sql)
 {
+  Serial.println(sql);
   int rc = sqlite3_exec(db, sql, callback, (void *)data, &zErrMsg);
   if (rc != SQLITE_OK)
   {
@@ -96,6 +97,7 @@ void db_exec(sqlite3 *db, const char *sql)
   {
     Serial.printf("Operation done successfully\n");
   }
+  return rc;
 }
 
 // Server Handlers
@@ -156,6 +158,15 @@ void GetDataForStartingTable()
   }
 }
 
+void PrintTable()
+{
+  String getDetailsTable = "SELECT * from Details;";
+  db_exec(DataBase, getDetailsTable.c_str());
+
+  String getMedicinesTable = "SELECT * from Medicines;";
+  db_exec(DataBase, getMedicinesTable.c_str());
+}
+
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 {
   switch (type)
@@ -175,9 +186,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
     if (UserCount == 1)
     {
       String sql = ((const char *)payload);
+      Serial.println(sql);
       db_exec(DataBase, sql.c_str());
-      if (rc != SQLITE_OK)
-        Serial.println("ne e dobre polojenieto");
+
+      PrintTable();
+   
     }
     break;
   }
