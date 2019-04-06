@@ -221,7 +221,15 @@ String stack_pills(String id){
   results.clear();
   return pillsResult;
   }
-  
+
+String PrepFullInfo(){
+  String fullInfo = "";
+  for (String r: results){
+    fullInfo += (r + ";");
+    }
+  return fullInfo;
+  }
+
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 {
   switch (type) {
@@ -260,7 +268,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 
         const int LEN = IDs.size();
         for (int i = 0; i < LEN; ++i) {
-          webSocket.sendTXT(0, IDs[i] + ";" + Names[i] + ";" + Pills[i]);
+          webSocket.sendTXT(0,"main; " + IDs[i] + ";" + Names[i] + ";" + Pills[i]);
           delay(10);
         }
 
@@ -271,9 +279,25 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
     case WStype_TEXT:
       if (userNum == 1) {
         String sql = ((const char*) payload);
-        db_exec(db1, sql.c_str());
-        if (rc != SQLITE_OK)
-          Serial.println("ne e dobre polojenieto");
+        String statusMsg = sql.substring(4);
+
+        sql = sql.substring(5, sql.length() - 1);
+        
+        Serial.println("SQL: " + sql);
+        Serial.println("statusMsg: " + statusMsg);
+        
+        if (statusMsg == "main"){
+          db_exec(db1, sql.c_str());
+          if (rc != SQLITE_OK)
+            Serial.println("ne e dobre polojenieto");
+          }
+          else if (statusMsg == "edit"){
+            db_exec(db1, sql.c_str());
+            if (rc != SQLITE_OK)
+              Serial.println("ne e dobre polojenieto!");
+            }
+            String fullInfo = PrepFullInfo();
+            webSocket.sendTXT(0,"edit; " + fullInfo);
       }
       break;
   }
