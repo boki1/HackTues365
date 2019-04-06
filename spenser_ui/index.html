@@ -463,7 +463,9 @@
 
   function showCard() {
     let id = this.textContent;
-    console.log(id);
+    connection.send(`edit SELECT * FROM Details where id='${id};'`);
+    connection.send(`edit SELECT * FROM Medicines where id='${id};'`);
+    
     prepareForCard();
     let rows = document.getElementById("db-table").getElementsByTagName("tr");
     let person, pills;
@@ -567,8 +569,8 @@
 
     if (appears) {
       table.deleteRow(rowIdx);
-      connection.send(`DELETE FROM Medicines WHERE ID=${id}`);
-      connection.send(`DELETE FROM Details WHERE ID=${id}`);
+      connection.send(`main DELETE FROM Medicines WHERE ID=${id}`);
+      connection.send(`main DELETE FROM Details WHERE ID=${id}`);
     } else {
       alert('User with such ID does not appear in our records!');
     }
@@ -624,18 +626,18 @@
   // TODO: ADD TABLE Details
   function SaveDetailInfo(_id, _person, _sex, _contactName, _contactPhone, _birthday, _room) {
     connection.send(
-      `INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
+      `main INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
     );
     console.log(
-      `INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
+      `main INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
     );
   }
 
   // TODO: ADD TABLE Medicines
   function SavePills(_id, _pills) {
     Object.keys(_pills).forEach((pill, idx) => {
-      connection.send(`INSERT INTO Medicines VALUES('${_id}', '${pill}', '${_pills[pill]}')`);
-      console.log(`INSERT INTO Medicines VALUES('${_id}', '${pill}', '${_pills[pill]}')`);
+      connection.send(`main INSERT INTO Medicines VALUES('${_id}', '${pill}', '${_pills[pill]}')`);
+      console.log(`main INSERT INTO Medicines VALUES('${_id}', '${pill}', '${_pills[pill]}')`);
     });
   }
 
