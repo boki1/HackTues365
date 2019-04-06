@@ -121,26 +121,6 @@ void HandleNotFound()
   server.send(404, "text/plain", message);
 }
 
-void stack_results()
-{
-  std::vector<String> _new;
-  String curr = "";
-  int i = 0;
-  for (String r : results)
-  {
-    if (i >= COLUMN_COUNT)
-    {
-      _new.push_back(curr);
-      curr = "";
-      i = 0;
-    }
-    curr += (r + " ");
-    i++;
-  }
-  results.clear();
-  results = _new;
-}
-
 String StackPills(String id)
 {
   String pResult = "";
