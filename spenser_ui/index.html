@@ -589,14 +589,17 @@
   }
 
   function getFormattedOutputAsObj(pills) {
-    let splitPills = pills.split('; ');
+    let splitPills = pills.split(/;|; /);
     let fPills = {};
     for (let i = 0; i < splitPills.length; ++i) {
-      let doubleSplit = splitPills[i].split(' -> ');
-      let med = doubleSplit[0];
-      let hourDelay = doubleSplit[1];
-      fPills[med] = parseInt(hourDelay);
+      if (splitPills[i]) {
+        let doubleSplit = splitPills[i].trim().split(' -> ');
+        let med = doubleSplit[0].toString();
+        let hourDelay = doubleSplit[1];
+        fPills[med] = hourDelay;
+      }
     }
+
     return fPills;
   }
 
@@ -622,17 +625,17 @@
   function SaveDetailInfo(_id, _person, _sex, _contactName, _contactPhone, _birthday, _room) {
     connection.send(
       `INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
-      );
+    );
     console.log(
       `INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
-      );
+    );
   }
 
   // TODO: ADD TABLE Medicines
   function SavePills(_id, _pills) {
-    Object.keys(_pills).forEach((pill, hour) => {
-      connection.send(`INSERT INTO Medicines VALUES('${_id}', '${pill}', '${hour}')`);
-      console.log(`INSERT INTO Medicines VALUES('${_id}', '${pill}', '${hour}')`);
+    Object.keys(_pills).forEach((pill, idx) => {
+      connection.send(`INSERT INTO Medicines VALUES('${_id}', '${pill}', '${_pills[pill]}')`);
+      console.log(`INSERT INTO Medicines VALUES('${_id}', '${pill}', '${_pills[pill]}')`);
     });
   }
 
@@ -659,8 +662,8 @@
     let pillObj = getFormattedOutputAsObj(pills);
 
     //SaveToDB
-    const hasValidDetails = true;//validateDetails(person, sex, contactName, contactPhone, birthday, room);
-    const hasValidPills = true;//validateMedicines(pillObj);
+    const hasValidDetails = true; //validateDetails(person, sex, contactName, contactPhone, birthday, room);
+    const hasValidPills = true; //validateMedicines(pillObj);
 
     if (!(hasValidDetails && hasValidPills)) {
       alert('WHY YOU TRY HACK US?');
