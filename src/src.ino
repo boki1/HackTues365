@@ -279,10 +279,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
     case WStype_TEXT:
       if (userNum == 1) {
         String sql = ((const char*) payload);
-        String statusMsg = sql.substring(4);
+        String statusMsg = sql.substring(0, 4);
 
-        sql = sql.substring(5, sql.length() - 1);
-        
+        sql = sql.substring(5);
         Serial.println("SQL: " + sql);
         Serial.println("statusMsg: " + statusMsg);
         
