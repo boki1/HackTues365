@@ -362,10 +362,15 @@
     connection.addEventListener('message', () => {
       console.log('Message: ', event.data);
       const row = event.data.split(';');
-      const id = row[0];
-      const personName = row[1];
-      const pills = row[2];
-      fillNewCells(id, personName, pills);
+      console.log(row);
+      const _status = row[0];
+      console.log('Status' + _status);
+      if (_status == 'main') {
+        const id = row[1];
+        const personName = row[2];
+        const pills = row[3];
+        fillNewCells(id, personName, pills);
+      }
     });
 
   };
