@@ -378,7 +378,8 @@
         const birthday = row[5];
         const room = row[6];
         const enterDate = row[7];
-        fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate);
+        const pills = row[8];
+        fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills);
       }
     });
 
@@ -456,7 +457,7 @@
     }
   }
 
-  function fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate) {
+  function fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills) {
     let _id = document.getElementById('id-label');
     let _contactName = document.getElementById('contact-name-label');
     let _contactPhone = document.getElementById('contact-phone-label');
@@ -467,7 +468,7 @@
     let _person = document.getElementById('person');
     let _pills = document.getElementById('pills-label');
 
-    _pills.innerHTML = '...';
+    _pills.innerHTML = pills;
     _person.innerHTML = 'About ' + person + ':';
     _sex.innerHTML = 'Currently unknown';
     _id.innerHTML = id;
