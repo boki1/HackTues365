@@ -371,7 +371,14 @@
         const pills = row[3].trim();
         fillNewCells(id, personName, pills);
       } else if (_status == 'edit') {
-
+        const id = row[1];
+        const person = row[2];
+        const contactName = row[3];
+        const contactPhone = row[4];
+        const birthday = row[5];
+        const room = row[6];
+        const enterDate = row[7];
+        fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate);
       }
     });
 
@@ -449,6 +456,28 @@
     }
   }
 
+  function fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate) {
+    let _id = document.getElementById('id-label');
+    let _contactName = document.getElementById('contact-name-label');
+    let _contactPhone = document.getElementById('contact-phone-label');
+    let _birthday = document.getElementById('birthday-label');
+    let _room = document.getElementById('room-label');
+    let _enteringDate = document.getElementById('entering-date-label');
+    let _sex = document.getElementById('sex-label');
+    let _person = document.getElementById('person');
+    let _pills = document.getElementById('pills-label');
+
+    _pills.innerHTML = '...';
+    _person.innerHTML = 'About ' + person + ':';
+    _sex.innerHTML = 'Currently unknown';
+    _id.innerHTML = id;
+    _contactName.innerHTML = _contactName;
+    _contactPhone.innerHTML = contactPhone;
+    _birthday.innerHTML = birthday;
+    _room.innerHTML = room;
+    _enteringDate.innerHTML = enterDate;
+  }
+
   function prepareForCard() {
     let table = document.getElementById("db-table");
     let nav = document.getElementById("nav-div");
@@ -469,46 +498,13 @@
   }
 
   function showCard() {
-    let id = this.textContent;
+    const id = this.textContent;
+    const _card = document.getElementById('card');
+    _card.style.display = 'block';
+
     connection.send(`edit ${id}`);
 
     prepareForCard();
-    let rows = document.getElementById("db-table").getElementsByTagName("tr");
-    let person, pills;
-
-    for (let i = 0; i < rows.length; ++i) {
-      let candidate = rows[i].getElementsByTagName("td");
-      if (candidate.length <= 0)
-        continue;
-      if (candidate[0].innerText == id) {
-        person = candidate[1].innerText;
-        pills = candidate[2].innerText;
-        break;
-      }
-    }
-
-    let _card = document.getElementById('card');
-    _card.style.display = 'block';
-
-    let _id = document.getElementById('id-label');
-    let _contactName = document.getElementById('contact-name-label');
-    let _contactPhone = document.getElementById('contact-phone-label');
-    let _birthday = document.getElementById('birthday-label');
-    let _room = document.getElementById('room-label');
-    let _enteringDate = document.getElementById('entering-date-label');
-    let _sex = document.getElementById('sex-label');
-    let _person = document.getElementById('person');
-    let _pills = document.getElementById('pills-label');
-
-    _pills.innerHTML = pills;
-    _person.innerHTML = 'About ' + person + ':';
-    _sex.innerHTML = '...';
-    _id.innerHTML = id;
-    _contactName.innerHTML = '...';
-    _contactPhone.innerHTML = '...';
-    _birthday.innerHTML = '...';
-    _room.innerHTML = '...';
-    _enteringDate.innerHTML = '...';
 
     let male = document.getElementById('male');
     let female = document.getElementById('female');
