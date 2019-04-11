@@ -320,7 +320,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
           String fPills = ""; 
           int i;
           for (i = 0; i < Pills.size(); ++i) {
-            fPills += (Pills[i] + " -> " + Hours[i] + (i != Pills.size()) ? ", " : "");
+            fPills += (Pills[i] + " -> " + Hours[i] + (i != Pills.size() - 1) ? ", " : "");
           } 
           Serial.println(Pills.size()); 
           Serial.println(fPills);

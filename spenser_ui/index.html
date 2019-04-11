@@ -19,7 +19,7 @@
   #card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
-    width: 20%;
+    width: 40%;
     display: none;
     margin: auto auto;
     margin-top: 30px;
@@ -378,8 +378,9 @@
         const birthday = row[5];
         const room = row[6];
         const enterDate = row[7];
-        const pills = row[8];
-        fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills);
+        const sex = row[8];
+        const pills = row[9];
+        fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills, sex);
       }
     });
 
@@ -457,7 +458,7 @@
     }
   }
 
-  function fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills) {
+  function fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills, sex) {
     let _id = document.getElementById('id-label');
     let _contactName = document.getElementById('contact-name-label');
     let _contactPhone = document.getElementById('contact-phone-label');
@@ -470,13 +471,22 @@
 
     _pills.innerHTML = pills;
     _person.innerHTML = 'About ' + person + ':';
-    _sex.innerHTML = 'Currently unknown';
+    _sex.innerHTML = sex;
     _id.innerHTML = id;
     _contactName.innerHTML = contactName;
     _contactPhone.innerHTML = contactPhone;
     _birthday.innerHTML = birthday;
     _room.innerHTML = room;
     _enteringDate.innerHTML = enterDate;
+
+    let male = document.getElementById('male');
+    let female = document.getElementById('female');
+    let def = document.getElementById('default');
+
+    if (sex == 'Male')         male.style.display = 'block';
+    else if (sex == 'Female')  female.style.display = 'block';
+    else                       def.style.display = 'block'; 
+      
   }
 
   function prepareForCard() {
@@ -506,18 +516,6 @@
     connection.send(`edit ${id}`);
 
     prepareForCard();
-
-    let male = document.getElementById('male');
-    let female = document.getElementById('female');
-    let _default = document.getElementById('default');
-
-    if (_sex.innerHTML == 'Male') {
-      male.style.display = 'block';
-    } else if (_sex.innerHTML == 'Female') {
-      female.style.display = 'block';
-    } else {
-      _default.style.display = 'block';
-    }
   }
 
   function filterTable() {

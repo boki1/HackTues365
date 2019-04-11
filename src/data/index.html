@@ -478,6 +478,15 @@
     _birthday.innerHTML = birthday;
     _room.innerHTML = room;
     _enteringDate.innerHTML = enterDate;
+
+    let male = document.getElementById('male');
+    let female = document.getElementById('female');
+    let def = document.getElementById('default');
+
+    if (sex == 'Male')         male.style.display = 'block';
+    else if (sex == 'Female')  female.style.display = 'block';
+    else                       def.style.display = 'block'; 
+      
   }
 
   function prepareForCard() {
@@ -507,18 +516,6 @@
     connection.send(`edit ${id}`);
 
     prepareForCard();
-
-    let male = document.getElementById('male');
-    let female = document.getElementById('female');
-    let _default = document.getElementById('default');
-
-    // if (_sex.innerHTML == 'Male') {
-    //   male.style.display = 'block';
-    // } else if (_sex.innerHTML == 'Female') {
-    //   female.style.display = 'block';
-    // } else {
-      _default.style.display = 'block';
-    // }
   }
 
   function filterTable() {
