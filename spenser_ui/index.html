@@ -371,7 +371,7 @@
         const pills = row[3].trim();
         fillNewCells(id, personName, pills);
       } else if (_status == 'edit') {
-        
+
       }
     });
 
@@ -470,8 +470,7 @@
 
   function showCard() {
     let id = this.textContent;
-    connection.send(`edit SELECT * FROM Details where id='${id};'`);
-    connection.send(`edit SELECT * FROM Medicines where id='${id};'`);
+    connection.send(`edit ${id}`);
 
     prepareForCard();
     let rows = document.getElementById("db-table").getElementsByTagName("tr");
