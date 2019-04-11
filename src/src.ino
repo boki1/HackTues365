@@ -21,8 +21,8 @@
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "Momchilovi1"
-#define STAPSK  "momchilovi93"
+#define STASSID "FONE"
+#define STAPSK  "nointernet"
 #endif
 
 const char *ssid = STASSID;
@@ -227,13 +227,16 @@ String PrepFullInfo(){
   for (String r: results){
     fullInfo += (r + ";");
     }
+    results.clear();
   return fullInfo;
   }
 
-String PrepFullPills(){
-  String fullPills = "";
-  for (String r: 
-  
+String prepDetails(){
+  String details = "";
+  for (String r : results){
+    details += r;
+  }
+  return details;
   }
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 {
@@ -287,24 +290,26 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
         String statusMsg = sql.substring(0, 4);
 
         sql = sql.substring(5);
-        Serial.println("SQL: " + sql);
-        Serial.println("statusMsg: " + statusMsg);
+        //Serial.println("SQL: " + sql);
+        //Serial.println("statusMsg: " + statusMsg);
         
         if (statusMsg == "main"){
           db_exec(db1, sql.c_str());
           if (rc != SQLITE_OK)
             Serial.println("ne e dobre polojenieto");
-            
-          else if (statusMsg == "edit"){
-            db_exec(db1, sql.c_str());
+        } else if (statusMsg == "edit"){
+            Serial.println("SQL_EDIT: " + sql);
+            Serial.println("SQL_STATUS_MSG: " + statusMsg);
+            String DetailQuery = "SELECT * FROM Details where id='" + sql +"';";
+            db_exec(db1, DetailQuery.c_str());
+            String Details = prepDetails();
             if (rc != SQLITE_OK)
               Serial.println("ne e dobre polojenieto!");
-            }
             String fullInfo = PrepFullInfo();
             webSocket.sendTXT(0,"edit;" + fullInfo);
-            String fullPills = PrepFullPills();
+            DetailQuery = "";
       }
       break;
   }
 }
-
+}
