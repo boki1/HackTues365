@@ -21,8 +21,8 @@
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "AndroidAP"
-#define STAPSK  "hari1234"
+#define STASSID "Momchilovi1"
+#define STAPSK  "momchilovi93"
 #endif
 
 const char *ssid = STASSID;
@@ -326,6 +326,8 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
           Serial.println(fPills);
 
           webSocket.sendTXT(0, "edit;" + fullInfo + fPills);
+
+          Serial.println("fPills: " + fPills);
           DetailQuery = "";
         }
         break;
