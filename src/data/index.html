@@ -382,7 +382,7 @@
         const room = row[7];
         const enterDate = row[8];
         let pills = row[9];
-        console.log("Pills: " + pills);
+        pills = pills.slice(0, -2);
         fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills, sex);
       }
     });
