@@ -361,7 +361,7 @@
     connection = new WebSocket('ws://' + location.hostname + ':81/');
     connection.addEventListener('message', () => {
       console.log('Message: ', event.data);
-      const row = event.data.split(';');
+      let row = event.data.split(';');
       console.log(row);
       const _status = row[0];
       console.log('Status' + _status);
@@ -371,15 +371,19 @@
         const pills = row[3].trim();
         fillNewCells(id, personName, pills);
       } else if (_status == 'edit') {
+        row = row.slice(0, -1);
+        console.log(row);
         const id = row[1];
         const person = row[2];
-        const contactName = row[3];
-        const contactPhone = row[4];
-        const birthday = row[5];
-        const room = row[6];
-        const enterDate = row[7];
-        const sex = row[8];
-        const pills = row[9];
+        const sex = row[3];
+        const contactName = row[4];
+        const contactPhone = row[5];
+        const birthday = row[6];
+        const room = row[7];
+        const enterDate = row[8];
+        let pills = row[9];
+        pills = pills.slice(0, -2);
+        console.log(pills);
         fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills, sex);
       }
     });
@@ -482,6 +486,10 @@
     let male = document.getElementById('male');
     let female = document.getElementById('female');
     let def = document.getElementById('default');
+    
+    male.style.display = 'none';
+    female.style.display = 'none';
+    def.style.display = 'none';
 
     if (sex == 'Male')         male.style.display = 'block';
     else if (sex == 'Female')  female.style.display = 'block';
@@ -512,6 +520,8 @@
     const id = this.textContent;
     const _card = document.getElementById('card');
     _card.style.display = 'block';
+    for (let i = 0; i < OLD.length; ++i)
+      OLD[i].innerHTML = "";
 
     connection.send(`edit ${id}`);
 
@@ -570,8 +580,8 @@
 
     if (appears) {
       table.deleteRow(rowIdx);
-      connection.send(`main DELETE FROM Medicines WHERE ID=${id}`);
-      connection.send(`main DELETE FROM Details WHERE ID=${id}`);
+      connection.send(`main DELETE FROM Medicines WHERE ID='${id}'`);
+      connection.send(`main DELETE FROM Details WHERE ID='${id}'`);
     } else {
       alert('User with such ID does not appear in our records!');
     }
@@ -621,13 +631,15 @@
     cell0.appendChild(newIdBtn);
 
     cell1.innerHTML = person;
-    cell2.innerHTML = receipt;
+    cell2.innerHTML = receipt.slice(0, -2);  
   }
 
   // TODO: ADD TABLE Details
-  function SaveDetailInfo(_id, _person, _sex, _contactName, _contactPhone, _birthday, _room) {
+ // SaveDetailInfo(id, person, contactName, contactPhone, birthday, room, enteringDate, sex);
+
+  function SaveDetailInfo(_id, _person, _contactName, _contactPhone, _birthday, _room, _enterDate, _sex) {
     connection.send(
-      `main INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
+      `main INSERT INTO Details VALUES('${_id}', '${_person}','${_sex}', '${_contactName}', '${_contactPhone}', '${_room}','${_birthday}', '${_enterDate}');`
     );
     console.log(
       `main INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
@@ -673,7 +685,7 @@
       return;
     };
 
-    SaveDetailInfo(id, person, sex, contactName, contactPhone, birthday, room, enteringDate);
+    SaveDetailInfo(id, person, contactName, contactPhone, birthday, room, enteringDate, sex);
     SavePills(id, pillObj);
 
     let fOutput = getFormattedOutput(pillObj);

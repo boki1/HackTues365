@@ -21,8 +21,8 @@
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "FONE"
-#define STAPSK  "interneticus"
+#define STASSID "Momchilovi1"
+#define STAPSK  "momchilovi93"
 #endif
 
 const char *ssid = STASSID;

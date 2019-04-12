@@ -383,6 +383,7 @@
         const enterDate = row[8];
         let pills = row[9];
         pills = pills.slice(0, -2);
+        console.log(pills);
         fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills, sex);
       }
     });
@@ -631,6 +632,9 @@
 
     cell1.innerHTML = person;
     cell2.innerHTML = receipt;
+    if (cell2.textContent.indexOf(", ") > -2) {
+      cell2.innerHTML = receipt.slice(0, -2);
+    }
   }
 
   // TODO: ADD TABLE Details
