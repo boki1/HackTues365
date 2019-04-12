@@ -428,7 +428,7 @@
     let newDetailsReplaceQuery = `REPLACE INTO Details (person, sex, contact_name, contact_phone, birth_date, room, enter_date) VALUES(`;
     let values = "";
     for (let i = 1; i < LEN - 1; ++i) {
-      OLD[i].innerHTML = inputs[i].value;
+      OLD[i].innerHTML = NEW[i].value;
       values += (':' + OLD[i] + ':');
       OLD[i].style.display = 'inline';
       NEW[i].style.display = 'none'
@@ -440,9 +440,11 @@
     OLD[LEN - 1].style.display = 'inline';
     NEW[LEN - 1].style.display = 'none';
     
-    connection.send(`main DELETE FROM Medicines WHERE ID='${id}'`);
-    Object.keys(getFormattedOutputAsObj(pills)).forEach((pill, idx) => {
-      connection.send(`main INSERT INTO Medicines VALUES('${id}', '${pill}', '${pills[pill]}')`);
+    connection.send(`main DELETE FROM Medicines WHERE ID='${OLD[0]}'`);
+    console.log("OLD: " + OLD[7]);
+    let pills = getFormattedOutputAsObj(OLD[7]);
+    Object.keys(pills).forEach((pill, idx) => {
+      connection.send(`main INSERT INTO Medicines VALUES('${OLD[0]}', '${pill}', '${pills[pill]}')`);
     });
     
   }
