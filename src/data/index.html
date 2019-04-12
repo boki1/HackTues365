@@ -424,13 +424,27 @@
     SAVE_BUTTON.style.display = 'none';
     EDIT_BUTTON.style.display = 'inline';
 
-    console.log('Saving...');
-    for (let i = 0; i < LEN; ++i) {
+    // TO NOT CHANGE ID! (HALF DONE)
+    let newDetailsReplaceQuery = `REPLACE INTO Details (person, sex, contact_name, contact_phone, birth_date, room, enter_date) VALUES(`;
+    let values = "";
+    for (let i = 1; i < LEN - 1; ++i) {
       OLD[i].innerHTML = inputs[i].value;
-      console.log(OLD[i].innerHTML);
+      values += (':' + OLD[i] + ':');
       OLD[i].style.display = 'inline';
       NEW[i].style.display = 'none'
     }
+
+    newDetailsReplaceQuery += values;
+    newDetailsReplaceQuery += ');';
+
+    OLD[LEN - 1].style.display = 'inline';
+    NEW[LEN - 1].style.display = 'none';
+    
+    connection.send(`main DELETE FROM Medicines WHERE ID='${id}'`);
+    Object.keys(getFormattedOutputAsObj(pills)).forEach((pill, idx) => {
+      connection.send(`main INSERT INTO Medicines VALUES('${id}', '${pill}', '${pills[pill]}')`);
+    });
+    
   }
 
   function discardChanges() {
@@ -440,7 +454,7 @@
     EDIT_BUTTON.style.display = 'inline';
 
     console.log("Changes discarded..");
-    for (let i = 0; i < LEN; ++i) {
+    for (let i = 1; i < LEN; ++i) {
       NEW[i].style.display = 'none'
       NEW[i].value = '';
       OLD[i].style.display = 'inline';
@@ -454,7 +468,7 @@
     EDIT_BUTTON.style.display = 'none';
 
     console.log('Old version:');
-    for (let i = 0; i < LEN; ++i) {
+    for (let i = 1; i < LEN; ++i) {
       NEW[i].style.display = 'inline'
       NEW[i].value = OLD[i].innerHTML;
       console.log(NEW[i].value);
@@ -632,15 +646,9 @@
     cell2.innerHTML = receipt;
   }
 
-  // TODO: ADD TABLE Details
- // SaveDetailInfo(id, person, contactName, contactPhone, birthday, room, enteringDate, sex);
-
   function SaveDetailInfo(_id, _person, _contactName, _contactPhone, _birthday, _room, _enterDate, _sex) {
     connection.send(
       `main INSERT INTO Details VALUES('${_id}', '${_person}','${_sex}', '${_contactName}', '${_contactPhone}', '${_room}','${_birthday}', '${_enterDate}');`
-    );
-    console.log(
-      `main INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
     );
   }
 
@@ -648,7 +656,6 @@
   function SavePills(_id, _pills) {
     Object.keys(_pills).forEach((pill, idx) => {
       connection.send(`main INSERT INTO Medicines VALUES('${_id}', '${pill}', '${_pills[pill]}')`);
-      console.log(`main INSERT INTO Medicines VALUES('${_id}', '${pill}', '${_pills[pill]}')`);
     });
   }
 
