@@ -592,12 +592,7 @@
   }
 
   function getFormattedOutput(fPills) {
-    let fOutput = "";
-    Object.keys(fPills).forEach(function (key) {
-      fOutput += key;
-      fOutput += ', ';
-    });
-    fOutput = fOutput.substring(0, -2);
+    const fOutput = Object.keys(fPills).join(", ");
     return fOutput;
   }
 
