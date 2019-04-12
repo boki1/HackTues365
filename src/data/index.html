@@ -593,6 +593,9 @@
 
   function getFormattedOutput(fPills) {
     const fOutput = Object.keys(fPills).join(", ");
+    if (fOutput.endsWith(", ")) {
+      return fOutput.substring(0, -2);
+    }
     return fOutput;
   }
 

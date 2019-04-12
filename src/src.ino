@@ -215,9 +215,9 @@ String stack_pills(String id) {
   String getPills = "SELECT medicines from medicines where id='" + id + "';";
   db_exec(db1, getPills.c_str());
 
-  for (String r : results) {
-    pillsResult += (r + ", ");
-  }
+  for (int i; i < results.size() - 1; ++i)
+    pillsResult += (results[i] + ", ");
+  pillsResult += results[results.size() - 1];
   results.clear();
   return pillsResult;
 }
