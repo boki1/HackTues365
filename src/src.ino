@@ -295,6 +295,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
         
         if (statusMsg == "main"){
           db_exec(db1, sql.c_str());
+          Serial.println(sql);
           if (rc != SQLITE_OK)
             Serial.println("ne e dobre polojenieto");
         } else if (statusMsg == "edit"){

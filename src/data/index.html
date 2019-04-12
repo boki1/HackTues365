@@ -625,9 +625,11 @@
   }
 
   // TODO: ADD TABLE Details
-  function SaveDetailInfo(_id, _person, _sex, _contactName, _contactPhone, _birthday, _room, _enterDate) {
+ // SaveDetailInfo(id, person, contactName, contactPhone, birthday, room, enteringDate, sex);
+
+  function SaveDetailInfo(_id, _person, _contactName, _contactPhone, _birthday, _room, _enterDate, _sex) {
     connection.send(
-      `main INSERT INTO Details VALUES('${_id}', '${_person}', '${_contactName}', '${_contactPhone}', '${_enterDate}', '${_sex}'`
+      `main INSERT INTO Details VALUES('${_id}', '${_person}','${_sex}', '${_contactName}', '${_contactPhone}', '${_room}','${_birthday}', '${_enterDate}');`
     );
     console.log(
       `main INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
