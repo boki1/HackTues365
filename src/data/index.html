@@ -373,13 +373,13 @@
       } else if (_status == 'edit') {
         const id = row[1];
         const person = row[2];
-        const contactName = row[3];
-        const contactPhone = row[4];
+        const contactName = row[4];
+        const contactPhone = row[5];
         const birthday = row[5];
         const room = row[6];
-        const enterDate = row[7];
-        const sex = row[8];
-        const pills = row[9];
+        const enterDate = row[8];
+        const sex = row[3];
+        const pills = '...';
         fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills, sex);
       }
     });
@@ -625,9 +625,9 @@
   }
 
   // TODO: ADD TABLE Details
-  function SaveDetailInfo(_id, _person, _sex, _contactName, _contactPhone, _birthday, _room) {
+  function SaveDetailInfo(_id, _person, _sex, _contactName, _contactPhone, _birthday, _room, _enterDate) {
     connection.send(
-      `main INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
+      `main INSERT INTO Details VALUES('${_id}', '${_person}', '${_contactName}', '${_contactPhone}', '${_enterDate}', '${_sex}'`
     );
     console.log(
       `main INSERT INTO Details VALUES('${_id}', '${_person}', '${_sex}', '${_contactName}', '${_contactPhone}', '${_birthday}', '${_room}')`
@@ -673,7 +673,7 @@
       return;
     };
 
-    SaveDetailInfo(id, person, sex, contactName, contactPhone, birthday, room, enteringDate);
+    SaveDetailInfo(id, person, contactName, contactPhone, birthday, room, enteringDate, sex);
     SavePills(id, pillObj);
 
     let fOutput = getFormattedOutput(pillObj);
