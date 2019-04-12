@@ -631,10 +631,10 @@
     cell0.appendChild(newIdBtn);
 
     cell1.innerHTML = person;
-    cell2.innerHTML = receipt;
-    if (cell2.textContent.indexOf(", ") > -2) {
-      cell2.innerHTML = receipt.slice(0, -2);
+    if ("," in receipt) {
+      receipt = receipt.slice(0, -2);
     }
+    cell2.innerHTML = receipt;
   }
 
   // TODO: ADD TABLE Details
