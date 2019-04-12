@@ -597,7 +597,7 @@
       fOutput += key;
       fOutput += ', ';
     });
-    fOutput = fOutput.replace(/([, ]*)$/g, '')
+    fOutput = fOutput.substring(0, -2);
     return fOutput;
   }
 
@@ -631,9 +631,6 @@
     cell0.appendChild(newIdBtn);
 
     cell1.innerHTML = person;
-    if (receipt.includes(',')) {
-      receipt = receipt.slice(0, -2);
-    }
     cell2.innerHTML = receipt;
   }
 
