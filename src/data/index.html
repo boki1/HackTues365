@@ -373,13 +373,14 @@
       } else if (_status == 'edit') {
         const id = row[1];
         const person = row[2];
+        const sex = row[3];
         const contactName = row[4];
         const contactPhone = row[5];
-        const birthday = row[5];
         const room = row[6];
+        const birthday = row[7];
         const enterDate = row[8];
-        const sex = row[3];
-        const pills = '...';
+        let pills = row[9];
+        pills = pills.slice(-2);
         fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills, sex);
       }
     });
@@ -482,6 +483,10 @@
     let male = document.getElementById('male');
     let female = document.getElementById('female');
     let def = document.getElementById('default');
+    
+    male.style.display = 'none';
+    female.style.display = 'none';
+    def.style.display = 'none';
 
     if (sex == 'Male')         male.style.display = 'block';
     else if (sex == 'Female')  female.style.display = 'block';
@@ -512,7 +517,9 @@
     const id = this.textContent;
     const _card = document.getElementById('card');
     _card.style.display = 'block';
-
+    for (let i = 0; i < OLD.length; ++i)
+      OLD[i].innerHTML = "";
+      
     connection.send(`edit ${id}`);
 
     prepareForCard();
@@ -570,8 +577,8 @@
 
     if (appears) {
       table.deleteRow(rowIdx);
-      connection.send(`main DELETE FROM Medicines WHERE ID=${id}`);
-      connection.send(`main DELETE FROM Details WHERE ID=${id}`);
+      connection.send(`main DELETE FROM Medicines WHERE ID='${id}'`);
+      connection.send(`main DELETE FROM Details WHERE ID='${id}'`);
     } else {
       alert('User with such ID does not appear in our records!');
     }

@@ -21,8 +21,8 @@
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "AndroidAP"
-#define STAPSK  "hari1234"
+#define STASSID "FONE"
+#define STAPSK  "interneticus"
 #endif
 
 const char *ssid = STASSID;
@@ -210,34 +210,34 @@ void stack_results() {
   results = _new;
 }
 
-String stack_pills(String id){
+String stack_pills(String id) {
   String pillsResult = "";
-  String getPills = "SELECT medicines from medicines where id='"+ id +"';";
+  String getPills = "SELECT medicines from medicines where id='" + id + "';";
   db_exec(db1, getPills.c_str());
 
-  for (String r: results){
+  for (String r : results) {
     pillsResult += (r + ", ");
-    }
+  }
   results.clear();
   return pillsResult;
-  }
+}
 
-String PrepFullInfo(){
+String PrepFullInfo() {
   String fullInfo = "";
-  for (String r: results){
+  for (String r : results) {
     fullInfo += (r + ";");
-    }
-    results.clear();
-  return fullInfo;
   }
+  results.clear();
+  return fullInfo;
+}
 
-String prepDetails(){
+String prepDetails() {
   String details = "";
-  for (String r : results){
+  for (String r : results) {
     details += r;
   }
   return details;
-  }
+}
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 {
   switch (type) {
@@ -264,19 +264,19 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 
 
         std::vector<String> Pills;
-        for (String id: IDs){
+        for (String id : IDs) {
           Pills.push_back(stack_pills(id));
-         }
+        }
         Serial.printf("%d %d %d", IDs.size(), Names.size(), Pills.size());
-//        stack_results();
-//        Serial.printf("Results length: %d\n", results.size());
+        //        stack_results();
+        //        Serial.printf("Results length: %d\n", results.size());
         for (String r : Pills) {
           Serial.println("Result: " + r);
         }
 
         const int LEN = IDs.size();
         for (int i = 0; i < LEN; ++i) {
-          webSocket.sendTXT(0,"main;" + IDs[i] + ";" + Names[i] + ";" + Pills[i]);
+          webSocket.sendTXT(0, "main;" + IDs[i] + ";" + Names[i] + ";" + Pills[i]);
           delay(10);
         }
 
@@ -292,25 +292,41 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
         sql = sql.substring(5);
         //Serial.println("SQL: " + sql);
         //Serial.println("statusMsg: " + statusMsg);
-        
-        if (statusMsg == "main"){
+
+        if (statusMsg == "main") {
           db_exec(db1, sql.c_str());
           Serial.println(sql);
           if (rc != SQLITE_OK)
             Serial.println("ne e dobre polojenieto");
-        } else if (statusMsg == "edit"){
-            Serial.println("SQL_EDIT: " + sql);
-            Serial.println("SQL_STATUS_MSG: " + statusMsg);
-            String DetailQuery = "SELECT * FROM Details where id='" + sql +"';";
-            db_exec(db1, DetailQuery.c_str());
-            String Details = prepDetails();
-            if (rc != SQLITE_OK)
-              Serial.println("ne e dobre polojenieto!");
-            String fullInfo = PrepFullInfo();
-            webSocket.sendTXT(0,"edit;" + fullInfo);
-            DetailQuery = "";
+        } else if (statusMsg == "edit") {
+          Serial.println("SQL_EDIT: " + sql);
+          Serial.println("SQL_STATUS_MSG: " + statusMsg);
+          String DetailQuery = "SELECT * FROM Details where id='" + sql + "';";
+          db_exec(db1, DetailQuery.c_str());
+          String Details = prepDetails();
+
+          if (rc != SQLITE_OK)
+            Serial.println("ne e dobre polojenieto!");
+          String fullInfo = PrepFullInfo();
+
+          String HoursQuery = "SELECT medicines FROM Medicines where id='" + sql + "';";
+          db_exec(db1, HoursQuery.c_str());
+          std::vector<String> Hours = results;
+
+          String MedQuery = "SELECT hours FROM Medicines where id='" + sql + "';";
+          db_exec(db1, MedQuery.c_str());
+          std::vector<String> Meds = results;
+
+          String fPills = ";";
+          for (int i = 0; i < Meds.size(); ++i)
+            fPills += (Meds[i] + " -> " + Hours[i] + (i != Meds.size() - 1) ? ", " : ";");
+          
+          webSocket.sendTXT(0, "edit;" + fullInfo + fPills);
+          DetailQuery = "";
+          Serial.println(fPills);
+          fPills = "";
+        }
+        break;
       }
-      break;
   }
-}
 }
