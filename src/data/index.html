@@ -361,7 +361,7 @@
     connection = new WebSocket('ws://' + location.hostname + ':81/');
     connection.addEventListener('message', () => {
       console.log('Message: ', event.data);
-      const row = event.data.split(';');
+      let row = event.data.split(';');
       console.log(row);
       const _status = row[0];
       console.log('Status' + _status);
@@ -371,16 +371,18 @@
         const pills = row[3].trim();
         fillNewCells(id, personName, pills);
       } else if (_status == 'edit') {
+        row = row.slice(0, -1);
+        console.log(row);
         const id = row[1];
         const person = row[2];
         const sex = row[3];
         const contactName = row[4];
         const contactPhone = row[5];
-        const room = row[6];
-        const birthday = row[7];
+        const birthday = row[6];
+        const room = row[7];
         const enterDate = row[8];
         let pills = row[9];
-        pills = pills.slice(-2);
+        console.log("Pills: " + pills);
         fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills, sex);
       }
     });
@@ -519,7 +521,7 @@
     _card.style.display = 'block';
     for (let i = 0; i < OLD.length; ++i)
       OLD[i].innerHTML = "";
-      
+
     connection.send(`edit ${id}`);
 
     prepareForCard();

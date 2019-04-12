@@ -309,21 +309,23 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
             Serial.println("ne e dobre polojenieto!");
           String fullInfo = PrepFullInfo();
 
-          String HoursQuery = "SELECT medicines FROM Medicines where id='" + sql + "';";
+          String HoursQuery = "SELECT hours FROM Medicines where id='" + sql + "';";
           db_exec(db1, HoursQuery.c_str());
           std::vector<String> Hours = results;
+          results.clear();
 
-          String MedQuery = "SELECT hours FROM Medicines where id='" + sql + "';";
+          String MedQuery = "SELECT medicines FROM Medicines where id='" + sql + "';";
           db_exec(db1, MedQuery.c_str());
           std::vector<String> Meds = results;
-
-          String fPills = ";";
-          for (int i = 0; i < Meds.size(); ++i)
-            fPills += (Meds[i] + " -> " + Hours[i] + (i != Meds.size() - 1) ? ", " : ";");
+          results.clear();
           
-          webSocket.sendTXT(0, "edit;" + fullInfo + fPills);
+          String fPills = "";
+          for (int i = 0; i < Meds.size(); ++i)
+            fPills += (Meds[i] + " -> " + Hours[i] + ", ");
+            
+          webSocket.sendTXT(0, "edit;" + fullInfo + fPills + ";");
           DetailQuery = "";
-          Serial.println(fPills);
+          Serial.println("edit;" + fullInfo + fPills + ";");
           fPills = "";
         }
         break;
