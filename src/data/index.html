@@ -378,12 +378,11 @@
         const sex = row[3];
         const contactName = row[4];
         const contactPhone = row[5];
-        const birthday = row[6];
-        const room = row[7];
+        const room = row[6];
+        const birthday = row[7];        
         const enterDate = row[8];
         let pills = row[9];
         pills = pills.slice(0, -2);
-        console.log(pills);
         fillEdit(id, person, contactName, contactPhone, birthday, room, enterDate, pills, sex);
       }
     });
@@ -392,12 +391,12 @@
 
   const OLD = [
     document.getElementById('id-label'),
+    document.getElementById('sex-label'),
     document.getElementById('contact-name-label'),
     document.getElementById('contact-phone-label'),
     document.getElementById('birthday-label'),
     document.getElementById('room-label'),
     document.getElementById('entering-date-label'),
-    document.getElementById('sex-label'),
     document.getElementById('pills-label')
   ];
 
@@ -408,10 +407,9 @@
     document.getElementById('birthday-inp'),
     document.getElementById('room-inp'),
     document.getElementById('entering-date-inp'),
-    document.getElementById('sex-inp'),
     document.getElementById('pills-inp')
   ];
-
+  "'"
   const CLOSE_BUTTON = document.getElementById('close-card-btn');
   const SAVE_BUTTON = document.getElementById('save-card-btn');
   const DISCARD_BUTTON = document.getElementById('discard-card-btn');
@@ -425,26 +423,30 @@
     EDIT_BUTTON.style.display = 'inline';
 
     // TO NOT CHANGE ID! (HALF DONE)
-    let newDetailsReplaceQuery = `REPLACE INTO Details (person, sex, contact_name, contact_phone, birth_date, room, enter_date) VALUES(`;
-    let values = "";
+    let newDetailsReplaceQuery = `main REPLACE INTO Details (id, person, sex, contact_name, contact_phone, birth_date, room, enter_date) VALUES(`;
+    let values = `'${OLD[0].textContent}', `;
     for (let i = 1; i < LEN - 1; ++i) {
       OLD[i].innerHTML = NEW[i].value;
-      values += (':' + OLD[i] + ':');
+      values += ("'" + OLD[i].textContent + "', ");
       OLD[i].style.display = 'inline';
       NEW[i].style.display = 'none'
     }
 
     newDetailsReplaceQuery += values;
+    newDetailsReplaceQuery = newDetailsReplaceQuery.substr(0, newDetailsReplaceQuery.length - 2);
     newDetailsReplaceQuery += ');';
+    console.log(newDetailsReplaceQuery);
+    
 
     OLD[LEN - 1].style.display = 'inline';
     NEW[LEN - 1].style.display = 'none';
     
-    connection.send(`main DELETE FROM Medicines WHERE ID='${OLD[0]}'`);
+    connection.send(newDetailsReplaceQuery);
+    connection.send(`main DELETE FROM Medicines WHERE ID='${OLD[0].textContent}'`);
     console.log("OLD: " + OLD[7]);
-    let pills = getFormattedOutputAsObj(OLD[7]);
+    let pills = getFormattedOutputAsObj(OLD[7].textContent);
     Object.keys(pills).forEach((pill, idx) => {
-      connection.send(`main INSERT INTO Medicines VALUES('${OLD[0]}', '${pill}', '${pills[pill]}')`);
+      connection.send(`main INSERT INTO Medicines VALUES('${OLD[0].textContent}', '${pill}', '${pills[pill]}')`);
     });
     
   }
@@ -472,7 +474,7 @@
     console.log('Old version:');
     for (let i = 1; i < LEN; ++i) {
       NEW[i].style.display = 'inline'
-      NEW[i].value = OLD[i].innerHTML;
+      NEW[i].value = OLD[i].textContent;
       console.log(NEW[i].value);
       OLD[i].style.display = 'none';
     }
@@ -616,7 +618,8 @@
   }
 
   function getFormattedOutputAsObj(pills) {
-    let splitPills = pills.split(/;|; /);
+    console.log(pills);
+    let splitPills = pills.split(/;|; |\|| \| /);
     let fPills = {};
     for (let i = 0; i < splitPills.length; ++i) {
       if (splitPills[i]) {
@@ -666,7 +669,7 @@
     if (!person) return;
     const pills = prompt("Pills (pill -> hour;):", "Aspirin -> 12:00;");
     if (!pills) return;
-    const sex = prompt("Sex (Male / Female):", "Male");
+    const sex = prompt("Sex (Male / Female):", "Female");
     if (!sex) return;
     const contactName = prompt("Name for contact (son / daughter...):", "Ivan Petrov");
     if (!contactName) return;

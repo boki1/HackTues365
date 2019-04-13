@@ -21,8 +21,8 @@
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "Momchilovi1"
-#define STAPSK  "momchilovi93"
+#define STASSID "AndroidAP"
+#define STAPSK  "hari1234"
 #endif
 
 const char *ssid = STASSID;
@@ -290,8 +290,8 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
         String statusMsg = sql.substring(0, 4);
 
         sql = sql.substring(5);
-        //Serial.println("SQL: " + sql);
-        //Serial.println("statusMsg: " + statusMsg);
+        Serial.println("Query: " + sql);
+        Serial.println("statusMsg: " + statusMsg);
 
         if (statusMsg == "main") {
           db_exec(db1, sql.c_str());
@@ -321,7 +321,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
           
           String fPills = "";
           for (int i = 0; i < Meds.size(); ++i)
-            fPills += (Meds[i] + " -> " + Hours[i] + ", ");
+            fPills += (Meds[i] + " -> " + Hours[i] + " | ");
             
           webSocket.sendTXT(0, "edit;" + fullInfo + fPills + ";");
           DetailQuery = "";
