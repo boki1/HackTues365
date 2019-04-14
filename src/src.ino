@@ -14,6 +14,11 @@
 //=================RFID Libs================//
 #include <MFRC522.h>
 #include <SPI.h>
+//=================Base connection==========//
+#include "WiFi.h"
+#include "AsyncUDP.h"
+
+AsyncUDP udp;
 
 #define SS_PIN 4
 #define RST_PIN 9
@@ -21,8 +26,8 @@
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "AndroidAP"
-#define STAPSK  "hari1234"
+#define STASSID "UltraCloudSolution"
+#define STAPSK  "kremi123"
 #endif
 
 const char *ssid = STASSID;
@@ -133,9 +138,12 @@ void setup(void) {
   //============Connect to a WiFi AP============//
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(100);
-    Serial.print(".");
+  if (WiFi.waitForConnectResult() != WL_CONNECTED) {
+    Serial.println("WiFi Failed");
+    while (1) {
+      delay(1000);
+      ESP.restart();
+    }
   }
   Serial.print("Connected to ");
   Serial.println(ssid);
@@ -179,13 +187,36 @@ void setup(void) {
   server.onNotFound(handleNotFound);
   server.begin();
 
-  webSocket.begin();
-  webSocket.onEvent(webSocketEvent);
-
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   printLocalTime();
 
   Serial.println("Server started");
+
+  if (udp.listen(420)) {
+    Serial.print("UDP Listening on IP: ");
+    Serial.println(WiFi.localIP());
+    udp.onPacket([](AsyncUDPPacket packet) {
+      Serial.print("UDP Packet Type: ");
+      Serial.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
+      Serial.print(", From: ");
+      Serial.print(packet.remoteIP());
+      Serial.print(":");
+      Serial.print(packet.remotePort());
+      Serial.print(", To: ");
+      Serial.print(packet.localIP());
+      Serial.print(":");
+      Serial.print(packet.localPort());
+      Serial.print(", Length: ");
+      Serial.print(packet.length());
+      Serial.print(", Data: ");
+      Serial.write(packet.data(), packet.length());
+      Serial.println();
+      //reply to the client
+      packet.printf("Got %u bytes of data", packet.length());
+    });
+  }
+  webSocket.begin();
+  webSocket.onEvent(webSocketEvent);
 }
 
 void loop(void) {
@@ -318,11 +349,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
           db_exec(db1, MedQuery.c_str());
           std::vector<String> Meds = results;
           results.clear();
-          
+
           String fPills = "";
           for (int i = 0; i < Meds.size(); ++i)
             fPills += (Meds[i] + " -> " + Hours[i] + " | ");
-            
+
           webSocket.sendTXT(0, "edit;" + fullInfo + fPills + ";");
           DetailQuery = "";
           Serial.println("edit;" + fullInfo + fPills + ";");

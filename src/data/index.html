@@ -433,7 +433,8 @@
 
     // TO NOT CHANGE ID! (HALF DONE)
     let newDetailsReplaceQuery = `main INSERT INTO Details VALUES(`;
-    let values = `'${ID}', '${personName.substr(6, personName.length - 3)}', `;
+    let values = `'${ID}', '${personName.substring(6, personName.length - 1)}', `;
+    console.log(values);
     for (let i = 1; i < LEN - 1; ++i) {
       OLD[i].innerHTML = NEW[i].value;
       values += ("'" + OLD[i].textContent + "', ");
@@ -623,7 +624,7 @@
   }
 
   function getFormattedOutputAsObj(pills) {
-    console.log(pills);
+    //console.log(pills);
     let splitPills = pills.split(/;|; |\|| \| /);
     let fPills = {};
     for (let i = 0; i < splitPills.length; ++i) {
