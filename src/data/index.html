@@ -431,9 +431,9 @@
     const ID = OLD[0].textContent;
     delPatient(ID);
 
-      // TO NOT CHANGE ID! (HALF DONE)
+    // TO NOT CHANGE ID! (HALF DONE)
     let newDetailsReplaceQuery = `main INSERT INTO Details VALUES(`;
-    let values = `'${ID}', '${personName.substr(7, personName.length - 2)}', `;
+    let values = `'${ID}', '${personName.substr(6, personName.length - 3)}', `;
     for (let i = 1; i < LEN - 1; ++i) {
       OLD[i].innerHTML = NEW[i].value;
       values += ("'" + OLD[i].textContent + "', ");
@@ -670,19 +670,19 @@
   }
 
   function addPatient() {
-    const person = prompt("Name: ", "Goshko Petrov");
+    const person = prompt("Name: ", "Momchil Zahariev");
     if (!person) return;
-    const pills = prompt("Pills (pill -> hour;):", "Aspirin -> 12:00;");
+    const pills = prompt("Pills (pill -> hour;):", "Amphetamin -> 12:00;");
     if (!pills) return;
-    const sex = prompt("Sex (Male / Female):", "Female");
+    const sex = prompt("Sex (Male / Female):", "Male");
     if (!sex) return;
-    const contactName = prompt("Name for contact (son / daughter...):", "Ivan Petrov");
+    const contactName = prompt("Name for contact (son / daughter...):", "Oshko Ivanov");
     if (!contactName) return;
-    const contactPhone = prompt("Phone for contact (son's / daughter's...):", "08** *** ***");
+    const contactPhone = prompt("Phone for contact (son's / daughter's...):", "0882 854 661");
     if (!contactPhone) return;
-    const birthday = prompt("Birthday (DD/MM/YYYY):", "11-11-1111");
+    const birthday = prompt("Birthday (DD/MM/YYYY):", "15-02-2003");
     if (!birthday) return;
-    const room = prompt("Room: ", "0");
+    const room = prompt("Room: ", "420");
     if (!room) return;
     const today = new Date();
     const enteringDate = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
