@@ -383,7 +383,7 @@
         const contactName = row[4];
         const contactPhone = row[5];
         const room = row[6];
-        const birthday = row[7];        
+        const birthday = row[7];
         const enterDate = row[8];
         let pills = row[9];
         pills = pills.slice(0, -2);
@@ -394,18 +394,15 @@
   };
 
   const OLD = [
-    document.getElementById('id-label'),
     document.getElementById('sex-label'),
     document.getElementById('contact-name-label'),
     document.getElementById('contact-phone-label'),
     document.getElementById('birthday-label'),
     document.getElementById('room-label'),
-    document.getElementById('entering-date-label'),
     document.getElementById('pills-label')
   ];
 
   const NEW = [
-    document.getElementById('id-inp'),
     document.getElementById('sex-inp'),
     document.getElementById('contact-name-inp'),
     document.getElementById('contact-phone-inp'),
@@ -450,7 +447,7 @@
 
     OLD[LEN - 1].style.display = 'inline';
     NEW[LEN - 1].style.display = 'none';
-    
+
     connection.send(newDetailsReplaceQuery);
     connection.send(`main DELETE FROM Medicines WHERE ID='${OLD[0].textContent}'`);
     console.log("OLD: " + OLD[7]);
@@ -458,7 +455,7 @@
     Object.keys(pills).forEach((pill, idx) => {
       connection.send(`main INSERT INTO Medicines VALUES('${OLD[0].textContent}', '${pill}', '${pills[pill]}')`);
     });
-    
+
   }
 
   function discardChanges() {
@@ -514,15 +511,15 @@
     let male = document.getElementById('male');
     let female = document.getElementById('female');
     let def = document.getElementById('default');
-    
+
     male.style.display = 'none';
     female.style.display = 'none';
     def.style.display = 'none';
 
     if (sex == 'Male')         male.style.display = 'block';
     else if (sex == 'Female')  female.style.display = 'block';
-    else                       def.style.display = 'block'; 
-      
+    else                       def.style.display = 'block';
+
   }
 
   function prepareForCard() {
