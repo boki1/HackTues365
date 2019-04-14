@@ -455,10 +455,7 @@
     connection.send(`main DELETE FROM Medicines WHERE ID='${OLD[0].textContent}'`);
     console.log("OLD: " + OLD[7]);
     let pills = getFormattedOutputAsObj(OLD[7].textContent);
-    Object.keys(pills).forEach((pill, idx) => {
-      connection.send(`main INSERT INTO Medicines VALUES('${OLD[0].textContent}', '${pill}', '${pills[pill]}')`);
-    });
-
+    SavePills(ID, pills);
   }
 
   function discardChanges() {
