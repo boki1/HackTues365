@@ -149,7 +149,7 @@
   #sex-inp:focus, ￼ ￼ ￼ 
   #pills-inp:focus {
     border-color: lightpink;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px lightpink;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   }
 
   #search-btn {
@@ -223,16 +223,16 @@
 
   .help .helptext {
     display: none;
-    width: 1100%;
-    color: grey;
-    background-color: rgba(238, 163, 174, 0.15);
+    width: 1200%;
+    color: rgb(34, 33, 33);
+    background-color: rgba(238, 163, 174, 0.85);
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
 
     position: absolute;
     z-index: 1;
-    margin-left: -100%;
+    margin-left: -100px;
   }
 
   .help:hover .helptext {
@@ -250,20 +250,19 @@
       </center>
       <div id="nav-div">
         <center>
-          <!-- <div class="fa fa-info help" id="help-btn"><span>Hidden</span></div> -->
-          <div class="fa fa-info help" id="help-btn">
-              <span class="helptext">
-                Add pill schema:
-                <br>[pill1] -> [hour1], [hour2]; [pill2] -> [hour1], [hour2];
-                <br> E.g. Amphetamine -> 10:00, 18:00; LSD monitor -> 15:30;
-                <br>link to instructions: https://github.com/boki1/HackTues365
-              </span>
-          </div>
-          
           <button id="add-btn"><i class="fa fa-plus"></i></button>
           <button id="del-btn"><i class="fa fa-minus"></i></button>
           <input id="search-inp" class="form-control " placeholder="Search">
           <i id="search-btn" class="fa fa-search"></i>
+          <div class="fa fa-info help" id="help-btn">
+            <span class="helptext">
+              Add pill schema:
+              <br>[pill1] -> [hour1], [hour2]; [pill2] -> [hour1], [hour2];
+              <br> E.g. Amphetamine -> 10:00, 18:00; LSD monitor -> 15:30;
+              <br>
+              <br>More details over <a href="https://github.com/boki1/HackTues365">here.</a>
+            </span>
+          </div>
         </center>
       </div>
 
