@@ -411,6 +411,9 @@
     document.getElementById('pills-inp')
   ];
 
+  const PILL_LABEL = document.getElementById('pills-label');
+  const PILL_INP = document.getElementById('pills-inp');
+
   const CLOSE_BUTTON = document.getElementById('close-card-btn');
   const SAVE_BUTTON = document.getElementById('save-card-btn');
   const DISCARD_BUTTON = document.getElementById('discard-card-btn');
@@ -444,14 +447,19 @@
     console.log(newDetailsReplaceQuery);
     connection.send(newDetailsReplaceQuery);
 
-    const PILLS_IDX = LEN - 1;
-    OLD[PILLS_IDX].style.display = 'inline';
-    NEW[PILLS_IDX].style.display = 'none';
+    PILL_LABEL.innerText = PILL_INP.value;
+    PILL_LABEL.style.display = 'inline';
+    PILL_INP.style.display = 'none';
 
-    connection.send(`main DELETE FROM Medicines WHERE ID='${ID}'`);
-    connection.send(newDetailsReplaceQuery);
-    let pills = getFormattedOutputAsObj(OLD[PILLS_IDX].textContent);
-    SavePills(ID, pills);
+    connection.send(`main DELETE FROM Medicines WHERE ID='${ID}';`);
+    let pills = getFormattedOutputAsObj(PILL_LABEL.innerText);
+    console.log('Pills: ');
+    console.log(pills);
+
+    Object.keys(pills).forEach((pill, idx) => {
+      connection.send(`main INSERT INTO Medicines VALUES('${ID}', '${pill}', '${pills[pill]}')`);
+    });
+
   }
 
   function discardChanges() {
