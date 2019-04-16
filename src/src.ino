@@ -17,6 +17,8 @@
 //=================Base connection==========//
 #include "WiFi.h"
 #include "AsyncUDP.h"
+//=================mDNS=====================//
+#include <ESPmDNS.h>
 
 AsyncUDP udp;
 
@@ -26,8 +28,8 @@ AsyncUDP udp;
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "AndroidAP"
-#define STAPSK "hari1234"
+#define STASSID "Momchilovi1"
+#define STAPSK "momchilovi93"
 #endif
 
 const char *ssid = STASSID;
@@ -144,6 +146,15 @@ void WiFiConnect()
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+
+  if (!MDNS.begin("esp32")) {
+    Serial.println("Error setting up MDNS responder!");
+    while(1) {
+      delay(1000);
+      }
+ }
+    Serial.println("mDNS responder started!");
+    MDNS.addService("http", "tcp", 80);
 }
 
 void ManageFileSystem()
