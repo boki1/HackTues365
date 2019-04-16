@@ -26,8 +26,8 @@ AsyncUDP udp;
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "Robotics"
-#define STAPSK "elsysbot&"
+#define STASSID "Gandalf"
+#define STAPSK "wnxg3298"
 #endif
 
 const char *ssid = STASSID;

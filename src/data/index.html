@@ -394,24 +394,20 @@
   };
 
   const OLD = [
-    document.getElementById('id-label'),
     document.getElementById('sex-label'),
     document.getElementById('contact-name-label'),
     document.getElementById('contact-phone-label'),
     document.getElementById('birthday-label'),
     document.getElementById('room-label'),
-    document.getElementById('entering-date-label'),
     document.getElementById('pills-label')
   ];
 
   const NEW = [
-    document.getElementById('id-inp'),
     document.getElementById('sex-inp'),
     document.getElementById('contact-name-inp'),
     document.getElementById('contact-phone-inp'),
     document.getElementById('birthday-inp'),
     document.getElementById('room-inp'),
-    document.getElementById('entering-date-inp'),
     document.getElementById('pills-inp')
   ];
 
@@ -428,33 +424,33 @@
     EDIT_BUTTON.style.display = 'inline';
     const personName = document.getElementById('person').textContent;
 
-    const ID = OLD[0].textContent;
-    delPatient(ID);
+    const ID = document.getElementById('id-label').innerText;
+    connection.send(`main DELETE FROM Details WHERE id='${ID}';`);
+    console.log('DELETING ID ' + ID);
 
-    // TO NOT CHANGE ID! (HALF DONE)
     let newDetailsReplaceQuery = `main INSERT INTO Details VALUES(`;
     let values = `'${ID}', '${personName.substring(6, personName.length - 1)}', `;
-    console.log(values);
-    for (let i = 1; i < LEN - 1; ++i) {
+    for (let i = 0; i < LEN - 1; ++i) {
       OLD[i].innerHTML = NEW[i].value;
       values += ("'" + OLD[i].textContent + "', ");
       OLD[i].style.display = 'inline';
       NEW[i].style.display = 'none'
     }
 
+    const ENTER_DATE = "'" + document.getElementById('entering-date-label').innerText + "'";
+    values += ENTER_DATE;
     newDetailsReplaceQuery += values;
-    newDetailsReplaceQuery = newDetailsReplaceQuery.substr(0, newDetailsReplaceQuery.length - 2);
     newDetailsReplaceQuery += ');';
     console.log(newDetailsReplaceQuery);
     connection.send(newDetailsReplaceQuery);
 
-    OLD[LEN - 1].style.display = 'inline';
-    NEW[LEN - 1].style.display = 'none';
+    const PILLS_IDX = LEN - 1;
+    OLD[PILLS_IDX].style.display = 'inline';
+    NEW[PILLS_IDX].style.display = 'none';
 
+    connection.send(`main DELETE FROM Medicines WHERE ID='${ID}'`);
     connection.send(newDetailsReplaceQuery);
-    connection.send(`main DELETE FROM Medicines WHERE ID='${OLD[0].textContent}'`);
-    console.log("OLD: " + OLD[7]);
-    let pills = getFormattedOutputAsObj(OLD[7].textContent);
+    let pills = getFormattedOutputAsObj(OLD[PILLS_IDX].textContent);
     SavePills(ID, pills);
   }
 
@@ -465,7 +461,7 @@
     EDIT_BUTTON.style.display = 'inline';
 
     console.log("Changes discarded..");
-    for (let i = 1; i < LEN; ++i) {
+    for (let i = 0; i < LEN; ++i) {
       NEW[i].style.display = 'none'
       NEW[i].value = '';
       OLD[i].style.display = 'inline';
@@ -479,7 +475,7 @@
     EDIT_BUTTON.style.display = 'none';
 
     console.log('Old version:');
-    for (let i = 1; i < LEN; ++i) {
+    for (let i = 0; i < LEN; ++i) {
       NEW[i].style.display = 'inline'
       NEW[i].value = OLD[i].textContent;
       console.log(NEW[i].value);
