@@ -8,13 +8,8 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
-
-
 <style>
-  #info>li {
-    list-style-type: none;
-    margin-top: 40px;
-  }
+
 
   #card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -151,7 +146,7 @@
   #birthday-inp:focus,
   #room-inp:focus,
   #entering-date-inp:focus,
-  #sex-inp:focus,
+  #sex-inp:focus, ￼ ￼ ￼ 
   #pills-inp:focus {
     border-color: lightpink;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px lightpink;
@@ -188,6 +183,7 @@
     background-size: cover;
   }
 
+  #help-btn,
   #search-btn,
   #add-btn,
   #del-btn {
@@ -201,6 +197,7 @@
     display: inline-block;
   }
 
+  #help-btn:hover,
   #search-btn:hover,
   #add-btn:hover,
   #del-btn:hover {
@@ -218,6 +215,30 @@
     width: 35%;
     display: inline;
   }
+
+  .help {
+    position: relative;
+    display: inline-block;
+  }
+
+  .help .helptext {
+    display: none;
+    width: 1100%;
+    color: grey;
+    background-color: rgba(238, 163, 174, 0.15);
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    position: absolute;
+    z-index: 1;
+    margin-left: -100%;
+  }
+
+  .help:hover .helptext {
+    display: block;
+  }
+
 </style>
 
 
@@ -229,6 +250,16 @@
       </center>
       <div id="nav-div">
         <center>
+          <!-- <div class="fa fa-info help" id="help-btn"><span>Hidden</span></div> -->
+          <div class="fa fa-info help" id="help-btn">
+              <span class="helptext">
+                Add pill schema:
+                <br>[pill1] -> [hour1], [hour2]; [pill2] -> [hour1], [hour2];
+                <br> E.g. Amphetamine -> 10:00, 18:00; LSD monitor -> 15:30;
+                <br>link to instructions: https://github.com/boki1/HackTues365
+              </span>
+          </div>
+          
           <button id="add-btn"><i class="fa fa-plus"></i></button>
           <button id="del-btn"><i class="fa fa-minus"></i></button>
           <input id="search-inp" class="form-control " placeholder="Search">
@@ -244,16 +275,6 @@
         </tr>
       </thead>
       <tbody>
-        <!-- <tr>
-          <td><button class="id-button">#TEST</button></td>
-          <td>Goshko</td>
-          <td>Analgin, Parcetamol</td>
-        </tr>
-        <tr>
-          <td><button class="id-button">#DEMO</button></td>
-          <td>Pesho</td>
-          <td>Nurofen, Propolki</td>
-        </tr> -->
       </tbody>
     </table>
   </div>
