@@ -460,6 +460,8 @@
       connection.send(`main INSERT INTO Medicines VALUES('${ID}', '${pill}', '${pills[pill]}')`);
     });
 
+    location.reload();
+
   }
 
   function discardChanges() {
