@@ -19,17 +19,26 @@
 #include "AsyncUDP.h"
 //=================mDNS=====================//
 #include <ESPmDNS.h>
+//=================RFID=====================//
+#include <SPI.h>
+#include <MFRC522.h>
 
 AsyncUDP udp;
 
-#define SS_PIN 4
-#define RST_PIN 9
+constexpr uint8_t RST_PIN = 15;
+constexpr uint8_t SS_PIN = 2;
+
+MFRC522 rfid(SS_PIN, RST_PIN);
+
+MFRC522::MIFARE_Key key;
+
+byte nuidPICC[4];
 
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "Momchilovi1"
-#define STAPSK "momchilovi93"
+#define STASSID "elsys"
+#define STAPSK ""
 #endif
 
 const char *ssid = STASSID;
@@ -146,15 +155,6 @@ void WiFiConnect()
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-
-  if (!MDNS.begin("esp32")) {
-    Serial.println("Error setting up MDNS responder!");
-    while(1) {
-      delay(1000);
-      }
- }
-    Serial.println("mDNS responder started!");
-    MDNS.addService("http", "tcp", 80);
 }
 
 void ManageFileSystem()
@@ -189,6 +189,29 @@ void ManageFileSystem()
   }
 }
 
+void mDNS() {
+  if (!MDNS.begin("spenser")) {
+    Serial.println("Error setting up MDNS responder!");
+    while (1) {
+      delay(1000);
+    }
+  }
+  Serial.println("mDNS responder started!");
+  MDNS.addService("http", "tcp", 80);
+}
+
+void startRFID() 
+{
+  SPI.begin(); // Init SPI bus
+  rfid.PCD_Init(); // Init MFRC522
+  for (byte i = 0; i < 6; i++) {
+    key.keyByte[i] = 0xFF;
+  }
+  Serial.println(F("This code scan the MIFARE Classsic NUID."));
+  Serial.print(F("Using the following key:"));
+  printHex(key.keyByte, MFRC522::MF_KEY_SIZE);
+}
+
 void setup(void)
 {
   Serial.begin(115200);
@@ -196,6 +219,8 @@ void setup(void)
 
   WiFiConnect();
   ManageFileSystem();
+  mDNS();
+  startRFID();
 
   sqlite3_initialize(); //Init SQLite3
 
@@ -210,31 +235,6 @@ void setup(void)
   PrintLocalTime();
 
   Serial.println("Server started");
-
-  if (udp.listen(420))
-  {
-    Serial.print("UDP Listening on IP: ");
-    Serial.println(WiFi.localIP());
-    udp.onPacket([](AsyncUDPPacket packet) {
-      Serial.print("UDP Packet Type: ");
-      Serial.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
-      Serial.print(", From: ");
-      Serial.print(packet.remoteIP());
-      Serial.print(":");
-      Serial.print(packet.remotePort());
-      Serial.print(", To: ");
-      Serial.print(packet.localIP());
-      Serial.print(":");
-      Serial.print(packet.localPort());
-      Serial.print(", Length: ");
-      Serial.print(packet.length());
-      Serial.print(", Data: ");
-      Serial.write(packet.data(), packet.length());
-      Serial.println();
-      //reply to the client
-      packet.printf("Got %u bytes of data", packet.length());
-    });
-  }
   webSocket.begin();
   webSocket.onEvent(WebSocketEvent);
 }
@@ -243,6 +243,31 @@ void loop(void)
 {
   server.handleClient();
   webSocket.loop();
+
+  if ( ! rfid.PICC_IsNewCardPresent())
+    return;
+  if ( ! rfid.PICC_ReadCardSerial())
+    return;
+  if (rfid.uid.uidByte[0] != nuidPICC[0] || 
+    rfid.uid.uidByte[1] != nuidPICC[1] || 
+    rfid.uid.uidByte[2] != nuidPICC[2] || 
+    rfid.uid.uidByte[3] != nuidPICC[3] ) {
+
+    for (byte i = 0; i < 4; i++) {
+      nuidPICC[i] = rfid.uid.uidByte[i];
+    }
+   
+    Serial.println(F("The NUID tag is:"));
+    Serial.print(F("In hex: "));
+    printHex(rfid.uid.uidByte, rfid.uid.size);
+  }
+  else Serial.println(F("Card read previously."));
+
+  // Halt PICC
+  rfid.PICC_HaltA();
+
+  // Stop encryption on PCD
+  rfid.PCD_StopCrypto1();
 }
 
 void StackResults()
@@ -393,14 +418,21 @@ void WebSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
     case WStype_DISCONNECTED:
       OnDisconnect();
       break;
-      
+
     case WStype_CONNECTED:
       OnConnect();
       break;
-      
+
     case WStype_TEXT:
       String query = (const char *) payload;
       OnMessage(query);
       break;
+  }
+}
+
+void printHex(byte *buffer, byte bufferSize) {
+  for (byte i = 0; i < bufferSize; i++) {
+    Serial.print(buffer[i] < 0x10 ? " 0" : " ");
+    Serial.print(buffer[i], HEX);
   }
 }
