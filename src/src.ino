@@ -1,3 +1,4 @@
+
 //===================RTC Libs==================//
 #include "time.h"
 //==================SQLite3 Libs==============//
@@ -22,8 +23,12 @@
 //=================RFID=====================//
 #include <SPI.h>
 #include <MFRC522.h>
+//=================Servo====================//
+#include <ESP32Servo.h>
 
 AsyncUDP udp;
+
+Servo myServo;
 
 constexpr uint8_t RST_PIN = 15;
 constexpr uint8_t SS_PIN = 2;
@@ -37,8 +42,8 @@ byte nuidPICC[4];
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "elsys"
-#define STAPSK ""
+#define STASSID "Gandalf"
+#define STAPSK "wnxg3298"
 #endif
 
 const char *ssid = STASSID;
@@ -58,15 +63,16 @@ const char *tail;
 
 volatile int userCount = 0;
 
-void PrintLocalTime()
+String _GetLocalTime()
 {
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo))
-  {
-    Serial.println("Failed to obtain time");
-    return;
-  }
-  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+    return "Failed to obtain time";
+  String lt = "";
+  lt += timeinfo.tm_hour;
+  lt += ":";
+  lt += timeinfo.tm_min + 1;
+  return lt;
 }
 
 std::vector<String> results;
@@ -200,13 +206,12 @@ void mDNS() {
   MDNS.addService("http", "tcp", 80);
 }
 
-void startRFID() 
+void startRFID()
 {
   SPI.begin(); // Init SPI bus
   rfid.PCD_Init(); // Init MFRC522
-  for (byte i = 0; i < 6; i++) {
+  for (byte i = 0; i < 6; i++)
     key.keyByte[i] = 0xFF;
-  }
   Serial.println(F("This code scan the MIFARE Classsic NUID."));
   Serial.print(F("Using the following key:"));
   printHex(key.keyByte, MFRC522::MF_KEY_SIZE);
@@ -232,11 +237,40 @@ void setup(void)
   server.begin();
 
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-  PrintLocalTime();
+  Serial.println(_GetLocalTime());
 
   Serial.println("Server started");
   webSocket.begin();
   webSocket.onEvent(WebSocketEvent);
+
+  myServo.attach(5); //servo pin
+  myServo.write(0);
+
+  if (udp.listen(420)) {
+    Serial.print("UDP Listening on IP: ");
+    Serial.println(WiFi.localIP());
+    udp.onPacket([](AsyncUDPPacket packet) {
+      Serial.print("UDP Packet Type: ");
+      Serial.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
+      Serial.print(", From: ");
+      Serial.print(packet.remoteIP());
+      Serial.print(":");
+      Serial.print(packet.remotePort());
+      Serial.print(", To: ");
+      Serial.print(packet.localIP());
+      Serial.print(":");
+      Serial.print(packet.localPort());
+      Serial.print(", Length: ");
+      Serial.print(packet.length());
+      Serial.print(", Data: ");
+      Serial.write(packet.data(), packet.length());
+      Serial.println();
+      //reply to the client
+      packet.printf("Got %u bytes of data", packet.length());
+    });
+  }
+  udp.broadcast("Anyone here?");
+  myServo.write(0);
 }
 
 void loop(void)
@@ -244,22 +278,36 @@ void loop(void)
   server.handleClient();
   webSocket.loop();
 
+  if (Serial.available() > 0) {    // is a character available?
+    char Sinput = Serial.read();
+
+    if (Sinput == '1') {
+      struct tm timeinfo;
+      String Query = "INSERT INTO medicines VALUES('#####', 'random pill', '" + _GetLocalTime() + "');";
+      Serial.println(Query);
+      ExecuteQuery(Database, Query.c_str());
+    }
+  }
+
+
+
   if ( ! rfid.PICC_IsNewCardPresent())
     return;
   if ( ! rfid.PICC_ReadCardSerial())
     return;
-  if (rfid.uid.uidByte[0] != nuidPICC[0] || 
-    rfid.uid.uidByte[1] != nuidPICC[1] || 
-    rfid.uid.uidByte[2] != nuidPICC[2] || 
-    rfid.uid.uidByte[3] != nuidPICC[3] ) {
+  if (rfid.uid.uidByte[0] != nuidPICC[0] ||
+      rfid.uid.uidByte[1] != nuidPICC[1] ||
+      rfid.uid.uidByte[2] != nuidPICC[2] ||
+      rfid.uid.uidByte[3] != nuidPICC[3] ) {
 
     for (byte i = 0; i < 4; i++) {
       nuidPICC[i] = rfid.uid.uidByte[i];
     }
-   
+
     Serial.println(F("The NUID tag is:"));
     Serial.print(F("In hex: "));
     printHex(rfid.uid.uidByte, rfid.uid.size);
+    MoveServo();
   }
   else Serial.println(F("Card read previously."));
 
@@ -268,6 +316,7 @@ void loop(void)
 
   // Stop encryption on PCD
   rfid.PCD_StopCrypto1();
+  udp.broadcast("Anyone here?");
 }
 
 void StackResults()
@@ -434,5 +483,17 @@ void printHex(byte *buffer, byte bufferSize) {
   for (byte i = 0; i < bufferSize; i++) {
     Serial.print(buffer[i] < 0x10 ? " 0" : " ");
     Serial.print(buffer[i], HEX);
+  }
+}
+
+void MoveServo() {
+  for (int _position = 0; _position <= 70; _position++) {
+    myServo.write(_position);
+    delay(13);
+  }
+
+  for (int _position = 70; _position >= 0; _position--) {
+    myServo.write(_position);
+    delay(13);
   }
 }
