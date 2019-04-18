@@ -75,7 +75,7 @@ String _GetLocalTime()
   return lt;
 }
 
-std::vector<String> results;
+static std::vector<String> results;
 const char *data = "Callback function called";
 static int callback(void *data, int argc, char **argv, char **azColName)
 {
@@ -214,7 +214,7 @@ void startRFID()
     key.keyByte[i] = 0xFF;
   Serial.println(F("This code scan the MIFARE Classsic NUID."));
   Serial.print(F("Using the following key:"));
-  printHex(key.keyByte, MFRC522::MF_KEY_SIZE);
+  Serial.println(GetIDCardInHex(key.keyByte, MFRC522::MF_KEY_SIZE));
 }
 
 void setup(void)
@@ -283,7 +283,7 @@ void loop(void)
 
     if (Sinput == '1') {
       struct tm timeinfo;
-      String Query = "INSERT INTO medicines VALUES('#####', 'random pill', '" + _GetLocalTime() + "');";
+      String Query = "INSERT INTO medicines VALUES(' #####', 'random pill', '" + _GetLocalTime() + "');";
       Serial.println(Query);
       ExecuteQuery(Database, Query.c_str());
     }
@@ -291,22 +291,25 @@ void loop(void)
 
 
 
-  if ( ! rfid.PICC_IsNewCardPresent())
-    return;
-  if ( ! rfid.PICC_ReadCardSerial())
+  if ( ! rfid.PICC_IsNewCardPresent() || !rfid.PICC_ReadCardSerial())
     return;
   if (rfid.uid.uidByte[0] != nuidPICC[0] ||
       rfid.uid.uidByte[1] != nuidPICC[1] ||
       rfid.uid.uidByte[2] != nuidPICC[2] ||
-      rfid.uid.uidByte[3] != nuidPICC[3] ) {
+      rfid.uid.uidByte[3] != nuidPICC[3] )
+  {
 
-    for (byte i = 0; i < 4; i++) {
+    for (byte i = 0; i < 4; i++)
       nuidPICC[i] = rfid.uid.uidByte[i];
-    }
 
-    Serial.println(F("The NUID tag is:"));
-    Serial.print(F("In hex: "));
-    printHex(rfid.uid.uidByte, rfid.uid.size);
+    String idCard = GetIDCardInHex(rfid.uid.uidByte, rfid.uid.size); 
+    Serial.println(idCard);
+    String getIDQuery = "SELECT id FROM id_cards WHERE id_card='" + idCard + "';";
+    ExecuteQuery(Database, getIDQuery.c_str());
+    String humanID = results[0];
+    Serial.println(humanID);
+    results.clear();
+    
     MoveServo();
   }
   else Serial.println(F("Card read previously."));
@@ -479,11 +482,15 @@ void WebSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
   }
 }
 
-void printHex(byte *buffer, byte bufferSize) {
+String GetIDCardInHex(byte *buffer, byte bufferSize) {
+  String idCard = "";
   for (byte i = 0; i < bufferSize; i++) {
-    Serial.print(buffer[i] < 0x10 ? " 0" : " ");
-    Serial.print(buffer[i], HEX);
+    idCard += (String(buffer[i] < 0x10 ? " 0" : " "));
+    idCard += String(buffer[i], HEX);
   }
+  idCard = idCard.substring(1, idCard.length());
+  idCard.toUpperCase();
+  return idCard;
 }
 
 void MoveServo() {
