@@ -30,8 +30,8 @@
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "viluu"
-#define STAPSK "v12345678"
+  #define STASSID "viluu"
+  #define STAPSK "v12345678"
 #endif
 
 sqlite3 *Database;
@@ -137,5 +137,4 @@ void loop(void)
   rfid.PICC_HaltA();
 
   rfid.PCD_StopCrypto1();
-  udp.broadcast("Anyone here?");
 }

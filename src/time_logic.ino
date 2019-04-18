@@ -9,24 +9,6 @@ struct tm *_GetLocalTime()
   return &timeinfo;
 }
 
-void split(String t)
-{
-  std::vector<int> hours;
-  char* cToken;
-  t.toCharArray(cToken, t.length());
-  char *token = strtok(cToken, ":");
-
-  while (token)
-  {
-    token = strtok(NULL, ":");
-    hours.push_back(atoi(token));
-  }
-
-  for (int h: hours)
-    Serial.print(h + " ");
-
-}
-
 bool isClose(struct tm *pillTime, struct tm *current)
 {
   unsigned int pillTimeMins = pillTime->tm_hour * 60 + pillTime->tm_min;

@@ -1,12 +1,34 @@
+std::vector<int> split(String str, String delim)
+{
+  Serial.println("into the split, str" + str + "; length: " + String(str.length()));
+  std::vector<int> res;
+  int i = 2;
+  res.push_back((int) str.substring(0, 2).toInt());
+  Serial.println("into the end");
+  for (; i < str.length(); i++) 
+    res.push_back((int) str.substring(i + 1, i + 2).toInt());
+
+  for (int r: res)
+    Serial.printf("%d ", r);
+  return res;
+}
+
 bool CheckMedTime(String candidate, struct tm *current)
 {
-   
+  String sDelColumn = ":";
+  String sDelCommaSpace = ", ";
+  //  Serial.println("Im in, 'CheckMedTime()' with cand " + String(candidate));
+  candidate.replace(sDelCommaSpace, sDelColumn);
+  //  Serial.println(candidate);
+  std::vector<int> splittedByCol = split(candidate, sDelColumn);
+
+  return false;
 }
 
 void startRFID()
 {
-  SPI.begin(); // Init SPI bus
-  rfid.PCD_Init(); // Init MFRC522
+  SPI.begin();
+  rfid.PCD_Init();
   for (byte i = 0; i < 6; i++)
     key.keyByte[i] = 0xFF;
   Serial.println(F("This code scan the MIFARE Classsic NUID."));
@@ -47,14 +69,23 @@ void OnClick(byte *buff, byte _size, struct tm *timeinfo)
 
   String _getHoursQuery = "SELECT hours FROM Medicines WHERE id='" + humanID + "';";
   ExecuteQuery(Database, _getHoursQuery.c_str());
-  results.clear();
 
-  struct tm current = _GetLocalTime();
+  Serial.println("Results size: " + String(results.size()));
+
+  struct tm *current = _GetLocalTime();
+  std::vector<int> indexes;
   for (int i = 0; i < results.size(); ++i)
   {
-    if (!CheckMedTime(hour, current))
+    if (!CheckMedTime(results[i], current))
       continue;
+    indexes.push_back(i);
   }
+
+  Serial.print("Indexes incoming... size: " + String(indexes.size()) + "; ");
+  for (int i : indexes)
+    Serial.print(i + " ");
+
+  results.clear();
 
   String _getMedicinesQuery = "SELECT medicines FROM Medicines WHERE id='" + humanID + "';";
   ExecuteQuery(Database, _getMedicinesQuery.c_str());
