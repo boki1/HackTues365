@@ -1,17 +1,23 @@
-std::vector<int> split(String str, String delim)
-{
-  Serial.println("into the split, str" + str + "; length: " + String(str.length()));
-  std::vector<int> res;
-  int i = 2;
-  res.push_back((int) str.substring(0, 2).toInt());
-  Serial.println("into the end");
-  for (; i < str.length(); i++) 
-    res.push_back((int) str.substring(i + 1, i + 2).toInt());
+//std::vector<int> split(String str, String delim)
+//{
+//  Serial.println("into the split, str" + str + "; length: " + String(str.length()));
+//  std::vector<int> res;
+//  int i = 2;
+//  res.push_back((int) str.substring(0, 2).toInt());
+//  Serial.println("into the end");
+//  for (; i < str.length(); i++)
+//    res.push_back((int) str.substring(i + 1, i + 2).toInt());
+//
+//  for (int r: res)
+//    Serial.printf("%d ", r);
+//  return res;
+//}
 
-  for (int r: res)
-    Serial.printf("%d ", r);
-  return res;
-}
+  std::vector<int> splittedByCol;
+  struct sd
+  {
+    int a : 5;
+  };
 
 bool CheckMedTime(String candidate, struct tm *current)
 {
@@ -19,9 +25,21 @@ bool CheckMedTime(String candidate, struct tm *current)
   String sDelCommaSpace = ", ";
   //  Serial.println("Im in, 'CheckMedTime()' with cand " + String(candidate));
   candidate.replace(sDelCommaSpace, sDelColumn);
-  //  Serial.println(candidate);
-  std::vector<int> splittedByCol = split(candidate, sDelColumn);
+  Serial.print("ESP time (candidate): ");
+  //Serial.println(candidate);
+  Serial.println("#####candidate.length" + candidate.length());
+  for (int i = 0; i < candidate.length() - 2; i+=2) 
+  {
+     splittedByCol[i]= candidate[i];
+     splittedByCol[i+1]= candidate[i+1];
+     Serial.print("While splitting: i=");
+     Serial.print(splittedByCol[i]);
+     Serial.print(" i + 1 =");
+     Serial.println(splittedByCol[i+1]);
+  }
 
+  
+  
   return false;
 }
 
