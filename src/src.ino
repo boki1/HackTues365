@@ -42,8 +42,8 @@ byte nuidPICC[4];
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-#define STASSID "Gandalf"
-#define STAPSK "wnxg3298"
+#define STASSID "AndroidAP"
+#define STAPSK "hari1234"
 #endif
 
 const char *ssid = STASSID;
