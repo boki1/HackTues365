@@ -2,7 +2,7 @@
 
 struct tm *_GetLocalTime()
 {
-  struct tm timeinfo;
+  static struct tm timeinfo;
   if (!getLocalTime(&timeinfo))
     return &timeinfo;
   timeinfo.tm_min += 1;

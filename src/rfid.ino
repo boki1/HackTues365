@@ -1,45 +1,38 @@
-//std::vector<int> split(String str, String delim)
-//{
-//  Serial.println("into the split, str" + str + "; length: " + String(str.length()));
-//  std::vector<int> res;
-//  int i = 2;
-//  res.push_back((int) str.substring(0, 2).toInt());
-//  Serial.println("into the end");
-//  for (; i < str.length(); i++)
-//    res.push_back((int) str.substring(i + 1, i + 2).toInt());
-//
-//  for (int r: res)
-//    Serial.printf("%d ", r);
-//  return res;
-//}
+std::vector<std::pair<int, int>> split(String str, String delim)
+{
+  Serial.println("into the split, str" + str + "; length: " + String(str.length()));
+  std::vector<std::pair<int, int>> res;
 
-  std::vector<int> splittedByCol;
-  struct sd
+  for (int i = 0; i < str.length(); i++)
   {
-    int a : 5;
-  };
+    if (String(str.charAt(i)) == delim)
+    {
+      res.push_back(std::make_pair((int) str.substring(i - 2, i).toInt(), (int) str.substring(i + 1, i + 3).toInt()));
+      if (i + 4 <= str.length()) i += 4;
+      else break;
+    }
+  }
 
-bool CheckMedTime(String candidate, struct tm *current)
+  return res;
+}
+
+bool isPillTime(String candidate, struct tm *current)
 {
   String sDelColumn = ":";
   String sDelCommaSpace = ", ";
-  //  Serial.println("Im in, 'CheckMedTime()' with cand " + String(candidate));
+  //  Serial.println("Im in, 'isPillTime()' with cand " + String(candidate));
   candidate.replace(sDelCommaSpace, sDelColumn);
-  Serial.print("ESP time (candidate): ");
-  //Serial.println(candidate);
-  Serial.println("#####candidate.length" + candidate.length());
-  for (int i = 0; i < candidate.length() - 2; i+=2) 
+
+  std::vector<std::pair<int, int>> hourMin = split(candidate, sDelColumn);
+  int minCandidate, minCurrent = current->tm_hour * 60 + current->tm_min;
+  Serial.println("Current time by var: " + String(minCurrent));
+  for (std::pair<int, int> p : hourMin)
   {
-     splittedByCol[i]= candidate[i];
-     splittedByCol[i+1]= candidate[i+1];
-     Serial.print("While splitting: i=");
-     Serial.print(splittedByCol[i]);
-     Serial.print(" i + 1 =");
-     Serial.println(splittedByCol[i+1]);
+    minCandidate = p.first * 60 + p.second;
+    Serial.println("Candidate time: " + String(minCandidate));
+    if (abs(minCandidate - minCurrent) <= 30) return true;
   }
 
-  
-  
   return false;
 }
 
@@ -94,7 +87,7 @@ void OnClick(byte *buff, byte _size, struct tm *timeinfo)
   std::vector<int> indexes;
   for (int i = 0; i < results.size(); ++i)
   {
-    if (!CheckMedTime(results[i], current))
+    if (!isPillTime(results[i], current))
       continue;
     indexes.push_back(i);
   }

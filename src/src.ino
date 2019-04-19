@@ -1,3 +1,7 @@
+#include <WebSocketsClient.h>
+#include <WebSocketsServer.h>
+#include <WebSockets.h>
+
 
 //===================RTC Libs==================//
 #include "time.h"
@@ -30,8 +34,8 @@
 #define COLUMN_COUNT 3
 
 #ifndef STASSID
-  #define STASSID "viluu"
-  #define STAPSK "v12345678"
+  #define STASSID "UltraCloudSolution"
+  #define STAPSK "kremi123"
 #endif
 
 sqlite3 *Database;
@@ -130,6 +134,7 @@ void loop(void)
     for (byte i = 0; i < 4; i++)
       nuidPICC[i] = rfid.uid.uidByte[i];
 
+    Serial.println("Villy touched the card :D");
     OnClick(rfid.uid.uidByte, rfid.uid.size, _GetLocalTime());
   }
   else Serial.println(F("Card read previously."));
