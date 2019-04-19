@@ -24,13 +24,14 @@ bool isPillTime(String candidate, struct tm *current)
   candidate.replace(sDelCommaSpace, sDelColumn);
 
   std::vector<std::pair<int, int>> hourMin = split(candidate, sDelColumn);
-  int minCandidate, minCurrent = current->tm_hour * 60 + current->tm_min;
+  unsigned minCandidate, minCurrent = current->tm_hour * 60 + current->tm_min;
   Serial.println("Current time by var: " + String(minCurrent));
   for (std::pair<int, int> p : hourMin)
   {
     minCandidate = p.first * 60 + p.second;
     Serial.println("Candidate time: " + String(minCandidate));
-    if (abs(minCandidate - minCurrent) <= 30) return true;
+    if (abs(minCandidate - minCurrent) <= 30)
+      return true;
   }
 
   return false;
@@ -56,18 +57,6 @@ String GetIDCardInHex(byte *buffer, byte bufferSize) {
   idCard = idCard.substring(1, idCard.length());
   idCard.toUpperCase();
   return idCard;
-}
-
-void MoveServo() {
-  for (int _position = 0; _position <= 70; _position++) {
-    myServo.write(_position);
-    delay(13);
-  }
-
-  for (int _position = 70; _position >= 0; _position--) {
-    myServo.write(_position);
-    delay(13);
-  }
 }
 
 void OnClick(byte *buff, byte _size, struct tm *timeinfo)
@@ -100,7 +89,23 @@ void OnClick(byte *buff, byte _size, struct tm *timeinfo)
 
   String _getMedicinesQuery = "SELECT medicines FROM Medicines WHERE id='" + humanID + "';";
   ExecuteQuery(Database, _getMedicinesQuery.c_str());
+  std::vector<String> pillsToDrop;
+  Serial.print("Im droppin..");
+  if (indexes.size() == 0) Serial.print("nothing :(");
+  for (int i : indexes) {
+    if (std::find(indexes.begin(), indexes.end(), i) != indexes.end())
+    { 
+      pillsToDrop.push_back(results[i]);
+      Serial.print(results[i] + " ");
+    }
+  }
+  
   results.clear();
 
-  MoveServo();
+  for (String pill: pillsToDrop)
+  {
+    int id = GetServoIdByPill(pill);
+    MoveServo(id, START_EVEN, END_EVEN);  
+  }
+  
 }

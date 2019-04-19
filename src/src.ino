@@ -2,6 +2,8 @@
 #include <WebSocketsServer.h>
 #include <WebSockets.h>
 
+#define START_EVEN 0
+#define END_EVEN 70
 
 //===================RTC Libs==================//
 #include "time.h"
