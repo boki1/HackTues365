@@ -61,6 +61,7 @@ String GetIDCardInHex(byte *buffer, byte bufferSize) {
 
 void OnClick(byte *buff, byte _size, struct tm *timeinfo)
 {
+  digitalWrite(LED, HIGH);
   String idCard = GetIDCardInHex(buff, _size);
   String getIDQuery = "SELECT id FROM id_cards WHERE id_card='" + idCard + "';";
   ExecuteQuery(Database, getIDQuery.c_str());
@@ -94,18 +95,17 @@ void OnClick(byte *buff, byte _size, struct tm *timeinfo)
   if (indexes.size() == 0) Serial.print("nothing :(");
   for (int i : indexes) {
     if (std::find(indexes.begin(), indexes.end(), i) != indexes.end())
-    { 
+    {
       pillsToDrop.push_back(results[i]);
       Serial.print(results[i] + " ");
     }
   }
-  
+
   results.clear();
 
-  for (String pill: pillsToDrop)
+  for (String pill : pillsToDrop)
   {
     int id = GetServoIdByPill(pill);
-    MoveServo(id, START_EVEN, END_EVEN);  
+    MoveServo(id);
   }
-  
 }

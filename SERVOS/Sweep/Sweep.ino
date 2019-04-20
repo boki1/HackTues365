@@ -19,21 +19,21 @@ void loop() {
   int pos3;
   int pos4;
 
-  for (pos1 = 0; pos1 <= 90; pos1 += 1) { 
+  for (pos1 = 0; pos1 <= 70; pos1 += 1) { 
     // in steps of 1 degree
     servo1.write(pos1);              
     delay(13);                       
   }
-  for (pos1 = 90; pos1 >= 0; pos1 -= 1) { 
+  for (pos1 = 70; pos1 >= 0; pos1 -= 1) { 
     servo1.write(pos1);              
     delay(13);                    
   }
-  for (pos2 = 0; pos2 <= 70; pos2 += 1) { 
+  for (pos2 = 0; pos2 <= 90; pos2 += 1) { 
     // in steps of 1 degree
     servo2.write(pos2);              
     delay(13);                     
   }
-  for (pos2 = 70; pos2 >= 0; pos2 -= 1) { 
+  for (pos2 = 90; pos2 >= 0; pos2 -= 1) { 
     servo2.write(pos2);              
     delay(13);                       
   }
@@ -42,7 +42,7 @@ void loop() {
     servo3.write(pos3);              
     delay(13);                       
   }
-  for (pos3 = 90; pos3 >= 0; pos3 -= 1) { 
+  for (pos3 = 70; pos3 >= 0; pos3 -= 1) { 
     servo3.write(pos3);              
     delay(13
     );                       
