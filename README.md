@@ -11,8 +11,8 @@
 Система за подпомагане на хора, живеещи в старчески домове. Състои се от една главна станция, от която възрастните хора могат да получават
 своите хапчета, и подстанции - notification base-ове. Те издават звуков и светлинен сигнал, когато наближи времето за прием на лекарства с
 цел да подсетят човека, че трябва да ги приеме. Когато отиде до главната станция, той се чекира със своята ID карта и това е всичко :). Хап
-четата падата в ръката на човека и той е свободен да продължи деня си без да мисли кога е следващият час, когато трябва да си вземе хапчет
-та.
+четата падата в ръката на човека и той е свободен да продължи деня си без да мисли кога е следващият час, когато трябва да си вземе хапчетaта.
+Основната цел на Spenser е да предотврати възможността някой човек да сгреши своята доза или да приеме хапче, което не е било предназначено за него.
 
 ## ЧЕСТО ЗАДАВАНИ ВЪПРОСИ:
 	
@@ -31,6 +31,7 @@ Link to the presenttion: https://prezi.com/dashboard/next/#/details/qeja4hnnzc6y
 ## Hello, Sweetie!
 
 A system, designed to help the people in the rest homes. Its componends are following: there's a main station from which the elderly can simply get their pills, and substations - notification bases. The notifications contain a light and a sound signal that is indicating when the time for getting the pills is approaching.
+The main function of Spenser is to prevent incidents such as wrong time for the pill or different dose.
 
 ## FAQ:
 
